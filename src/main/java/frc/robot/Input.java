@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Encoder;
 public class Input{
     /* Sensors */
     public static BuiltInAccelerometer accel;
-    public static ADXRS450_Gyro gyro;
 	public static DigitalInput button;
     public static Encoder encoder;
     
@@ -32,12 +31,11 @@ public class Input{
 
     public static void reset(){
         encoder.reset();
-        gyro.reset();
     }
 
     /** deadband ? percent, used on the gamepad */
 	private static double deadband(double value) {
-		double deadzone = 0.02;//smallest amount you can recognize from the controller
+		double deadzone = 0.04;//smallest amount you can recognize from the controller
 		if ((value >= +deadzone)||(value <= -deadzone)) {
 			return value;//outside deadband
 		}else{
@@ -58,13 +56,15 @@ public class Input{
         }
         return x;
     }
-    
+
+    /*
     public static double getAngleRate(){
         return gyro.getRate();
     }
     public static double getAngle(){
         return constrainAngle(gyro.getAngle(),0,360);
     }
+    */
     public static double getLeftY(){
         double joy = -deadband(xbox.getY(KLEFT));
         return joy;

@@ -7,16 +7,16 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 public class MotorBase{
 	/** Hardware */
-	static CANSparkMax dRightF = new CANSparkMax(2, MotorType.kBrushless);
-	static CANSparkMax dRightB = new CANSparkMax(1, MotorType.kBrushless);
-	static CANSparkMax dLeftF = new CANSparkMax(3, MotorType.kBrushless);
-    static CANSparkMax dLeftB = new CANSparkMax(4, MotorType.kBrushless);
+	private static CANSparkMax dRightF = new CANSparkMax(2, MotorType.kBrushless);
+	private static CANSparkMax dRightB = new CANSparkMax(1, MotorType.kBrushless);
+	private static CANSparkMax dLeftF = new CANSparkMax(3, MotorType.kBrushless);
+    private static CANSparkMax dLeftB = new CANSparkMax(4, MotorType.kBrushless);
 
     /* Constants */
-	public static double dSpeed = 0.4;//overall speed affecting robots actions
-	public static double dForwardH;//last non-zero FORWARD value
-	public static double dTurnH;//last non-zero TURN value
-	public static double driveK;//value affecting the slew of acceleration
+	private static double dSpeed = 0.4;//overall speed affecting robots actions
+	private static double dForwardH;//last non-zero FORWARD value
+	private static double dTurnH;//last non-zero TURN value
+	private static double driveK;//value affecting the slew of acceleration
 
     public static void init(){
 		driveK = 0.2;
@@ -52,9 +52,8 @@ public class MotorBase{
 		*/
 		SmartDashboard.putNumber("Forward", forward);
 		SmartDashboard.putNumber("Turn", turn);
-		double rightMath = Math.round((Input.limit(forward-turn)*dSpeed)*100.0)/100.0;
-		double leftMath = Math.round((Input.limit(forward+turn)*dSpeed)*100.0)/100.0;
-		System.out.println(leftMath+"   "+rightMath);
+		double rightMath = (int)((Input.limit(forward-turn)*dSpeed)*100.0)/100.0;
+		double leftMath = (int)((Input.limit(forward+turn)*dSpeed)*100.0)/100.0;
 		dRightF.set(rightMath);
 		dLeftF.set(leftMath);
 	}
