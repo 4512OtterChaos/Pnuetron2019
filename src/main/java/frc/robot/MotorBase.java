@@ -52,9 +52,17 @@ public class MotorBase{
 		*/
 		SmartDashboard.putNumber("Forward", forward);
 		SmartDashboard.putNumber("Turn", turn);
-		double rightMath = Input.limit(forward-turn)*dSpeed;
-		double leftMath = Input.limit(forward+turn)*dSpeed;
+		double rightMath = Math.round((Input.limit(forward-turn)*dSpeed)*100.0)/100.0;
+		double leftMath = Math.round((Input.limit(forward+turn)*dSpeed)*100.0)/100.0;
+		System.out.println(leftMath+"   "+rightMath);
 		dRightF.set(rightMath);
 		dLeftF.set(leftMath);
+	}
+
+	public static void displayStats(){
+		SmartDashboard.putNumber("dLeftF-E", dLeftF.getEncoder().getPosition());
+		SmartDashboard.putNumber("dLeftB-E", dLeftB.getEncoder().getPosition());
+		SmartDashboard.putNumber("dRightF-E", dRightF.getEncoder().getPosition());
+		SmartDashboard.putNumber("dRightB-E", dRightB.getEncoder().getPosition());
 	}
 }

@@ -37,7 +37,7 @@ public class Input{
 
     /** deadband ? percent, used on the gamepad */
 	private static double deadband(double value) {
-		double deadzone = 0.15;//smallest amount you can recognize from the controller
+		double deadzone = 0.02;//smallest amount you can recognize from the controller
 		if ((value >= +deadzone)||(value <= -deadzone)) {
 			return value;//outside deadband
 		}else{
@@ -67,22 +67,18 @@ public class Input{
     }
     public static double getLeftY(){
         double joy = -deadband(xbox.getY(KLEFT));
-        SmartDashboard.putNumber("LJoyY", joy);
         return joy;
     }
     public static double getLeftX(){
         double joy = deadband(xbox.getX(KLEFT));
-        SmartDashboard.putNumber("LJoyX", joy);
         return joy;
     }
     public static double getRightY(){
         double joy = -deadband(xbox.getY(KRIGHT));
-        SmartDashboard.putNumber("RJoyY", joy);
         return joy;
     }
     public static double getRightX(){
         double joy = deadband(xbox.getX(KRIGHT));
-        SmartDashboard.putNumber("RJoyX", joy);
         return joy;
     }
     public static boolean getRightBumper(){
@@ -111,5 +107,12 @@ public class Input{
     }
     public static int getCount(){
         return encoder.get();
+    }
+
+    public static void displayStats(){
+        SmartDashboard.putNumber("RJoyX", getRightX());
+        SmartDashboard.putNumber("RJoyY", getRightY());
+        SmartDashboard.putNumber("LJoyX", getLeftX());
+        SmartDashboard.putNumber("LJoyY", getLeftY());
     }
 }

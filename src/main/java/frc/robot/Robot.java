@@ -28,6 +28,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    Input.displayStats();
+    MotorBase.displayStats();
   }
 
   @Override
