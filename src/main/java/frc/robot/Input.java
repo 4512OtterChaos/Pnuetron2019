@@ -4,15 +4,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
+import com.ctre.phoenix.sensors.PigeonIMU;
 public class Input{
     /* Sensors */
-    public static BuiltInAccelerometer accel;
-	public static DigitalInput button;
-    public static Encoder encoder;
+    private static PigeonIMU pigeon = new PigeonIMU(5);
+    private static PigeonIMU.GeneralStatus pStat = new PigeonIMU.GeneralStatus();
+    private static double[] ypr = new double[3];//yaw[0], pitch[1], roll[2]
     
     /* Controls */
 	public static XboxController xbox; //object for controller --more buttons :)
@@ -25,12 +23,9 @@ public class Input{
         
         /* Sensor assignment *///code matches electrical
         //comment these out as necessary
-        accel = new BuiltInAccelerometer();
+        pigeon.getGeneralStatus(pStat);
+        pigeon.getYawPitchRoll(ypr);
         //gyro = new ADXRS450_Gyro(Port.kOnboardCS0);
-    }
-
-    public static void reset(){
-        encoder.reset();
     }
 
     /** deadband ? percent, used on the gamepad */
@@ -105,9 +100,11 @@ public class Input{
     public static double getLeftTrigger(){
         return xbox.getTriggerAxis(KLEFT);
     }
+    /*
     public static int getCount(){
         return encoder.get();
     }
+    */
 
     public static void displayStats(){
         SmartDashboard.putNumber("RJoyX", getRightX());
