@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 public class MotorBase{
 	/** Hardware */
@@ -41,8 +42,16 @@ public class MotorBase{
 		dLeftB.configPeakOutputReverse(-1);
 		dRightF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
 		dRightF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, 30);
+		dRightF.config_kP(0, 0.6, 30);
+		dRightF.config_kI(0, 0.0, 30);
+		dRightF.config_kD(0, 20.0, 30);
+		dRightF.config_kF(0, 1023.0/6800.0, 30);
+		dRightF.configClosedLoopPeakOutput(0, 0.75, 30);
+		dRightF.configAllowableClosedloopError(0, 0, 30);
+		dRightF.configClosedloopRamp(0.5);
 		dRightF.setInverted(true);
 		dRightB.setInverted(true);
+		dRightF.setSensorPhase(true);
 		dRightB.follow(dRightF);
 		dLeftB.follow(dLeftF);
 		//*Routine
@@ -55,21 +64,32 @@ public class MotorBase{
 		//*arcade drive
 		double forward = Input.getLeftY();
 		double turn = Input.getRightX();
-		arcadeDrive(forward, turn);
+		testPID(forward, turn);
+		//arcadeDrive(forward, turn);
 	}
 
 	public static void disable(){
+		tankDrive(0, 0);
 		dRightF.setNeutralMode(NeutralMode.Coast);
 		dRightB.setNeutralMode(NeutralMode.Coast);
 		dLeftF.setNeutralMode(NeutralMode.Coast);
 		dLeftB.setNeutralMode(NeutralMode.Coast);
 	}
 
+	public static void testPID(double forward, double turn){
+		double tRPM = forward*250;
+		double t100ms = tRPM*4096/600.0;
+		dRightF.set(ControlMode.Velocity, t100ms);
+	}
 	public static void arcadeDrive(double forward, double turn){
 		forward*=dSpeed;
 		turn*=dSpeed;
-		dRightF.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
-		dLeftF.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+		double right = Input.limit(forward-turn);
+		double left = Input.limit(forward+turn);
+		dRightF.set(ControlMode.PercentOutput, right);
+		dLeftF.set(ControlMode.PercentOutput, left);
+		//dRightF.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+		//dLeftF.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 	}
 
     public static void tankDrive(double left, double right){
@@ -80,5 +100,7 @@ public class MotorBase{
 	}
 
 	public static void displayStats(){
+		SmartDashboard.putNumber("Right EncoderP", dRightF.getSelectedSensorPosition());
+		SmartDashboard.putNumber("Right EncoderV", dRightF.getSelectedSensorVelocity()/4096.0*600f);
 	}
 }
