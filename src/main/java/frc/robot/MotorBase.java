@@ -154,9 +154,7 @@ public class MotorBase{
 		SmartDashboard.putNumber("Left Encoder Counts", dLeftF.getSelectedSensorPosition());
 		SmartDashboard.putNumber("Left Encoder RPM", toRPM(dLeftF.getSelectedSensorVelocity()));
 		SmartDashboard.putNumber("Left Encoder NativeV", dLeftF.getSelectedSensorVelocity());
-		double[] rightLoop = {toRPM(rTarget), toRPM(dRightF.getSelectedSensorVelocity())};
-		double[] leftLoop = {toRPM(lTarget), toRPM(dLeftF.getSelectedSensorVelocity())};
-		SmartDashboard.putNumberArray("Right Loop", rightLoop);
-		SmartDashboard.putNumberArray("Left Loop", leftLoop);
+		double[] PIDMap = {toRPM(rTarget), toRPM(dRightF.getSelectedSensorVelocity()), toRPM(lTarget), toRPM(dLeftF.getSelectedSensorVelocity())};
+		SmartDashboard.putNumberArray("PID Map", PIDMap);
 	}
 }
