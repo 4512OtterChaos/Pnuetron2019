@@ -23,15 +23,22 @@ public class Robot extends TimedRobot {
     autoChoose.addOption("Test Auto", kTest);
     SmartDashboard.putData("Auto choices", autoChoose);
     //---------------------------------//
+    Constants.init();
     Input.init();
   }
 
   @Override
   public void robotPeriodic() {
+    Constants.update();
     Input.displayStats();
     MotorBase.displayStats();
   }
 
+  @Override
+  public void disabledInit() {
+    MotorBase.disable();
+  }
+  
   @Override
   public void autonomousInit() {
     autoSelected = autoChoose.getSelected();

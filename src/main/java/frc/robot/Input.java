@@ -30,7 +30,7 @@ public class Input{
 
     /** deadband ? percent, used on the gamepad */
 	private static double deadband(double value) {
-		double deadzone = 0.04;//smallest amount you can recognize from the controller
+		double deadzone = 0.14;//smallest amount you can recognize from the controller
 		if ((value >= +deadzone)||(value <= -deadzone)) {
 			return value;//outside deadband
 		}else{
@@ -52,14 +52,6 @@ public class Input{
         return x;
     }
 
-    /*
-    public static double getAngleRate(){
-        return gyro.getRate();
-    }
-    public static double getAngle(){
-        return constrainAngle(gyro.getAngle(),0,360);
-    }
-    */
     public static double getLeftY(){
         double joy = -deadband(xbox.getY(KLEFT));
         return joy;
@@ -100,16 +92,12 @@ public class Input{
     public static double getLeftTrigger(){
         return xbox.getTriggerAxis(KLEFT);
     }
-    /*
-    public static int getCount(){
-        return encoder.get();
-    }
-    */
 
     public static void displayStats(){
         SmartDashboard.putNumber("RJoyX", getRightX());
         SmartDashboard.putNumber("RJoyY", getRightY());
         SmartDashboard.putNumber("LJoyX", getLeftX());
         SmartDashboard.putNumber("LJoyY", getLeftY());
+        SmartDashboard.putNumberArray("YPR", ypr);
     }
 }

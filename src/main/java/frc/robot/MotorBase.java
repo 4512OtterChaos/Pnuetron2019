@@ -1,71 +1,77 @@
 package frc.robot;
 
-import com.revrobotics.*;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.*;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 public class MotorBase{
 	/** Hardware */
-	public static CANSparkMax dRightF = new CANSparkMax(2, MotorType.kBrushless);
-	public static CANSparkMax dRightB = new CANSparkMax(1, MotorType.kBrushless);
-	public static CANSparkMax dLeftF = new CANSparkMax(3, MotorType.kBrushless);
-	public static CANSparkMax dLeftB = new CANSparkMax(4, MotorType.kBrushless);
-	public static CANEncoder eRightF = new CANEncoder(dRightF);
-	public static CANEncoder eRightB = new CANEncoder(dRightB);
-	public static CANEncoder eLeftF = new CANEncoder(dLeftF);
-	public static CANEncoder eLeftB = new CANEncoder(dLeftB);
-	public static CANPIDController dRight = new CANPIDController(dRightF);
-	public static CANPIDController dLeft = new CANPIDController(dLeftF);
-	public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;//pid constants
+	public static TalonSRX dRightF = new TalonSRX(1);
+	public static TalonSRX dRightB = new TalonSRX(2);
+	public static TalonSRX dLeftF = new TalonSRX(3);
+	public static TalonSRX dLeftB = new TalonSRX(4);
+	//public static TalonSRX liftF = new TalonSRX(5);
+	//public static TalonSRX liftB = new TalonSRX(6);
+
+	/*
+	dRightF.
+	dRightB.
+	dLeftF.
+	dLeftB.
+	*/
 
     /* Constants */
-	private static double dSpeed = 0.4;//overall speed affecting robots actions
+	private static float dSpeed = 0.3f;//overall speed affecting robots actions
+	private static double rTarget;
+	private static double lTarget;
 
     public static void init(){
 		//*Constants
-		kP=1e-5;
-		kI=1e-6;
-		kD=0;
-		kIz=0;
-		kFF=0;
-		kMaxOutput=1;
-		kMinOutput=-1;
-		maxRPM=5700;//neo motor = 5700 rpm; gearbox reduction = 10.71:1;
-		SmartDashboard.putNumber("P Gain", kP);
-    	SmartDashboard.putNumber("I Gain", kI);
-    	SmartDashboard.putNumber("D Gain", kD);
-    	SmartDashboard.putNumber("I Zone", kIz);
-    	SmartDashboard.putNumber("Feed Forward", kFF);
-    	SmartDashboard.putNumber("Max Output", kMaxOutput);
-    	SmartDashboard.putNumber("Min Output", kMinOutput);
-		//*Hardware initialization
-		dRightF.setIdleMode(IdleMode.kBrake);
-		dRightB.setIdleMode(IdleMode.kBrake);
-		dLeftF.setIdleMode(IdleMode.kBrake);
-		dLeftB.setIdleMode(IdleMode.kBrake);
-		dRightF.setSmartCurrentLimit(40);
-		dRightB.setSmartCurrentLimit(40);
-		dLeftF.setSmartCurrentLimit(40);
-		dLeftB.setSmartCurrentLimit(40);
+		//*Config
+		dRightF.configFactoryDefault();
+		dRightB.configFactoryDefault();
+		dLeftF.configFactoryDefault();
+		dLeftB.configFactoryDefault();
+		//idle
+		dRightF.setNeutralMode(NeutralMode.Brake);
+		dRightB.setNeutralMode(NeutralMode.Brake);
+		dLeftF.setNeutralMode(NeutralMode.Brake);
+		dLeftB.setNeutralMode(NeutralMode.Brake);
+		//limits
+		dRightF.configPeakOutputForward(1);
+		dRightB.configPeakOutputForward(1);
+		dLeftF.configPeakOutputForward(1);
+		dLeftB.configPeakOutputForward(1);
+		dRightF.configPeakOutputReverse(-1);
+		dRightB.configPeakOutputReverse(-1);
+		dLeftF.configPeakOutputReverse(-1);
+		dLeftB.configPeakOutputReverse(-1);
+		//define sensor
+		dRightF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
+		dRightF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
+
+		dLeftF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
+		dLeftF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
+		//pid
+		configPID(Constants.kP, Constants.kI, Constants.kD, Constants.kF);
+		//behavior
+		dRightF.configClosedLoopPeakOutput(Constants.kIdx, Constants.kPeakClosed, Constants.kTimeout);
+		dRightF.configAllowableClosedloopError(Constants.kIdx, Constants.kAllowableClosed, Constants.kTimeout);
+		dRightF.configClosedloopRamp(Constants.kRamp);
+		dRightF.setInverted(true);
+		dRightB.setInverted(true);
+		dRightF.setSensorPhase(true);
+
+		dLeftF.configClosedLoopPeakOutput(Constants.kIdx, Constants.kPeakClosed, Constants.kTimeout);
+		dLeftF.configAllowableClosedloopError(Constants.kIdx, Constants.kAllowableClosed, Constants.kTimeout);
+		dLeftF.configClosedloopRamp(Constants.kRamp);
+		dLeftF.setInverted(false);
+		dLeftB.setInverted(false);
+		dLeftF.setSensorPhase(true);
+
 		dRightB.follow(dRightF);
 		dLeftB.follow(dLeftF);
-		dRightF.setRampRate(0.75);
-		dLeftF.setRampRate(0.75);
-		dRightF.setInverted(true);
-		//*PID
-		dRight.setP(kP);
-		dRight.setI(kI);
-		dRight.setD(kD);
-		dRight.setIZone(kIz);
-		dRight.setFF(kFF);
-		dRight.setOutputRange(kMinOutput, kMaxOutput);
-		dLeft.setP(kP);
-		dLeft.setI(kI);
-		dLeft.setD(kD);
-		dLeft.setIZone(kIz);
-		dLeft.setFF(kFF);
-		dLeft.setOutputRange(kMinOutput, kMaxOutput);
 		//*Routine
 		tankDrive(0,0);
 		System.out.println("--Feed Forward Teleop--");
@@ -73,59 +79,82 @@ public class MotorBase{
 
     public static void periodic(){
 		//*pid tuning values
-		double p = SmartDashboard.getNumber("P Gain", 0);
-		double i = SmartDashboard.getNumber("I Gain", 0);
-		double d = SmartDashboard.getNumber("D Gain", 0);
-		double iz = SmartDashboard.getNumber("I Zone", 0);
-		double ff = SmartDashboard.getNumber("Feed Forward", 0);
-		double max = SmartDashboard.getNumber("Max Output", 0);
-		double min = SmartDashboard.getNumber("Min Output", 0);
-		if((p != kP)) { dRight.setP(p);dLeft.setP(p); kP = p; }
-		if((i != kI)) { dRight.setI(i);dLeft.setI(i); kI = i; }
-		if((d != kD)) { dRight.setD(d);dLeft.setD(d); kD = d; }
-		if((iz != kIz)) { dRight.setIZone(iz);dLeft.setIZone(iz); kIz = iz; }
-		if((ff != kFF)) { dRight.setFF(ff);dLeft.setFF(ff); kFF = ff; }
-		if((max != kMaxOutput) || (min != kMinOutput)) { 
-		  dRight.setOutputRange(min, max);
-		  dLeft.setOutputRange(min, max); 
-		  kMinOutput = min; kMaxOutput = max; 
-		}
 		//*arcade drive
 		double forward = Input.getLeftY();
 		double turn = Input.getRightX();
-		double leftMath = ((int)((Input.limit(forward+turn)*dSpeed)*100.0)/100.0)*maxRPM;
-		double rightMath = ((int)((Input.limit(forward-turn)*dSpeed)*100.0)/100.0)*maxRPM;
-		SmartDashboard.putNumber("LeftMath", leftMath);
-		SmartDashboard.putNumber("RightMath", rightMath);
-		dLeft.setReference(leftMath, ControlType.kVelocity);
-		dRight.setReference(rightMath, ControlType.kVelocity);
-		//tankDrive(leftMath, rightMath);
+		testPID(forward, turn);
+		//arcadeDrive(forward, turn);
 	}
 
 	public static void disable(){
-		dRightF.setIdleMode(IdleMode.kCoast);
-		dRightB.setIdleMode(IdleMode.kCoast);
-		dLeftF.setIdleMode(IdleMode.kCoast);
-		dLeftB.setIdleMode(IdleMode.kCoast);
+		tankDrive(0, 0);
+		dRightF.setNeutralMode(NeutralMode.Coast);
+		dRightB.setNeutralMode(NeutralMode.Coast);
+		dLeftF.setNeutralMode(NeutralMode.Coast);
+		dLeftB.setNeutralMode(NeutralMode.Coast);
 	}
 
+	public static void testPID(double forward, double turn){
+		double right = arcadeMath(forward, turn, true);
+		double left = arcadeMath(forward, turn, false);
+		rTarget = calc100ms(right, Constants.kMaxRPM);
+		lTarget = calc100ms(left, Constants.kMaxRPM);
+		dRightF.set(ControlMode.Velocity, rTarget);
+		dLeftF.set(ControlMode.Velocity, lTarget);
+	}
 	public static void arcadeDrive(double forward, double turn){
-		double leftMath = (int)((Input.limit(forward+turn)*dSpeed)*100.0)/100.0;
-		double rightMath = (int)((Input.limit(forward-turn)*dSpeed)*100.0)/100.0;
-		tankDrive(leftMath, rightMath);
+		double right = arcadeMath(forward, turn, true);
+		double left = arcadeMath(forward, turn, false);
+		dRightF.set(ControlMode.PercentOutput, right);
+		dLeftF.set(ControlMode.PercentOutput, left);
+		//dRightF.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+		//dLeftF.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 	}
 
     public static void tankDrive(double left, double right){
-		dRightF.set(right);
-		dLeftF.set(left);
+		left*=dSpeed;
+		right*=dSpeed;
+		dRightF.set(ControlMode.PercentOutput, right);
+		dLeftF.set(ControlMode.PercentOutput, left);
+	}
+
+	private static double arcadeMath(double forward, double turn, boolean right){
+		forward*=dSpeed;
+		turn*=dSpeed*0.8;
+		if(right) return Input.limit(forward-turn);
+		else return Input.limit(forward+turn);
+	}
+
+	private static double calc100ms(double percentOutput, double range){//percentage rpm as native units
+		double tRPM = percentOutput*range;
+		return toNative(tRPM);//talons use sensor units per 100ms(native units)
+	}
+	private static double toNative(double rpm){//convert rpm to native talon units
+		return rpm*4096.0/600.0f;
+	}
+	private static double toRPM(double nativeU){//convert native talon units to rpm
+		return nativeU/4096.0*600f;
+	}
+
+	public static void configPID(double p, double i, double d, double f){
+		dRightF.config_kP(Constants.kIdx, p, Constants.kTimeout);
+		dRightF.config_kI(Constants.kIdx, i, Constants.kTimeout);
+		dRightF.config_kD(Constants.kIdx, d, Constants.kTimeout);
+		dRightF.config_kF(Constants.kIdx, f, Constants.kTimeout);
+		dLeftF.config_kP(Constants.kIdx, p, Constants.kTimeout);
+		dLeftF.config_kI(Constants.kIdx, i, Constants.kTimeout);
+		dLeftF.config_kD(Constants.kIdx, d, Constants.kTimeout);
+		dLeftF.config_kF(Constants.kIdx, f, Constants.kTimeout);
 	}
 
 	public static void displayStats(){
-		SmartDashboard.putNumber("dLeftF-E", eLeftF.getPosition());
-		SmartDashboard.putNumber("dLeftB-E", eLeftB.getPosition());
-		SmartDashboard.putNumber("dRightF-E", eRightF.getPosition());
-		SmartDashboard.putNumber("dRightB-E", eRightB.getPosition());
-		SmartDashboard.putNumber("LeftVelocity", eLeftF.getVelocity());
-		SmartDashboard.putNumber("RightVelocity", eRightF.getVelocity());
+		SmartDashboard.putNumber("Right Encoder Counts", dRightF.getSelectedSensorPosition());
+		SmartDashboard.putNumber("Right Encoder RPM", toRPM(dRightF.getSelectedSensorVelocity()));
+		SmartDashboard.putNumber("Right Encoder NativeV", dRightF.getSelectedSensorVelocity());
+		SmartDashboard.putNumber("Left Encoder Counts", dLeftF.getSelectedSensorPosition());
+		SmartDashboard.putNumber("Left Encoder RPM", toRPM(dLeftF.getSelectedSensorVelocity()));
+		SmartDashboard.putNumber("Left Encoder NativeV", dLeftF.getSelectedSensorVelocity());
+		double[] PIDMap = {toRPM(rTarget), toRPM(dRightF.getSelectedSensorVelocity()), toRPM(lTarget), toRPM(dLeftF.getSelectedSensorVelocity())};
+		SmartDashboard.putNumberArray("PID Map", PIDMap);
 	}
 }
