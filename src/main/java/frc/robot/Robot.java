@@ -41,14 +41,12 @@ public class Robot extends TimedRobot {
   
   @Override
   public void autonomousInit() {
-    autoSelected = autoChoose.getSelected();
     MotorBase.init();
-    Autonomous.init(autoSelected);
   }
 
   @Override
   public void autonomousPeriodic() {
-    Autonomous.periodic();
+    MotorBase.periodic();
   }
 
   @Override
