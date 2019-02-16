@@ -82,8 +82,8 @@ public class MotorBase{
     public static void periodic(){
 		//*pid tuning values
 		//*arcade drive
-		double forward = Input.getLeftY();
-		double turn = Input.getRightX();
+		double forward = Input.getLeftY(Input.xbox);
+		double turn = Input.getRightX(Input.xbox);
 		velPID(forward, turn);
 		//arcadeDrive(forward, turn);
 	}

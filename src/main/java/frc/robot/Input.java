@@ -14,13 +14,15 @@ public class Input{
     public static Limelight backLime;
     
     /* Controls */
-	public static XboxController xbox; //object for controller --more buttons :)
+    public static XboxController xbox; //object for controller --more buttons :)
+    public static XboxController fightStick;
     private static Hand KLEFT = GenericHID.Hand.kLeft; //constant referring to
     private static Hand KRIGHT = GenericHID.Hand.kRight;//the side of controller
 
     public static void init(){
         /* Controls' assignment*/
-		xbox = new XboxController(0);
+        xbox = new XboxController(0);
+        fightStick = new XboxController(1);
         
         /* Sensor assignment *///code matches electrical
         //comment these out as necessary
@@ -60,52 +62,56 @@ public class Input{
         return x;
     }
 
-    public static double getLeftY(){
-        double joy = -deadband(xbox.getY(KLEFT));
+    public static double getLeftY(XboxController controller){
+        double joy = -deadband(controller.getY(KLEFT));
         return joy;
     }
-    public static double getLeftX(){
-        double joy = deadband(xbox.getX(KLEFT));
+    public static double getLeftX(XboxController controller){
+        double joy = deadband(controller.getX(KLEFT));
         return joy;
     }
-    public static double getRightY(){
-        double joy = -deadband(xbox.getY(KRIGHT));
+    public static double getRightY(XboxController controller){
+        double joy = -deadband(controller.getY(KRIGHT));
         return joy;
     }
-    public static double getRightX(){
-        double joy = deadband(xbox.getX(KRIGHT));
+    public static double getRightX(XboxController controller){
+        double joy = deadband(controller.getX(KRIGHT));
         return joy;
     }
-    public static boolean getRightBumper(){
-        return xbox.getBumper(KRIGHT);
+    public static boolean getRightBumper(XboxController controller){
+        return controller.getBumper(KRIGHT);
     }
-    public static boolean getLeftBumper(){
-        return xbox.getBumper(KLEFT);
+    public static boolean getLeftBumper(XboxController controller){
+        return controller.getBumper(KLEFT);
     }
-    public static boolean getAButton(){
-        return xbox.getAButton();
+    public static boolean getAButton(XboxController controller){
+        return controller.getAButton();
     }
-    public static boolean getXButton(){
-        return xbox.getXButton();
+    public static boolean getXButton(XboxController controller){
+        return controller.getXButton();
     }
-    public static boolean getYButton(){
-        return xbox.getYButton();
+    public static boolean getYButton(XboxController controller){
+        return controller.getYButton();
     }
-    public static boolean getBButton(){
-        return xbox.getBButton();
+    public static boolean getBButton(XboxController controller){
+        return controller.getBButton();
     }
-    public static double getRightTrigger(){
-        return xbox.getTriggerAxis(KRIGHT);
+    public static double getRightTrigger(XboxController controller){
+        return controller.getTriggerAxis(KRIGHT);
     }
-    public static double getLeftTrigger(){
-        return xbox.getTriggerAxis(KLEFT);
+    public static double getLeftTrigger(XboxController controller){
+        return controller.getTriggerAxis(KLEFT);
     }
 
     public static void displayStats(){
-        SmartDashboard.putNumber("RJoyX", getRightX());
-        SmartDashboard.putNumber("RJoyY", getRightY());
-        SmartDashboard.putNumber("LJoyX", getLeftX());
-        SmartDashboard.putNumber("LJoyY", getLeftY());
+        SmartDashboard.putNumber("RJoyX", getRightX(xbox));
+        SmartDashboard.putNumber("RJoyY", getRightY(xbox));
+        SmartDashboard.putNumber("LJoyX", getLeftX(xbox));
+        SmartDashboard.putNumber("LJoyY", getLeftY(xbox));
+        SmartDashboard.putNumber("RJoyX", getRightX(fightStick));
+        SmartDashboard.putNumber("RJoyY", getRightY(fightStick));
+        SmartDashboard.putNumber("LJoyX", getLeftX(fightStick));
+        SmartDashboard.putNumber("LJoyY", getLeftY(fightStick));
         SmartDashboard.putNumberArray("YPR", ypr);
         SmartDashboard.putNumber("backTx", backLime.getTx());
         SmartDashboard.putNumber("backTy", backLime.getTy());
