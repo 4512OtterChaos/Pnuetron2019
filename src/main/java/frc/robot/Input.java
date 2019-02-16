@@ -4,13 +4,14 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import com.ctre.phoenix.sensors.PigeonIMU;
 public class Input{
     /* Sensors */
     private static PigeonIMU pigeon = new PigeonIMU(5);
     private static PigeonIMU.GeneralStatus pStat = new PigeonIMU.GeneralStatus();
     private static double[] ypr = new double[3];//yaw[0], pitch[1], roll[2]
+    public static Limelight frontLime;
+    public static Limelight backLime;
     
     /* Controls */
 	public static XboxController xbox; //object for controller --more buttons :)
@@ -25,10 +26,14 @@ public class Input{
         //comment these out as necessary
         pigeon.getGeneralStatus(pStat);
         pigeon.getYawPitchRoll(ypr);
-        //gyro = new ADXRS450_Gyro(Port.kOnboardCS0);
+        frontLime = new Limelight();
+        backLime = new Limelight("limelight-one");
     }
 
-    /** deadband ? percent, used on the gamepad */
+    /**
+     * @param value What value should be constrained
+     * @return Value constrained to deadband.
+     */
 	private static double deadband(double value) {
 		double deadzone = 0.14;//smallest amount you can recognize from the controller
 		if ((value >= +deadzone)||(value <= -deadzone)) {
@@ -38,7 +43,10 @@ public class Input{
 		}
     }
 
-    //constrain input to motor ranges
+    /**
+     * @param value What value should be constrained.
+     * @return Value constrained for motor output(-1 to 1).
+     */
     public static double limit(double value){
         return Math.max(-1,Math.min(1,value));
     }
@@ -99,5 +107,11 @@ public class Input{
         SmartDashboard.putNumber("LJoyX", getLeftX());
         SmartDashboard.putNumber("LJoyY", getLeftY());
         SmartDashboard.putNumberArray("YPR", ypr);
+        SmartDashboard.putNumber("backTx", backLime.getTx());
+        SmartDashboard.putNumber("backTy", backLime.getTy());
+        SmartDashboard.putNumber("backTa", backLime.getTa());
+        SmartDashboard.putNumber("frontTx", frontLime.getTx());
+        SmartDashboard.putNumber("frontTy", frontLime.getTy());
+        SmartDashboard.putNumber("frontTa", frontLime.getTa());
     }
 }

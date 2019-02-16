@@ -11,8 +11,8 @@ public class MotorBase{
 	public static TalonSRX dRightB = new TalonSRX(2);
 	public static TalonSRX dLeftF = new TalonSRX(3);
 	public static TalonSRX dLeftB = new TalonSRX(4);
-	//public static TalonSRX liftF = new TalonSRX(5);
-	//public static TalonSRX liftB = new TalonSRX(6);
+	public static TalonSRX liftF = new TalonSRX(5);
+	public static TalonSRX liftB = new TalonSRX(6);
 
 	/*
 	dRightF.
@@ -38,6 +38,8 @@ public class MotorBase{
 		dRightB.setNeutralMode(NeutralMode.Brake);
 		dLeftF.setNeutralMode(NeutralMode.Brake);
 		dLeftB.setNeutralMode(NeutralMode.Brake);
+		liftF.setNeutralMode(NeutralMode.Brake);
+		liftB.setNeutralMode(NeutralMode.Brake);
 		//limits
 		dRightF.configPeakOutputForward(1);
 		dRightB.configPeakOutputForward(1);
@@ -82,7 +84,7 @@ public class MotorBase{
 		//*arcade drive
 		double forward = Input.getLeftY();
 		double turn = Input.getRightX();
-		testPID(forward, turn);
+		velPID(forward, turn);
 		//arcadeDrive(forward, turn);
 	}
 
@@ -92,9 +94,11 @@ public class MotorBase{
 		dRightB.setNeutralMode(NeutralMode.Coast);
 		dLeftF.setNeutralMode(NeutralMode.Coast);
 		dLeftB.setNeutralMode(NeutralMode.Coast);
+		liftF.setNeutralMode(NeutralMode.Brake);
+		liftB.setNeutralMode(NeutralMode.Brake);
 	}
 
-	public static void testPID(double forward, double turn){
+	public static void velPID(double forward, double turn){
 		double right = arcadeMath(forward, turn, true);
 		double left = arcadeMath(forward, turn, false);
 		rTarget = calc100ms(right, Constants.kMaxRPM);
