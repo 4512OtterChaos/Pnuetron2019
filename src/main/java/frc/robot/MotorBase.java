@@ -13,18 +13,28 @@ public class MotorBase{
 	public static TalonSRX dLeftB = new TalonSRX(4);
 	public static TalonSRX liftF = new TalonSRX(5);
 	public static TalonSRX liftB = new TalonSRX(6);
+	public static TalonSRX wrist = new TalonSRX(7);
+	public static TalonSRX intakeL = new TalonSRX(8);
+	public static TalonSRX intakeR = new TalonSRX(9);
 
 	/*
 	dRightF.
 	dRightB.
 	dLeftF.
 	dLeftB.
+	liftF.
+	liftB.
+	wrist.
+	intakeL.
+	intakeR.
 	*/
 
-    /* Constants */
+    /* Targets */
 	private static float dSpeed = 0.3f;//overall speed affecting robots actions
-	private static double rTarget;
-	private static double lTarget;
+	private static double rightTarget;
+	private static double leftTarget;
+	private static double liftTarget;
+	private static double wristTarget;
 
     public static void init(){
 		//*Constants
@@ -33,6 +43,8 @@ public class MotorBase{
 		dRightB.configFactoryDefault();
 		dLeftF.configFactoryDefault();
 		dLeftB.configFactoryDefault();
+		liftF.configFactoryDefault();
+		liftB.configFactoryDefault();
 		//idle
 		dRightF.setNeutralMode(NeutralMode.Brake);
 		dRightB.setNeutralMode(NeutralMode.Brake);
@@ -45,35 +57,51 @@ public class MotorBase{
 		dRightB.configPeakOutputForward(1);
 		dLeftF.configPeakOutputForward(1);
 		dLeftB.configPeakOutputForward(1);
+		liftF.configPeakOutputForward(1);
+		liftB.configPeakOutputForward(1);
 		dRightF.configPeakOutputReverse(-1);
 		dRightB.configPeakOutputReverse(-1);
 		dLeftF.configPeakOutputReverse(-1);
 		dLeftB.configPeakOutputReverse(-1);
+		liftF.configPeakOutputReverse(-1);
+		liftB.configPeakOutputReverse(-1);
 		//define sensor
 		dRightF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
 		dRightF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
 
 		dLeftF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
 		dLeftF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
+
+		liftF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
+		liftF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
 		//pid
-		configPID(Constants.kP, Constants.kI, Constants.kD, Constants.kF);
+		configPID(Constants.dkP, Constants.dkI, Constants.dkD, Constants.dkF);
+		configPID(liftF, Constants.lkP, Constants.lkI, Constants.lkD, Constants.lkF);
 		//behavior
-		dRightF.configClosedLoopPeakOutput(Constants.kIdx, Constants.kPeakClosed, Constants.kTimeout);
+		dRightF.configClosedLoopPeakOutput(Constants.kIdx, Constants.dkPeakClosed, Constants.kTimeout);
 		dRightF.configAllowableClosedloopError(Constants.kIdx, Constants.kAllowableClosed, Constants.kTimeout);
-		dRightF.configClosedloopRamp(Constants.kRamp);
+		dRightF.configClosedloopRamp(Constants.dkRamp);
 		dRightF.setInverted(true);
 		dRightB.setInverted(true);
 		dRightF.setSensorPhase(true);
 
-		dLeftF.configClosedLoopPeakOutput(Constants.kIdx, Constants.kPeakClosed, Constants.kTimeout);
+		dLeftF.configClosedLoopPeakOutput(Constants.kIdx, Constants.dkPeakClosed, Constants.kTimeout);
 		dLeftF.configAllowableClosedloopError(Constants.kIdx, Constants.kAllowableClosed, Constants.kTimeout);
-		dLeftF.configClosedloopRamp(Constants.kRamp);
+		dLeftF.configClosedloopRamp(Constants.dkRamp);
 		dLeftF.setInverted(false);
 		dLeftB.setInverted(false);
 		dLeftF.setSensorPhase(true);
 
+		liftF.configClosedLoopPeakOutput(Constants.kIdx, Constants.lkPeakClosed, Constants.kTimeout);
+		liftF.configAllowableClosedloopError(Constants.kIdx, Constants.kAllowableClosed, Constants.kTimeout);
+		liftF.configClosedloopRamp(Constants.lkRamp);
+		liftF.setInverted(true);
+		liftB.setInverted(true);
+		liftF.setSensorPhase(true);
+
 		dRightB.follow(dRightF);
 		dLeftB.follow(dLeftF);
+		liftB.follow(liftF);
 		//*Routine
 		tankDrive(0,0);
 		System.out.println("--Feed Forward Teleop--");
@@ -101,10 +129,10 @@ public class MotorBase{
 	public static void velPID(double forward, double turn){
 		double right = arcadeMath(forward, turn, true);
 		double left = arcadeMath(forward, turn, false);
-		rTarget = calc100ms(right, Constants.kMaxRPM);
-		lTarget = calc100ms(left, Constants.kMaxRPM);
-		dRightF.set(ControlMode.Velocity, rTarget);
-		dLeftF.set(ControlMode.Velocity, lTarget);
+		rightTarget = calc100ms(right, Constants.dkMaxRPM);
+		leftTarget = calc100ms(left, Constants.dkMaxRPM);
+		dRightF.set(ControlMode.Velocity, rightTarget);
+		dLeftF.set(ControlMode.Velocity, leftTarget);
 	}
 	public static void arcadeDrive(double forward, double turn){
 		double right = arcadeMath(forward, turn, true);
@@ -124,9 +152,13 @@ public class MotorBase{
 
 	private static double arcadeMath(double forward, double turn, boolean right){
 		forward*=dSpeed;
-		turn*=dSpeed*0.8;
+		turn*=dSpeed*0.75;
 		if(right) return Input.limit(forward-turn);
 		else return Input.limit(forward+turn);
+	}
+
+	public static void setLift(double x){
+		liftF.set(ControlMode.PercentOutput, x);
 	}
 
 	private static double calc100ms(double percentOutput, double range){//percentage rpm as native units
@@ -151,6 +183,17 @@ public class MotorBase{
 		dLeftF.config_kF(Constants.kIdx, f, Constants.kTimeout);
 	}
 
+	public static void configPID(TalonSRX motor, double p, double i, double d, double f){
+		motor.config_kP(Constants.kIdx, p, Constants.kTimeout);
+		motor.config_kI(Constants.kIdx, i, Constants.kTimeout);
+		motor.config_kD(Constants.kIdx, d, Constants.kTimeout);
+		motor.config_kF(Constants.kIdx, f, Constants.kTimeout);
+		motor.config_kP(Constants.kIdx, p, Constants.kTimeout);
+		motor.config_kI(Constants.kIdx, i, Constants.kTimeout);
+		motor.config_kD(Constants.kIdx, d, Constants.kTimeout);
+		motor.config_kF(Constants.kIdx, f, Constants.kTimeout);
+	}
+
 	public static void displayStats(){
 		SmartDashboard.putNumber("Right Encoder Counts", dRightF.getSelectedSensorPosition());
 		SmartDashboard.putNumber("Right Encoder RPM", toRPM(dRightF.getSelectedSensorVelocity()));
@@ -158,7 +201,13 @@ public class MotorBase{
 		SmartDashboard.putNumber("Left Encoder Counts", dLeftF.getSelectedSensorPosition());
 		SmartDashboard.putNumber("Left Encoder RPM", toRPM(dLeftF.getSelectedSensorVelocity()));
 		SmartDashboard.putNumber("Left Encoder NativeV", dLeftF.getSelectedSensorVelocity());
-		double[] PIDMap = {toRPM(rTarget), toRPM(dRightF.getSelectedSensorVelocity()), toRPM(lTarget), toRPM(dLeftF.getSelectedSensorVelocity())};
-		SmartDashboard.putNumberArray("PID Map", PIDMap);
+		SmartDashboard.putNumber("Lift Encoder Counts", liftF.getSelectedSensorPosition());
+		SmartDashboard.putNumber("Lift Encoder RPM", toRPM(liftF.getSelectedSensorVelocity()));
+		SmartDashboard.putNumber("Lift Encoder NativeV", liftF.getSelectedSensorVelocity());
+		//
+		double[] dPIDMap = {toRPM(rightTarget), toRPM(dRightF.getSelectedSensorVelocity()), toRPM(leftTarget), toRPM(dLeftF.getSelectedSensorVelocity())};
+		SmartDashboard.putNumberArray("Drive PID Map", dPIDMap);
+		double[] lPIDMap = {toRPM(liftTarget), toRPM(liftF.getSelectedSensorVelocity())};
+		SmartDashboard.putNumberArray("Lift PID Map", lPIDMap);
 	}
 }

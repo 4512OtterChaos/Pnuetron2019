@@ -3,33 +3,53 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Constants{
-    //PID
-    public static double kP = 0.5;
-    public static double kI = 0.0;
-    public static double kD = 40.0;
-    public static final double kF = 1023.0/6800.0;
+    //*PID
+    public static double dkP = 0.5;
+    public static double dkI = 0.0;
+    public static double dkD = 40.0;
+    public static final double dkF = 1023.0/6800.0;
+    public static double lkP = 0.0;
+    public static double lkI = 0.0;
+    public static double lkD = 0.0;
+    public static final double lkF = 1023.0/6800.0;
     public static final int kTimeout = 30;
-    public static final double kPeakClosed = 0.7;
-    public static final double kRamp = 0.55;
-    public static final double kMaxRPM = 1000;
+    public static final double dkPeakClosed = 0.7;
+    public static final double lkPeakClosed = 0.7;
+    public static final double dkRamp = 0.55;
+    public static final double lkRamp = 0.55;
+    public static final double dkMaxRPM = 1000;
+    public static final double lkMaxRPM = 1000;
     public static final int kAllowableClosed = 0;
     public static final int kIdx = 0;
 
     public static void init(){
-        SmartDashboard.putNumber("P Gain", kP);
-        SmartDashboard.putNumber("I Gain", kI);
-        SmartDashboard.putNumber("D Gain", kD);
+        SmartDashboard.putNumber("Drive P Gain", dkP);
+        SmartDashboard.putNumber("Drive I Gain", dkI);
+        SmartDashboard.putNumber("Drive D Gain", dkD);
+        SmartDashboard.putNumber("Lift P Gain", lkP);
+        SmartDashboard.putNumber("Lift I Gain", lkI);
+        SmartDashboard.putNumber("Lift D Gain", lkD);
     }
 
     public static void update(){
-        double p = SmartDashboard.getNumber("P Gain", 0);
-        double i = SmartDashboard.getNumber("I Gain", 0);
-        double d = SmartDashboard.getNumber("D Gain", 0);
-        if(p!=kP || i!=kI || d!=kD){
-            kP=p;
-            kI=i;
-            kD=d;
-            MotorBase.configPID(kP, kI, kD, kF);
+        double dp = SmartDashboard.getNumber("Drive P Gain", 0);
+        double di = SmartDashboard.getNumber("Drive I Gain", 0);
+        double dd = SmartDashboard.getNumber("Drive D Gain", 0);
+        if(dp!=dkP || di!=dkI || dd!=dkD){
+            dkP=dp;
+            dkI=di;
+            dkD=dd;
+            MotorBase.configPID(dkP, dkI, dkD, dkF);
+        }
+        double lp = SmartDashboard.getNumber("Lift P Gain", 0);
+        double li = SmartDashboard.getNumber("Lift I Gain", 0);
+        double ld = SmartDashboard.getNumber("Lift D Gain", 0);
+        if(lp!=lkP || li!=lkI || ld!=lkD){
+            lkP=lp;
+            lkI=li;
+            lkD=ld;
+            MotorBase.configPID(MotorBase.liftF, lkP, lkI, lkD, lkF);
+            MotorBase.configPID(MotorBase.liftB, lkP, lkI, lkD, lkF);
         }
     }
 }
