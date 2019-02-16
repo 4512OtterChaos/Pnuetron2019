@@ -31,31 +31,31 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     Constants.update();
     Input.displayStats();
-    MotorBase.displayStats();
+    Motorbase.displayStats();
   }
 
   @Override
   public void disabledInit() {
-    MotorBase.disable();
+    Motorbase.disable();
   }
   
   @Override
   public void autonomousInit() {
-    MotorBase.init();
+    Motorbase.init();
   }
 
   @Override
   public void autonomousPeriodic() {
-    MotorBase.periodic();
+    Motorbase.periodic();
   }
 
   @Override
   public void teleopInit() {
-    MotorBase.init();
+    Motorbase.init();
   }
 
   @Override
   public void teleopPeriodic() {
-    MotorBase.periodic();
+    Motorbase.periodic();
   }
 }

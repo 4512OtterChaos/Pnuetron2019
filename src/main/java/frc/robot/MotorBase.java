@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.*;
-public class MotorBase{
+public class Motorbase{
 	/** Hardware */
 	public static TalonSRX dRightF = new TalonSRX(1);
 	public static TalonSRX dRightB = new TalonSRX(2);

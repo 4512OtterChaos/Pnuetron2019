@@ -39,7 +39,7 @@ public class Constants{
             dkP=dp;
             dkI=di;
             dkD=dd;
-            MotorBase.configPID(dkP, dkI, dkD, dkF);
+            Motorbase.configPID(dkP, dkI, dkD, dkF);
         }
         double lp = SmartDashboard.getNumber("Lift P Gain", 0);
         double li = SmartDashboard.getNumber("Lift I Gain", 0);
@@ -48,8 +48,8 @@ public class Constants{
             lkP=lp;
             lkI=li;
             lkD=ld;
-            MotorBase.configPID(MotorBase.liftF, lkP, lkI, lkD, lkF);
-            MotorBase.configPID(MotorBase.liftB, lkP, lkI, lkD, lkF);
+            Motorbase.configPID(Motorbase.liftF, lkP, lkI, lkD, lkF);
+            Motorbase.configPID(Motorbase.liftB, lkP, lkI, lkD, lkF);
         }
     }
 }
