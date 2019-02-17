@@ -25,37 +25,39 @@ public class Robot extends TimedRobot {
     //---------------------------------//
     Constants.init();
     Input.init();
+    RobotMap.config();
   }
 
   @Override
   public void robotPeriodic() {
     Constants.update();
     Input.displayStats();
-    Motorbase.displayStats();
+    Teleop.displayStats();
+    RobotMap.displayStats();
   }
 
   @Override
   public void disabledInit() {
-    Motorbase.disable();
+    Teleop.disable();
   }
   
   @Override
   public void autonomousInit() {
-    Motorbase.init();
+    Teleop.init();
   }
 
   @Override
   public void autonomousPeriodic() {
-    Motorbase.periodic();
+    Teleop.periodic();
   }
 
   @Override
   public void teleopInit() {
-    Motorbase.init();
+    Teleop.init();
   }
 
   @Override
   public void teleopPeriodic() {
-    Motorbase.periodic();
+    Teleop.periodic();
   }
 }

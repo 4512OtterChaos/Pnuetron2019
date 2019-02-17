@@ -12,6 +12,8 @@ public class Encyclopedia{// a referendum of common terms you may see
     Sensors
     ----------
     Gyro : ADXRS450_Gyro gyro = new ADXRS450_Gyro(Port.kOnboardCS0);  //using SPI port
+         PigeonIMU pigeon = new PigeonIMU(port);  //CTRE Pigeon gyro
+         PigeonIMU.GeneralStatus pStat = new PigeonIMU.GeneralStatus(); //Status handler
     XboxController xbox = new XboxController(0);
     - Hand KLEFT = GenericHID.Hand.kLeft;   //these refer to the side of the controller(left stick/right stick)
     - Hand KRIGHT = GenericHID.Hand.kRight;
@@ -67,7 +69,7 @@ public class Encyclopedia{// a referendum of common terms you may see
      * 
       [The 'static' denotation is mainly in usage relating to multiple classes. ]
       [When a field is 'static', it essentially means that that field is        ]
-      [similar across all classes.                                               ]
+      [similar across all classes.                                              ]
       Consider the following:
 
       public class Stat{
