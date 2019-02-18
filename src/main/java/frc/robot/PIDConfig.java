@@ -1,6 +1,11 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.*;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
 public class PIDConfig{
@@ -10,6 +15,10 @@ public class PIDConfig{
     public int kTimeout;
     public double kPeakClosed;
     public double kRampClosed;
+    private ShuffleboardTab tab = Shuffleboard.getTab("PID");
+    private NetworkTableEntry pGain;
+    private NetworkTableEntry iGain;
+    private NetworkTableEntry dGain;
 
     /**
      * Creates a new PID configuration for a set of motors.
@@ -38,17 +47,20 @@ public class PIDConfig{
             motor.configAllowableClosedloopError(Constants.kIdx, Constants.kAllowableClosed, Constants.kTimeout);
             configPID(motor, kP, kI, kD, kF);
         }
+        this.pGain = tab.add(subsystemName+" P Gain", kP).withWidget(BuiltInWidgets.kTextView).getEntry();
+        this.iGain = tab.add(subsystemName+" I Gain", kI).withWidget(BuiltInWidgets.kTextView).getEntry();
+        this.dGain = tab.add(subsystemName+" D Gain", kD).withWidget(BuiltInWidgets.kTextView).getEntry();
     }
 
     public void init(){
-        SmartDashboard.putNumber(subsystemName+" P Gain", kP);
-        SmartDashboard.putNumber(subsystemName+" I Gain", kI);
-        SmartDashboard.putNumber(subsystemName+" D Gain", kD);
+        tab.add(subsystemName+" P Gain", kP).withWidget(BuiltInWidgets.kTextView);
+        tab.add(subsystemName+" I Gain", kI).withWidget(BuiltInWidgets.kTextView);
+        tab.add(subsystemName+" D Gain", kD).withWidget(BuiltInWidgets.kTextView);
     }
     public void update(){
-        double p = SmartDashboard.getNumber(subsystemName+" P Gain", 0);
-        double i = SmartDashboard.getNumber(subsystemName+" I Gain", 0);
-        double d = SmartDashboard.getNumber(subsystemName+" D Gain", 0);
+        double p = pGain.getDouble(0);
+        double i = iGain.getDouble(0);
+        double d = dGain.getDouble(0);
         if(p!=kP || i!=kI || d!=kD){
             kP=p;
             kI=i;
