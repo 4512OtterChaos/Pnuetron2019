@@ -17,7 +17,7 @@ public class Constants{
     p, i, d, f, 
     peak, ramp);
     */
-    public static PIDConfig drivePID = new PIDConfig(RobotMap.driveMotors, "Drivebase", 
+    public static PIDConfig drivePID = new PIDConfig(RobotMap.driveMotors, "Drive", 
     0.5, 0, 40, 1023/6800, 
     0.7, 0.55);
 

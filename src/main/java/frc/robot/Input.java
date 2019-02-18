@@ -28,8 +28,8 @@ public class Input{
         //comment these out as necessary
         pigeon.getGeneralStatus(pStat);
         pigeon.getYawPitchRoll(ypr);
-        frontLime = new Limelight();
-        backLime = new Limelight("limelight-one");
+        frontLime = new Limelight("front");
+        backLime = new Limelight("back","limelight-one");
     }
 
     /**
@@ -113,11 +113,7 @@ public class Input{
         SmartDashboard.putNumber("LJoyX", getLeftX(fightStick));
         SmartDashboard.putNumber("LJoyY", getLeftY(fightStick));
         SmartDashboard.putNumberArray("YPR", ypr);
-        SmartDashboard.putNumber("backTx", backLime.getTx());
-        SmartDashboard.putNumber("backTy", backLime.getTy());
-        SmartDashboard.putNumber("backTa", backLime.getTa());
-        SmartDashboard.putNumber("frontTx", frontLime.getTx());
-        SmartDashboard.putNumber("frontTy", frontLime.getTy());
-        SmartDashboard.putNumber("frontTa", frontLime.getTa());
+        frontLime.displayStats();
+        backLime.displayStats();
     }
 }

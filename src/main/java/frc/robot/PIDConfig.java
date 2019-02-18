@@ -11,6 +11,18 @@ public class PIDConfig{
     public double kPeakClosed;
     public double kRampClosed;
 
+    /**
+     * Creates a new PID configuration for a set of motors.
+     * This automatically configures the motors and updates smartdashboard with values.
+     * @param motors Array of TalonSRX motors(to be configured).
+     * @param subsystem Name of the subsystem to be displayed on smartdashboard.
+     * @param p Proportional constant.
+     * @param i Integral constant.
+     * @param d Derivative constant.
+     * @param f Feed-forward constant.
+     * @param peak Closed loop peak output(0 to 1).
+     * @param ramp Seconds from neutral to full throttle(0 to 10 seconds).
+     */
     public PIDConfig(TalonSRX[] motors, String subsystem, double p, double i, double d, double f, double peak, double ramp){
         this.masterMotors = motors;
         this.subsystemName = subsystem;
