@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 public class Constants{
     //*PID
     public static final int kTimeout = 30;
-    public static final double ikRamp = 0.4;
+    public static final double ikRamp = 0.3;
     public static final double dkMaxRPM = 1000;
     public static final double lkMaxRPM = 1000;
     public static final int kAllowableClosed = 0;

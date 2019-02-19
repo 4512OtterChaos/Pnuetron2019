@@ -10,6 +10,8 @@ public class Teleop{
 	private static TalonSRX dRightF = RobotMap.dRightF;
 	private static TalonSRX dLeftF = RobotMap.dLeftF;
 	private static TalonSRX liftF = RobotMap.liftF;
+	private static TalonSRX wrist = RobotMap.wrist;
+	private static VictorSPX intake = RobotMap.intakeR;
     /* Targets */
 	private static float dSpeed = 0.3f;//coefficient of drivespeed
 	public static double rightTarget;
@@ -19,21 +21,19 @@ public class Teleop{
 
     public static void init(){
 		//*Routine
-		tankDrive(0,0);
+		disableMotors();
 		System.out.println("--Feed Forward Teleop--");
     }
 
     public static void periodic(){
-		//*pid tuning values
 		//*arcade drive
 		double forward = Input.getLeftY(Input.xbox);
 		double turn = Input.getRightX(Input.xbox);
 		velPID(forward, turn);
-		//arcadeDrive(forward, turn);
 	}
 
 	public static void disable(){
-		tankDrive(0, 0);
+		disableMotors();
 		RobotMap.configNeutral(NeutralMode.Coast, RobotMap.driveMotors);
 	}
 	
@@ -101,8 +101,25 @@ public class Teleop{
 		dLeftF.set(ControlMode.PercentOutput, left);
 	}
 	
+	//basic motor control
+	public static void setDrive(double left, double right){
+		dRightF.set(ControlMode.PercentOutput, right);
+		dLeftF.set(ControlMode.PercentOutput, left);
+	}
 	public static void setLift(double x){
 		liftF.set(ControlMode.PercentOutput, x);
+	}
+	public static void setWrist(double x){
+		wrist.set(ControlMode.PercentOutput, x);
+	}
+	public static void setIntake(double x){
+		intake.set(ControlMode.PercentOutput, x);
+	}
+	public static void disableMotors(){
+		setDrive(0, 0);
+		setLift(0);
+		setWrist(0);
+		setIntake(0);
 	}
 
 	public static void displayStats(){

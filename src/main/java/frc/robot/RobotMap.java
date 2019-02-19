@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
+
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
 public class RobotMap{
@@ -15,7 +17,7 @@ public class RobotMap{
 	wrist.
 	intakeR.
 	intakeL.
-    */
+	*/
     public static TalonSRX dRightF = new TalonSRX(1);
 	public static TalonSRX dRightB = new TalonSRX(2);
 	public static TalonSRX dLeftF = new TalonSRX(3);
@@ -23,14 +25,14 @@ public class RobotMap{
 	public static TalonSRX liftF = new TalonSRX(5);
 	public static TalonSRX liftB = new TalonSRX(6);
 	public static TalonSRX wrist = new TalonSRX(7);
-	public static TalonSRX intakeR = new TalonSRX(8);
-    public static TalonSRX intakeL = new TalonSRX(9);
+	public static VictorSPX intakeR = new VictorSPX(8);
+    public static VictorSPX intakeL = new VictorSPX(9);
 
     public static TalonSRX[] driveMotors = {dRightF, dRightB, dLeftF, dLeftB};
     public static TalonSRX[] liftMotors = {liftF, liftB};
     public static TalonSRX[] wristMotors = {wrist};
-    public static TalonSRX[] intakeMotors = {intakeR, intakeL};
-    public static TalonSRX[] allMotors = {dRightF, dRightB, dLeftF, dLeftB, liftF, liftB, wrist, intakeR, intakeL};
+    public static BaseMotorController[] intakeMotors = {intakeR, intakeL};
+    public static BaseMotorController[] allMotors = {dRightF, dRightB, dLeftF, dLeftB, liftF, liftB, wrist, intakeR, intakeL};
     
     /**
      * Configure the behavior of the electrical components(motor controllers, pnuematics, etc.)
@@ -50,6 +52,9 @@ public class RobotMap{
 
 		liftF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
 		liftF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
+
+		wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
+		wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
         //behavior
         dRightB.follow(dRightF);
 		dLeftB.follow(dLeftF);
@@ -75,21 +80,36 @@ public class RobotMap{
         intakeR.setInverted(false);
         intakeL.configOpenloopRamp(Constants.ikRamp);
         intakeL.setInverted(InvertType.OpposeMaster);
-    }
+	}
+	
+	public static void zeroSensor(BaseMotorController motor){
+		motor.setSelectedSensorPosition(0, Constants.kIdx, Constants.kTimeout);
+	}
+	public static void zeroSensor(BaseMotorController[] motors){
+		for(BaseMotorController motor:motors){
+			motor.setSelectedSensorPosition(0, Constants.kIdx, Constants.kTimeout);
+		}
+	}
     
-    public static void configPeak(double negative, double positive, TalonSRX[] motors){
-        for(TalonSRX motor:motors){
-            motor.configPeakOutputForward(positive);
-            motor.configPeakOutputReverse(negative);
+    public static void configPeak(double negative, double positive, BaseMotorController[] motors){
+        for(BaseMotorController motor:motors){
+            motor.configPeakOutputForward(positive, Constants.kTimeout);
+            motor.configPeakOutputReverse(negative, Constants.kTimeout);
         }
-    }
-    public static void configNeutral(NeutralMode neutral, TalonSRX[] motors){
-        for(TalonSRX motor:motors){
+	}
+	public static void configNominal(double negative, double positive, BaseMotorController[] motors){
+		for(BaseMotorController motor:motors){
+			motor.configNominalOutputForward(positive, Constants.kTimeout);
+			motor.configNominalOutputReverse(negative, Constants.kTimeout);
+		}
+	}
+    public static void configNeutral(NeutralMode neutral, BaseMotorController[] motors){
+        for(BaseMotorController motor:motors){
             motor.setNeutralMode(neutral);
         }
     }
-    public static void configFactory(TalonSRX[] motors){
-        for(TalonSRX motor:motors){
+    public static void configFactory(BaseMotorController[] motors){
+        for(BaseMotorController motor:motors){
             motor.configFactoryDefault();
         }
     }
@@ -101,20 +121,34 @@ public class RobotMap{
 		return nativeU/4096.0*600f;
 	}
 
+	public static double getRPM(BaseMotorController motor){
+		return toRPM(motor.getSelectedSensorVelocity());
+	}
+	public static double getNative(BaseMotorController motor){
+		return motor.getSelectedSensorVelocity();
+	}
+	public static double getPos(BaseMotorController motor){
+		return motor.getSelectedSensorPosition();
+	}
+
     public static void displayStats(){
-        SmartDashboard.putNumber("Right Encoder Counts", dRightF.getSelectedSensorPosition());
-		SmartDashboard.putNumber("Right Encoder RPM", toRPM(dRightF.getSelectedSensorVelocity()));
-		SmartDashboard.putNumber("Right Encoder NativeV", dRightF.getSelectedSensorVelocity());
-		SmartDashboard.putNumber("Left Encoder Counts", dLeftF.getSelectedSensorPosition());
-		SmartDashboard.putNumber("Left Encoder RPM", toRPM(dLeftF.getSelectedSensorVelocity()));
-		SmartDashboard.putNumber("Left Encoder NativeV", dLeftF.getSelectedSensorVelocity());
-		SmartDashboard.putNumber("Lift Encoder Counts", liftF.getSelectedSensorPosition());
-		SmartDashboard.putNumber("Lift Encoder RPM", toRPM(liftF.getSelectedSensorVelocity()));
-		SmartDashboard.putNumber("Lift Encoder NativeV", liftF.getSelectedSensorVelocity());
+		String[] tabs = {"PID","Electrical"};
+		Network.put("Right Drive Counts", getPos(dRightF), tabs);
+		Network.put("Right Drive RPM", getRPM(dRightF), tabs);
+		Network.put("Right Drive NativeV", getNative(dRightF), tabs);
+		Network.put("Left Drive Counts", getPos(dLeftF), tabs);
+		Network.put("Left Drive RPM", getRPM(dLeftF), tabs);
+		Network.put("Left Drive NativeV", getNative(dLeftF), tabs);
+		Network.put("Lift Counts", getPos(liftF), tabs);
+		Network.put("Lift RPM", getRPM(liftF), tabs);
+		Network.put("Lift NativeV", getNative(liftF), tabs);
+		Network.put("Wrist Counts", getPos(wrist), tabs);
+		Network.put("Wrist RPM", getRPM(wrist), tabs);
+		Network.put("Wrist NativeV", getNative(wrist), tabs);
 		//pid
-		double[] dPIDMap = {toRPM(Teleop.rightTarget), toRPM(dRightF.getSelectedSensorVelocity()), toRPM(Teleop.leftTarget), toRPM(dLeftF.getSelectedSensorVelocity())};
-		SmartDashboard.putNumberArray("Drive PID Map", dPIDMap);
-		double[] lPIDMap = {toRPM(Teleop.liftTarget), toRPM(liftF.getSelectedSensorVelocity())};
-		SmartDashboard.putNumberArray("Lift PID Map", lPIDMap);
+		double[] dPIDMap = {toRPM(Teleop.rightTarget), getRPM(dRightF), toRPM(Teleop.leftTarget), getRPM(dLeftF)};
+		double[] lPIDMap = {toRPM(Teleop.liftTarget), getRPM(liftF)};
+		Network.putArr("Drive PID Map", dPIDMap, "PID");
+		Network.putArr("Lift PID Map", lPIDMap, "PID");
     }
 }
