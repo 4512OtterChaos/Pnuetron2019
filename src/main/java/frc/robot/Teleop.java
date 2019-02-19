@@ -2,7 +2,9 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
-
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
@@ -26,10 +28,18 @@ public class Teleop{
     }
 
     public static void periodic(){
+		checkInputs();
+	}
+
+	private static void checkInputs(){
 		//*arcade drive
 		double forward = Input.getLeftY(Input.xbox);
 		double turn = Input.getRightX(Input.xbox);
 		velPID(forward, turn);
+		//*Pnuematics
+		if(Input.getLeftBumper(Input.xbox)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kReverse);
+		else if(Input.getRightBumper(Input.xbox)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kForward);
+		else setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kOff);
 	}
 
 	public static void disable(){
@@ -115,6 +125,14 @@ public class Teleop{
 	public static void setIntake(double x){
 		intake.set(ControlMode.PercentOutput, x);
 	}
+	//basic solenoid control
+	public static void setSolenoid(Solenoid valve, boolean state){
+		valve.set(state);
+	}
+	public static void setSolenoid(DoubleSolenoid valve, Value state){
+		valve.set(state);
+	}
+
 	public static void disableMotors(){
 		setDrive(0, 0);
 		setLift(0);

@@ -2,7 +2,9 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
-
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
@@ -32,7 +34,13 @@ public class RobotMap{
     public static TalonSRX[] liftMotors = {liftF, liftB};
     public static TalonSRX[] wristMotors = {wrist};
     public static BaseMotorController[] intakeMotors = {intakeR, intakeL};
-    public static BaseMotorController[] allMotors = {dRightF, dRightB, dLeftF, dLeftB, liftF, liftB, wrist, intakeR, intakeL};
+	public static BaseMotorController[] allMotors = {dRightF, dRightB, dLeftF, dLeftB, liftF, liftB, wrist, intakeR, intakeL};
+	
+	public static Compressor compressor = new Compressor(0);
+	public static DoubleSolenoid crabber = new DoubleSolenoid(0,0);
+	public static DoubleSolenoid crabPop = new DoubleSolenoid(0,1);
+	public static DoubleSolenoid intakeFlip = new DoubleSolenoid(0,0);
+	public static DoubleSolenoid liftStop = new DoubleSolenoid(2,3);
     
     /**
      * Configure the behavior of the electrical components(motor controllers, pnuematics, etc.)
@@ -42,7 +50,8 @@ public class RobotMap{
 		//idle
 		configNeutral(NeutralMode.Brake, allMotors);
 		//limits
-		configPeak(-1, 1, allMotors);
+		configPeak(Constants.kPeakReverse, Constants.kPeakForward, allMotors);
+		configNominal(Constants.kNominalReverse, Constants.kNominalReverse, allMotors);
 		//define sensor
 		dRightF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
 		dRightF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
@@ -132,6 +141,7 @@ public class RobotMap{
 	}
 
     public static void displayStats(){
+		//pid/electrical systems
 		String[] tabs = {"PID","Electrical"};
 		Network.put("Right Drive Counts", getPos(dRightF), tabs);
 		Network.put("Right Drive RPM", getRPM(dRightF), tabs);
@@ -148,7 +158,12 @@ public class RobotMap{
 		//pid
 		double[] dPIDMap = {toRPM(Teleop.rightTarget), getRPM(dRightF), toRPM(Teleop.leftTarget), getRPM(dLeftF)};
 		double[] lPIDMap = {toRPM(Teleop.liftTarget), getRPM(liftF)};
+		double[] wPIDMap = {toRPM(Teleop.wristTarget), getRPM(wrist)};
 		Network.putArr("Drive PID Map", dPIDMap, "PID");
 		Network.putArr("Lift PID Map", lPIDMap, "PID");
+		Network.putArr("Wrist PID Map", wPIDMap, "PID");
+		//electrical
+		Network.put("Compressor Current", compressor.getCompressorCurrent());
+		Network.put("Compressor Switch", compressor.getPressureSwitchValue());
     }
 }

@@ -4,13 +4,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Constants{
-    //*PID
+    public static final double kPeakForward = 1;
+    public static final double kPeakReverse = -1;
+    public static final double kNominalForward = 0.05;
+    public static final double kNominalReverse = -0.05;
     public static final int kTimeout = 30;
     public static final double ikRamp = 0.3;
     public static final double dkMaxRPM = 1000;
     public static final double lkMaxRPM = 1000;
     public static final int kAllowableClosed = 0;
     public static final int kIdx = 0;
+    //*PID
 
     /* 
     PIDConfig pid = new PIDConfig(motors[], subsystem, 
