@@ -56,6 +56,17 @@ public class Input{
         return Math.max(low,Math.min(high,value));
     }
 
+    public static double toDegrees(double radians){
+        double math = (radians*180.0)/Math.PI;
+        math = ((int)(math*10.0))/10.0;
+        return math;
+    }
+    public static double toRadians(double degrees){
+        double math = (degrees*Math.PI)/180.0;
+        math = ((int)(math*100.0))/100.0;
+        return math;
+    }
+
     public static double constrainAngle(double x, double min, double max){
         while(x<min){//constrain angles 0 - 360
             x += max;

@@ -37,6 +37,7 @@ public class Teleop{
 		drive();
 		pnuematics();
 		lift();
+		wrist();
 		intake();
 	}
 
@@ -59,31 +60,33 @@ public class Teleop{
 	private static void lift(){
 		//* Lift
 		double lift = Input.getLeftY(Input.fightStick);
-		double target = RobotMap.getPos(liftF)+(3000*((lift<0)? 0.66*lift:lift));
+		liftTarget = RobotMap.getPos(liftF)+(3000*((lift<0)? 0.66*lift:lift));
 		boolean stageBot = RobotMap.getSwitch(RobotMap.stage1Bot);
 		boolean carriageTop = RobotMap.getSwitch(RobotMap.carriageTop);
 		//double target = 3900;
+		//movement
 		if(stageBot){
-			target = Input.limit(target,0,21400);
+			liftTarget = Input.limit(liftTarget,0,21400);
 			if(RobotMap.getPos(liftF)>=21000){
-				target=22500;
+				liftTarget=22500;
 			}
 			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kForward);
 			if(carriageTop) setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
 		} else {
 			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
-			target = Input.limit(target, 0, 47500);
+			liftTarget = Input.limit(liftTarget, 0, 47500);
 			if(RobotMap.getPos(liftF)<=1000 && !stageBot){
-				target=-2000;
+				liftTarget=-2000;
 			}
 		}
 		//setLift(lift*0.3);
-		lPosPID(target);
+		lPosPID(liftTarget);
 	}
 
 	public static void wrist(){
-		double target = 0;
-		wPosPID(target);
+		wristTarget = 0;
+		double feed;
+		wPosPID(wristTarget);
 	}
 
 	private static void intake(){
@@ -171,6 +174,9 @@ public class Teleop{
 	public static void wPosPID(double pos){
 		wrist.set(ControlMode.Position, pos);
 	}
+	public static void wPosPID(double pos, double feedforward){
+		wrist.set(ControlMode.Position, pos, DemandType.ArbitraryFeedForward, feedforward);
+	}
 
 	//basic motor control
 	public static void setDrive(double left, double right){
@@ -199,7 +205,7 @@ public class Teleop{
 	public static void disableMotors(){
 		setDrive(0, 0);
 		setLift(0);
-		setWrist(0);
+		//setWrist(0);
 		setIntake(0);
 	}
 

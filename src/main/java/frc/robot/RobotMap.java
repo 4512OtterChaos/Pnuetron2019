@@ -168,6 +168,11 @@ public class RobotMap{
 		return motor.getSelectedSensorPosition();
 	}
 
+	public static double getArmDegrees(TalonSRX arm){
+		double percent = getPos(arm)/Constants.wkRotationCounts;
+		return percent*=360;
+	}
+
 	public static boolean getSwitch(DigitalInput dio){
 		return !dio.get();
 	}

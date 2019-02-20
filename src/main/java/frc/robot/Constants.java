@@ -43,14 +43,16 @@ public class Constants{
     public static double wkF = 0;
     public static double wkPeak = 0.7;
     public static double wkRamp = 0.55;
+    public static final double wkRotationCounts = 0;
 
     /* 
     PIDConfig pid = new PIDConfig(motors[], subsystem, 
     p, i, d, f, 
     peak, ramp);
     */
+    /*
     public static PIDConfig drivePID = new PIDConfig(RobotMap.driveMotors, "Drive", 
-    0.5, 0, 40, 1023/6800, 
+    0.5, 0, 40, 1023/2600.0, 
     0.7, 0.55);
 
     public static PIDConfig liftPID = new PIDConfig(RobotMap.liftMotors, "Lift", 
@@ -60,15 +62,20 @@ public class Constants{
     public static PIDConfig wristPID = new PIDConfig(RobotMap.wristMotors, "Wrist", 
     0, 0, 0, 0, 
     0.7, 0.55);
+    */
 
     public static void init(){
+        /*
         drivePID.init();
         liftPID.init();
         wristPID.init();
+        */
     }
     public static void update(){
+        /*
         drivePID.update();
         liftPID.update();
         wristPID.update();
+        */
     }
 }

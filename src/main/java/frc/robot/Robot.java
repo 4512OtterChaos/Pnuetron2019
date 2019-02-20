@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    //Constants.update();
+    Constants.update();
     Input.displayStats();
     Teleop.displayStats();
     RobotMap.displayStats();
