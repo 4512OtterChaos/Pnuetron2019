@@ -15,10 +15,6 @@ public class PIDConfig{
     public int kTimeout;
     public double kPeakClosed;
     public double kRampClosed;
-    private ShuffleboardTab tab = Shuffleboard.getTab("PID");
-    private NetworkTableEntry pGain;
-    private NetworkTableEntry iGain;
-    private NetworkTableEntry dGain;
 
     /**
      * Creates a new PID configuration for a set of motors.
@@ -47,20 +43,17 @@ public class PIDConfig{
             motor.configAllowableClosedloopError(Constants.kIdx, Constants.kAllowableClosed, Constants.kTimeout);
             configPID(motor, kP, kI, kD, kF);
         }
-        this.pGain = tab.add(subsystemName+" P Gain", kP).withWidget(BuiltInWidgets.kTextView).getEntry();
-        this.iGain = tab.add(subsystemName+" I Gain", kI).withWidget(BuiltInWidgets.kTextView).getEntry();
-        this.dGain = tab.add(subsystemName+" D Gain", kD).withWidget(BuiltInWidgets.kTextView).getEntry();
     }
 
     public void init(){
-        tab.add(subsystemName+" P Gain", kP).withWidget(BuiltInWidgets.kTextView);
-        tab.add(subsystemName+" I Gain", kI).withWidget(BuiltInWidgets.kTextView);
-        tab.add(subsystemName+" D Gain", kD).withWidget(BuiltInWidgets.kTextView);
+        SmartDashboard.putNumber(subsystemName+" P Gain", kP);
+        SmartDashboard.putNumber(subsystemName+" I Gain", kI);
+        SmartDashboard.putNumber(subsystemName+" D Gain", kD);
     }
     public void update(){
-        double p = pGain.getDouble(0);
-        double i = iGain.getDouble(0);
-        double d = dGain.getDouble(0);
+        double p = SmartDashboard.getNumber(subsystemName+" P Gain", kP);
+        double i = SmartDashboard.getNumber(subsystemName+" I Gain", kI);
+        double d = SmartDashboard.getNumber(subsystemName+" D Gain", kD);
         if(p!=kP || i!=kI || d!=kD){
             kP=p;
             kI=i;

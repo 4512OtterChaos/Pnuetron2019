@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.sensors.PigeonIMU;
 public class Input{
     /* Sensors */
-    private static PigeonIMU pigeon = new PigeonIMU(5);
+    private static PigeonIMU pigeon = new PigeonIMU(RobotMap.dRightB);
     private static PigeonIMU.GeneralStatus pStat = new PigeonIMU.GeneralStatus();
     private static double[] ypr = new double[3];//yaw[0], pitch[1], roll[2]
     public static Limelight frontLime;
@@ -51,6 +51,9 @@ public class Input{
      */
     public static double limit(double value){
         return Math.max(-1,Math.min(1,value));
+    }
+    public static double limit(double value, double low, double high){
+        return Math.max(low,Math.min(high,value));
     }
 
     public static double constrainAngle(double x, double min, double max){
@@ -108,10 +111,9 @@ public class Input{
         SmartDashboard.putNumber("RJoyY", getRightY(xbox));
         SmartDashboard.putNumber("LJoyX", getLeftX(xbox));
         SmartDashboard.putNumber("LJoyY", getLeftY(xbox));
-        SmartDashboard.putNumber("RJoyX", getRightX(fightStick));
-        SmartDashboard.putNumber("RJoyY", getRightY(fightStick));
-        SmartDashboard.putNumber("LJoyX", getLeftX(fightStick));
-        SmartDashboard.putNumber("LJoyY", getLeftY(fightStick));
+
+        SmartDashboard.putNumber("FightX", getLeftX(fightStick));
+        SmartDashboard.putNumber("FightY", getLeftY(fightStick));
         SmartDashboard.putNumberArray("YPR", ypr);
         frontLime.displayStats();
         backLime.displayStats();

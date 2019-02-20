@@ -9,12 +9,40 @@ public class Constants{
     public static final double kNominalForward = 0.05;
     public static final double kNominalReverse = -0.05;
     public static final int kTimeout = 30;
-    public static final double ikRamp = 0.3;
-    public static final double dkMaxRPM = 1000;
-    public static final double lkMaxRPM = 1000;
+    public static final double ikRamp = 0.2;
+    public static final double dkMaxRPM = 500;
+    public static final double lkMaxRPM = 500;
     public static final int kAllowableClosed = 0;
     public static final int kIdx = 0;
     //*PID
+    public static double dkP = 0.5;
+    public static double dkI = 0;
+    public static double dkD = 40;
+    public static double dkF = 1023/2600.0;
+    public static double dkPeak = 0.7;
+    public static double dkRamp = 0.55;
+
+    /*
+    wrist flat = 3900(lift)
+    wrist flat = -600(wrist)
+    lift top = 47500(lift)
+    wrist other flat = 6000(lift)
+    wrist other flat = 1400(wrist)
+    stage 1 = 21400(lift)
+    */
+    public static double lkP = 0.2;
+    public static double lkI = 0;
+    public static double lkD = 20;
+    public static double lkF = 0;
+    public static double lkPeak = 0.7;
+    public static double lkRamp = 0.55;
+
+    public static double wkP = 0.3;
+    public static double wkI = 0;
+    public static double wkD = 20;
+    public static double wkF = 0;
+    public static double wkPeak = 0.7;
+    public static double wkRamp = 0.55;
 
     /* 
     PIDConfig pid = new PIDConfig(motors[], subsystem, 

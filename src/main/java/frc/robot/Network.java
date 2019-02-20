@@ -20,28 +20,34 @@ public class Network{
         else if(value instanceof Double[] || value instanceof Integer[])
             SmartDashboard.putNumberArray(key, (double[])value);
     }
+    private static void checkShuffle(String key, Object value, String tab){
+        Shuffleboard.getTab(tab).add(key, value);
+    }
+    private static void checkShuffle(String key, Object value, String tab, WidgetType widget){
+        Shuffleboard.getTab(tab).add(key, value).withWidget(widget);
+    }
     
     public static void put(String key, Object value){
         checkSmart(key, value);
     }
     public static void put(String key, Object value, String tab){
         checkSmart(key, value);
-        Shuffleboard.getTab(tab).add(key, value);
+        //checkShuffle(key, value, tab);
     }
     public static void put(String key, Object value, String[] tabs){
         for(String tab:tabs){
             checkSmart(key, value);
-            Shuffleboard.getTab(tab).add(key, value);
+            //checkShuffle(key, value, tab);
         }
     }
     public static void put(String key, Object value, String tab, WidgetType widget){
         checkSmart(key, value);
-        Shuffleboard.getTab(tab).add(key, value).withWidget(widget);
+        //checkShuffle(key, value, tab, widget);
     }
     public static void put(String key, Object value, String[] tabs, WidgetType widget){
         for(String tab:tabs){
             checkSmart(key, value);
-            Shuffleboard.getTab(tab).add(key, value).withWidget(widget);
+            //checkShuffle(key, value, tab, widget);
         }
     }
     public static void putArr(String key, Object value){
@@ -49,12 +55,12 @@ public class Network{
     }
     public static void putArr(String key, Object value, String tab){
         checkSmart(key, value);
-        Shuffleboard.getTab(tab).add(key, value);
+        //checkShuffle(key, value, tab);
     }
     public static void putArr(String key, Object value, String[] tabs){
         for(String tab:tabs){
             checkSmart(key, value);
-            Shuffleboard.getTab(tab).add(key, value);
+            //checkShuffle(key, value, tab);
         }
     }
 }

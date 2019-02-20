@@ -13,7 +13,8 @@ public class Teleop{
 	private static TalonSRX dLeftF = RobotMap.dLeftF;
 	private static TalonSRX liftF = RobotMap.liftF;
 	private static TalonSRX wrist = RobotMap.wrist;
-	private static VictorSPX intake = RobotMap.intakeR;
+	private static VictorSPX intakeR = RobotMap.intakeR;
+	private static VictorSPX intakeL = RobotMap.intakeL;
     /* Targets */
 	private static float dSpeed = 0.3f;//coefficient of drivespeed
 	public static double rightTarget;
@@ -25,6 +26,7 @@ public class Teleop{
 		//*Routine
 		disableMotors();
 		System.out.println("--Feed Forward Teleop--");
+		setIntake(-1);
     }
 
     public static void periodic(){
@@ -32,14 +34,65 @@ public class Teleop{
 	}
 
 	private static void checkInputs(){
+		drive();
+		pnuematics();
+		lift();
+		intake();
+	}
+
+	private static void drive(){
 		//*arcade drive
 		double forward = Input.getLeftY(Input.xbox);
 		double turn = Input.getRightX(Input.xbox);
-		velPID(forward, turn);
+		dVelPID(forward, turn);
+		//arcadeDrive(forward, turn);
+		//setDrive(forward, forward);
+	}
+
+	private static void pnuematics(){
 		//*Pnuematics
 		if(Input.getLeftBumper(Input.xbox)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kReverse);
 		else if(Input.getRightBumper(Input.xbox)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kForward);
 		else setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kOff);
+	}
+
+	private static void lift(){
+		//* Lift
+		double lift = Input.getLeftY(Input.fightStick);
+		double target = RobotMap.getPos(liftF)+(3000*((lift<0)? 0.66*lift:lift));
+		boolean stageBot = RobotMap.getSwitch(RobotMap.stage1Bot);
+		boolean carriageTop = RobotMap.getSwitch(RobotMap.carriageTop);
+		//double target = 3900;
+		if(stageBot){
+			target = Input.limit(target,0,21400);
+			if(RobotMap.getPos(liftF)>=21000){
+				target=22500;
+			}
+			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kForward);
+			if(carriageTop) setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
+		} else {
+			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
+			target = Input.limit(target, 0, 47500);
+			if(RobotMap.getPos(liftF)<=1000 && !stageBot){
+				target=-2000;
+			}
+		}
+		//setLift(lift*0.3);
+		lPosPID(target);
+	}
+
+	public static void wrist(){
+		double target = 0;
+		wPosPID(target);
+	}
+
+	private static void intake(){
+		//* Intake
+		double lTrigger = Input.getLeftTrigger(Input.xbox);
+		double rTrigger = Input.getRightTrigger(Input.xbox);
+		if(lTrigger != 0) setIntake(lTrigger);
+		else if(rTrigger != 0) setIntake(-rTrigger);
+		else setIntake(0);//-0.3
 	}
 
 	public static void disable(){
@@ -53,7 +106,7 @@ public class Teleop{
 	 * @param forward Percentage forward(-1 to 1).
 	 * @param turn Percentage turn(-1 to 1).
 	 */
-	public static void velPID(double forward, double turn){
+	public static void dVelPID(double forward, double turn){
 		double right = arcadeMath(forward, turn, true);
 		double left = arcadeMath(forward, turn, false);
 		rightTarget = calc100ms(right, Constants.dkMaxRPM);
@@ -83,7 +136,7 @@ public class Teleop{
 	 */
 	private static double arcadeMath(double forward, double turn, boolean right){
 		forward*=dSpeed;
-		turn*=dSpeed*0.75;
+		turn*=dSpeed*0.9;
 		if(right) return Input.limit(forward-turn);
 		else return Input.limit(forward+turn);
 	}
@@ -110,7 +163,15 @@ public class Teleop{
 		dRightF.set(ControlMode.PercentOutput, right);
 		dLeftF.set(ControlMode.PercentOutput, left);
 	}
+
+	public static void lPosPID(double pos){
+		liftF.set(ControlMode.Position, pos);
+	}
 	
+	public static void wPosPID(double pos){
+		wrist.set(ControlMode.Position, pos);
+	}
+
 	//basic motor control
 	public static void setDrive(double left, double right){
 		dRightF.set(ControlMode.PercentOutput, right);
@@ -123,7 +184,9 @@ public class Teleop{
 		wrist.set(ControlMode.PercentOutput, x);
 	}
 	public static void setIntake(double x){
-		intake.set(ControlMode.PercentOutput, x);
+		x*=0.3;
+		intakeR.set(ControlMode.PercentOutput, x);
+		intakeL.set(ControlMode.PercentOutput, (1.1*x)+((x<0)?-0.15:0.15));
 	}
 	//basic solenoid control
 	public static void setSolenoid(Solenoid valve, boolean state){
