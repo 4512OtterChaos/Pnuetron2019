@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -9,12 +11,17 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
 public class Teleop{
+	//reference popular components
 	private static TalonSRX dRightF = RobotMap.dRightF;
 	private static TalonSRX dLeftF = RobotMap.dLeftF;
 	private static TalonSRX liftF = RobotMap.liftF;
 	private static TalonSRX wrist = RobotMap.wrist;
 	private static VictorSPX intakeR = RobotMap.intakeR;
 	private static VictorSPX intakeL = RobotMap.intakeL;
+	private static DigitalInput stage1Bot = RobotMap.stage1Bot;
+	private static DigitalInput stage1Top = RobotMap.stage1Top;
+	private static DigitalInput carriageBot = RobotMap.carriageBot;
+	private static DigitalInput carriageTop = RobotMap.carriageTop;
     /* Targets */
 	private static float dSpeed = 0.3f;//coefficient of drivespeed
 	public static double rightTarget;
@@ -67,7 +74,7 @@ public class Teleop{
 		//movement
 		if(stageBot){
 			liftTarget = Input.limit(liftTarget,0,21400);
-			if(RobotMap.getPos(liftF)>=21000){
+			if(RobotMap.getPos(liftF)>=20000){
 				liftTarget=22500;
 			}
 			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kForward);
@@ -85,7 +92,7 @@ public class Teleop{
 
 	public static void wrist(){
 		wristTarget = 0;
-		double feed;
+		double feed = RobotMap.getArmDegrees(wrist); 
 		wPosPID(wristTarget);
 	}
 

@@ -9,7 +9,7 @@ public class Constants{
     public static final double kNominalForward = 0.05;
     public static final double kNominalReverse = -0.05;
     public static final int kTimeout = 30;
-    public static final double ikRamp = 0.2;
+    public static final double ikRamp = 0.25;
     public static final double dkMaxRPM = 500;
     public static final double lkMaxRPM = 500;
     public static final int kAllowableClosed = 0;
@@ -28,7 +28,7 @@ public class Constants{
     lift top = 47500(lift)
     wrist other flat = 6000(lift)
     wrist other flat = 1400(wrist)
-    stage 1 = 21400(lift)
+    carriage top = 21400(lift)
     */
     public static double lkP = 0.2;
     public static double lkI = 0;
@@ -43,7 +43,8 @@ public class Constants{
     public static double wkF = 0;
     public static double wkPeak = 0.7;
     public static double wkRamp = 0.55;
-    public static final double wkRotationCounts = 0;
+    public static final double wkRotationCounts = 4096;//1 rotation is 4096 counts(4x encoder)
+    public static final double wkFFCoefficient = 0.5;//How much PercentOutput is required for the motor to stall while flat
 
     /* 
     PIDConfig pid = new PIDConfig(motors[], subsystem, 

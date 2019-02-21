@@ -168,9 +168,13 @@ public class RobotMap{
 		return motor.getSelectedSensorPosition();
 	}
 
-	public static double getArmDegrees(TalonSRX arm){
+	public static double getArmDegrees(TalonSRX arm){//straight up is 0 degrees, negative forward
 		double percent = getPos(arm)/Constants.wkRotationCounts;
-		return percent*=360;
+		return percent*360;
+	}
+	public static double calculateArmFF(TalonSRX arm){
+		double math = (1-Math.cos(2*Input.toRadians(getArmDegrees(arm))))/2.0;
+		return math;
 	}
 
 	public static boolean getSwitch(DigitalInput dio){
@@ -208,7 +212,7 @@ public class RobotMap{
 
 		Network.put("Stage 1 Bot", getSwitch(stage1Bot), "Electrical");
 		Network.put("Stage 1 Top", getSwitch(stage1Top), "Electrical");
-		Network.put("Carraige Top", getSwitch(carriageTop), "Electrical");
+		Network.put("Carriage Top", getSwitch(carriageTop), "Electrical");
 		Network.put("Carriage Bot", getSwitch(carriageBot), "Electrical");
 	}
 }
