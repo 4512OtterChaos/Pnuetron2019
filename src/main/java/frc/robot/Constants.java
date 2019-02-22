@@ -20,7 +20,7 @@ public class Constants{
     public static double dkD = 40;
     public static double dkF = 1023/2600.0;
     public static double dkPeak = 0.7;
-    public static double dkRamp = 0.55;
+    public static double dkRamp = 0.5;
 
     /*
     wrist flat = 3900(lift)
@@ -35,15 +35,15 @@ public class Constants{
     public static double lkD = 20;
     public static double lkF = 0;
     public static double lkPeak = 0.7;
-    public static double lkRamp = 0.55;
+    public static double lkRamp = 0.5;
 
     public static double wkP = 0.3;
     public static double wkI = 0;
     public static double wkD = 20;
     public static double wkF = 0;
     public static double wkPeak = 0.7;
-    public static double wkRamp = 0.55;
-    public static final double wkRotationCounts = 4096;//1 rotation is 4096 counts(4x encoder)
+    public static double wkRamp = 0.5;
+    public static final double kRotCounts = 4096;//1 rotation is 4096 counts(4x encoder)
     public static final double wkFFCoefficient = 0.5;//How much PercentOutput is required for the motor to stall while flat
 
     /* 

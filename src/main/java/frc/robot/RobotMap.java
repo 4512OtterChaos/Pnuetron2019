@@ -168,13 +168,17 @@ public class RobotMap{
 		return motor.getSelectedSensorPosition();
 	}
 
-	public static double getArmDegrees(TalonSRX arm){//straight up is 0 degrees, negative forward
-		double percent = getPos(arm)/Constants.wkRotationCounts;
+	public static double getDegrees(TalonSRX arm){//straight up is 0 degrees, negative forward
+		double percent = getPos(arm)/Constants.kRotCounts;
+		return percent*360;
+	}
+	public static double getDegrees(double counts){
+		double percent = counts/Constants.kRotCounts;
 		return percent*360;
 	}
 	public static double calculateArmFF(TalonSRX arm){
-		double math = (1-Math.cos(2*Input.toRadians(getArmDegrees(arm))))/2.0;
-		return math;
+		double math = Math.sin(Input.toRadians(getDegrees(arm)));
+		return math*Constants.wkFFCoefficient;
 	}
 
 	public static boolean getSwitch(DigitalInput dio){
@@ -196,6 +200,7 @@ public class RobotMap{
 		Network.put("Wrist Counts", getPos(wrist), tabs);
 		Network.put("Wrist RPM", getRPM(wrist), tabs);
 		Network.put("Wrist NativeV", getNative(wrist), tabs);
+		Network.put("Wrist Degree", getDegrees(wrist), tabs);
 		//pid
 		double[] dPIDMap = {toRPM(Teleop.rightTarget), getRPM(dRightF), toRPM(Teleop.leftTarget), getRPM(dLeftF)};
 		double[] lPIDMap = {toRPM(Teleop.liftTarget), getRPM(liftF)};

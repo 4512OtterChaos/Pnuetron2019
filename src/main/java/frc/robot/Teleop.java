@@ -66,23 +66,27 @@ public class Teleop{
 
 	private static void lift(){
 		//* Lift
-		double lift = Input.getLeftY(Input.fightStick);
-		liftTarget = RobotMap.getPos(liftF)+(3000*((lift<0)? 0.66*lift:lift));
-		boolean stageBot = RobotMap.getSwitch(RobotMap.stage1Bot);
-		boolean carriageTop = RobotMap.getSwitch(RobotMap.carriageTop);
+		double joy = (Input.getLeftTrigger(Input.fightStick)!=0)? Input.getLeftY(Input.fightStick):0;
+		double pos = RobotMap.getPos(liftF);
+		liftTarget = calcLiftTarget(joy);
+		if(Math.abs(RobotMap.getDegrees(wrist))<30 || liftTarget<pos){
+			liftTarget=pos;
+		}
+		boolean stageBot = RobotMap.getSwitch(stage1Bot);
+		boolean carrTop = RobotMap.getSwitch(carriageTop);
 		//double target = 3900;
 		//movement
 		if(stageBot){
 			liftTarget = Input.limit(liftTarget,0,21400);
-			if(RobotMap.getPos(liftF)>=20000){
-				liftTarget=22500;
+			if(pos>=20000 && liftTarget>=pos){
+				liftTarget=23000;
 			}
 			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kForward);
-			if(carriageTop) setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
+			if(carrTop) setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
 		} else {
 			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
 			liftTarget = Input.limit(liftTarget, 0, 47500);
-			if(RobotMap.getPos(liftF)<=1000 && !stageBot){
+			if(pos<=1500 && !stageBot){
 				liftTarget=-2000;
 			}
 		}
@@ -91,9 +95,13 @@ public class Teleop{
 	}
 
 	public static void wrist(){
+		boolean stageBot = RobotMap.getSwitch(stage1Bot);
+		boolean carrTop = RobotMap.getSwitch(carriageTop);
 		wristTarget = 0;
-		double feed = RobotMap.getArmDegrees(wrist); 
-		wPosPID(wristTarget);
+		double power = (Input.getLeftBumper(Input.fightStick))? Input.getLeftY(Input.fightStick):0;
+		double feed = RobotMap.calculateArmFF(wrist); 
+		//wPosPID(wristTarget, feed);
+		setWrist(power);
 	}
 
 	private static void intake(){
@@ -176,6 +184,10 @@ public class Teleop{
 
 	public static void lPosPID(double pos){
 		liftF.set(ControlMode.Position, pos);
+	}
+
+	public static double calcLiftTarget(double joy){
+		return RobotMap.getPos(liftF)+(3000*((joy<0)? 0.66*joy:joy));
 	}
 	
 	public static void wPosPID(double pos){
