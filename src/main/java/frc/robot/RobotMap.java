@@ -41,8 +41,8 @@ public class RobotMap{
 	public static BaseMotorController[] allMotors = {dRightF, dRightB, dLeftF, dLeftB, liftF, liftB, wrist, intakeR, intakeL};
 	
 	public static Compressor compressor = new Compressor(0);
-	public static DoubleSolenoid crabber = new DoubleSolenoid(4,5);
-	public static DoubleSolenoid crabPop = new DoubleSolenoid(6,7);
+	public static DoubleSolenoid crabber = new DoubleSolenoid(6,7);
+	public static DoubleSolenoid crabPop = new DoubleSolenoid(4,5);
 	public static DoubleSolenoid intakeFlip = new DoubleSolenoid(0,1);
 	public static DoubleSolenoid liftStop = new DoubleSolenoid(2,3);
 
@@ -63,6 +63,10 @@ public class RobotMap{
 		//limits
 		configPeak(Constants.kPeakReverse, Constants.kPeakForward, allMotors);
 		configNominal(Constants.kNominalReverse, Constants.kNominalReverse, allMotors);
+
+		configPeak(-Constants.wkPeak, Constants.wkPeak, wristMotors);
+		configPeak(-Constants.lkPeak, Constants.lkPeak, liftMotors);
+		configPeak(-Constants.dkPeak, Constants.dkPeak, driveMotors);
 		//define sensor
 		dRightF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
 		dRightF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
@@ -93,7 +97,7 @@ public class RobotMap{
         liftF.setSensorPhase(true);
 
 		wrist.setInverted(false);
-        wrist.setSensorPhase(true);
+        wrist.setSensorPhase(false);
 
         intakeR.configOpenloopRamp(Constants.ikRamp);
         intakeR.setInverted(false);
@@ -101,8 +105,10 @@ public class RobotMap{
 		intakeL.setInverted(true);
 		//pid
 		zeroSensor(allMotors);
+		wrist.setSelectedSensorPosition(280, Constants.kIdx, Constants.kTimeout);
 		configClosed(driveMotors, Constants.dkP, Constants.dkI, Constants.dkD, Constants.dkF, Constants.dkPeak, Constants.dkRamp);
 		configClosed(liftMotors, Constants.lkP, Constants.lkI, Constants.lkD, Constants.lkF, Constants.lkPeak, Constants.lkRamp);
+		configClosed(wristMotors, Constants.wkP, Constants.wkI, Constants.wkD, Constants.wkF, Constants.wkPeak, Constants.wkRamp);
 	}
 	
 	public static void zeroSensor(BaseMotorController motor){
@@ -176,9 +182,13 @@ public class RobotMap{
 		double percent = counts/Constants.kRotCounts;
 		return percent*360;
 	}
+	public static double degreesToCounts(double degree){
+		double percent = degree/360;
+		return percent*Constants.kRotCounts;
+	}
 	public static double calculateArmFF(TalonSRX arm){
 		double math = Math.sin(Input.toRadians(getDegrees(arm)));
-		return math*Constants.wkFFCoefficient;
+		return -math*Constants.wkFFCoefficient;
 	}
 
 	public static boolean getSwitch(DigitalInput dio){

@@ -52,7 +52,7 @@ public class Input{
     public static double limit(double value){
         return Math.max(-1,Math.min(1,value));
     }
-    public static double limit(double value, double low, double high){
+    public static double limit(double low, double high, double value){
         return Math.max(low,Math.min(high,value));
     }
 
@@ -115,6 +115,18 @@ public class Input{
     }
     public static double getLeftTrigger(XboxController controller){
         return controller.getTriggerAxis(KLEFT);
+    }
+    public static boolean getLeftStick(XboxController controller){
+        return controller.getStickButton(KLEFT);
+    }
+    public static boolean getLeftStickReleased(XboxController controller){
+        return controller.getStickButtonReleased(KLEFT);
+    }
+    public static boolean getRightStick(XboxController controller){
+        return controller.getStickButton(KRIGHT);
+    }
+    public static boolean getRightStickReleased(XboxController controller){
+        return controller.getStickButtonReleased(KRIGHT);
     }
 
     public static void displayStats(){

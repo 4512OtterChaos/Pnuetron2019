@@ -62,6 +62,10 @@ public class Teleop{
 		if(Input.getLeftBumper(Input.xbox)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kReverse);
 		else if(Input.getRightBumper(Input.xbox)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kForward);
 		else setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kOff);
+		if(Input.getRightTrigger(Input.fightStick)>0) setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kForward);
+		else if(Input.getRightBumper(Input.fightStick)) setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kReverse);
+		if(Input.getRightStick(Input.fightStick)) setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kForward);
+		else setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kReverse);
 	}
 
 	private static void lift(){
@@ -69,26 +73,25 @@ public class Teleop{
 		double joy = (Input.getLeftTrigger(Input.fightStick)!=0)? Input.getLeftY(Input.fightStick):0;
 		double pos = RobotMap.getPos(liftF);
 		liftTarget = calcLiftTarget(joy);
-		if(Math.abs(RobotMap.getDegrees(wrist))<30 || liftTarget<pos){
-			liftTarget=pos;
-		}
 		boolean stageBot = RobotMap.getSwitch(stage1Bot);
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
+		boolean carrBot = RobotMap.getSwitch(carriageBot);
+		if(Math.abs(RobotMap.getDegrees(wrist))<15 && liftTarget<pos-100){
+			liftTarget=pos;
+		}
 		//double target = 3900;
 		//movement
-		if(stageBot){
-			liftTarget = Input.limit(liftTarget,0,21400);
-			if(pos>=20000 && liftTarget>=pos){
-				liftTarget=23000;
+		if(stageBot && !carrTop){
+			liftTarget = Input.limit(liftTarget,0,22000);
+			if(pos>=19000 && liftTarget>=pos+100){
+				liftTarget=24000;
 			}
-			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kForward);
-			if(carrTop) setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
 		} else {
-			setSolenoid(RobotMap.liftStop, DoubleSolenoid.Value.kReverse);
-			liftTarget = Input.limit(liftTarget, 0, 47500);
-			if(pos<=1500 && !stageBot){
+			if(pos<=2000 && (!stageBot&&!carrBot) && liftTarget<=pos+100 && liftTarget>=pos-100){
 				liftTarget=-2000;
 			}
+			else if(liftTarget<0)liftTarget=Math.max(liftTarget,0);
+			liftTarget = Input.limit(liftTarget, 0, 47500);
 		}
 		//setLift(lift*0.3);
 		lPosPID(liftTarget);
@@ -97,11 +100,17 @@ public class Teleop{
 	public static void wrist(){
 		boolean stageBot = RobotMap.getSwitch(stage1Bot);
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
-		wristTarget = 0;
-		double power = (Input.getLeftBumper(Input.fightStick))? Input.getLeftY(Input.fightStick):0;
 		double feed = RobotMap.calculateArmFF(wrist); 
-		//wPosPID(wristTarget, feed);
-		setWrist(power);
+		if(Input.getAButton(Input.fightStick)) wristTarget = RobotMap.degreesToCounts(-90);
+		else if(Input.getXButton(Input.fightStick)) wristTarget = RobotMap.degreesToCounts(90);
+		else if(Input.getBButton(Input.fightStick)) wristTarget = RobotMap.degreesToCounts(0);
+		//else if(Input.getYButton(Input.fightStick)) wristTarget = ;
+		if(RobotMap.getDegrees(wristTarget)<20 && !carrTop) Input.limit(RobotMap.degreesToCounts(15), RobotMap.degreesToCounts(170), wristTarget);
+		wristTarget = Input.limit(RobotMap.degreesToCounts(-95), RobotMap.degreesToCounts(170), wristTarget);
+		SmartDashboard.putNumber("Wrist Target", wristTarget);
+		SmartDashboard.putNumber("Wrist Target Degrees", RobotMap.getDegrees(wristTarget));
+		wPosPID(wristTarget, feed);
+		//setWrist(test);
 	}
 
 	private static void intake(){
@@ -187,7 +196,7 @@ public class Teleop{
 	}
 
 	public static double calcLiftTarget(double joy){
-		return RobotMap.getPos(liftF)+(3000*((joy<0)? 0.66*joy:joy));
+		return RobotMap.getPos(liftF)+(4000*((joy<0)? 0.66*joy:joy));
 	}
 	
 	public static void wPosPID(double pos){
