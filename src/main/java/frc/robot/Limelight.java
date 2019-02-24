@@ -48,6 +48,14 @@ public class Limelight{
         NetworkTableEntry lightMode = table.getEntry("ledMode");
         lightMode.setNumber((lightMode.getDouble(0)==3)? 1:3);
     }
+    public void lightOff(){
+        NetworkTableEntry lightMode = table.getEntry("ledMode");
+        lightMode.setNumber(1);
+    }
+    public void lightOn(){
+        NetworkTableEntry lightMode = table.getEntry("ledMode");
+        lightMode.setNumber(3);
+    }
 
     public void shiftPipe(){
         NetworkTableEntry pipe = table.getEntry("pipeline");

@@ -14,22 +14,22 @@ public class Input{
     public static Limelight backLime;
     
     /* Controls */
-    public static XboxController xbox; //object for controller --more buttons :)
-    public static XboxController fightStick;
+    public static XboxController driver; //object for controller --more buttons :)
+    public static XboxController lifter;
     private static Hand KLEFT = GenericHID.Hand.kLeft; //constant referring to
     private static Hand KRIGHT = GenericHID.Hand.kRight;//the side of controller
 
     public static void init(){
         /* Controls' assignment*/
-        xbox = new XboxController(0);
-        fightStick = new XboxController(1);
+        driver = new XboxController(0);
+        lifter = new XboxController(1);
         
         /* Sensor assignment *///code matches electrical
         //comment these out as necessary
         pigeon.getGeneralStatus(pStat);
         pigeon.getYawPitchRoll(ypr);
-        frontLime = new Limelight("front");
-        backLime = new Limelight("back","limelight-one");
+        backLime = new Limelight("back");
+        frontLime = new Limelight("front","limelight-one");
     }
 
     /**
@@ -76,6 +76,10 @@ public class Input{
         return x;
     }
 
+    public static void shiftPipe(Limelight lime){
+        lime.shiftPipe();
+    }
+
     public static double getLeftY(XboxController controller){
         double joy = -deadband(controller.getY(KLEFT));
         return joy;
@@ -110,6 +114,12 @@ public class Input{
     public static boolean getBButton(XboxController controller){
         return controller.getBButton();
     }
+    public static boolean getStart(XboxController controller){
+        return controller.getStartButtonPressed();
+    }
+    public static boolean getBack(XboxController controller){
+        return controller.getBackButtonPressed();
+    }
     public static double getRightTrigger(XboxController controller){
         return controller.getTriggerAxis(KRIGHT);
     }
@@ -130,13 +140,13 @@ public class Input{
     }
 
     public static void displayStats(){
-        SmartDashboard.putNumber("RJoyX", getRightX(xbox));
-        SmartDashboard.putNumber("RJoyY", getRightY(xbox));
-        SmartDashboard.putNumber("LJoyX", getLeftX(xbox));
-        SmartDashboard.putNumber("LJoyY", getLeftY(xbox));
+        SmartDashboard.putNumber("RJoyX", getRightX(driver));
+        SmartDashboard.putNumber("RJoyY", getRightY(driver));
+        SmartDashboard.putNumber("LJoyX", getLeftX(driver));
+        SmartDashboard.putNumber("LJoyY", getLeftY(driver));
 
-        SmartDashboard.putNumber("FightX", getLeftX(fightStick));
-        SmartDashboard.putNumber("FightY", getLeftY(fightStick));
+        SmartDashboard.putNumber("FightX", getLeftX(lifter));
+        SmartDashboard.putNumber("FightY", getLeftY(lifter));
         SmartDashboard.putNumberArray("YPR", ypr);
         frontLime.displayStats();
         backLime.displayStats();

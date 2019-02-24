@@ -186,9 +186,14 @@ public class RobotMap{
 		double percent = degree/360;
 		return percent*Constants.kRotCounts;
 	}
-	public static double calculateArmFF(TalonSRX arm){
-		double math = Math.sin(Input.toRadians(getDegrees(arm)));
-		return -math*Constants.wkFFCoefficient;
+	public static double calcArmFF(){
+		double math = Math.sin(Input.toRadians(getDegrees(wrist)));
+		double stall = Constants.wkFFCoefficient;
+		return -math*stall;
+	}
+	public static double calcArmIntake(){
+		double math = 1;
+		return math;
 	}
 
 	public static boolean getSwitch(DigitalInput dio){

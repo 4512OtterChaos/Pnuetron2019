@@ -30,17 +30,20 @@ public class Teleop{
 	public static double wristTarget;
 
     public static void init(){
+		//*
+		liftTarget=0;
+		wristTarget=0;
+		rightTarget=0;
+		leftTarget=0;
 		//*Routine
 		disableMotors();
 		System.out.println("--Feed Forward Teleop--");
 		setIntake(-1);
+		//Input.backLime.lightOn();
     }
 
     public static void periodic(){
-		checkInputs();
-	}
-
-	private static void checkInputs(){
+		camera();
 		drive();
 		pnuematics();
 		lift();
@@ -48,10 +51,15 @@ public class Teleop{
 		intake();
 	}
 
+	private static void camera(){
+		if(Input.getStart(Input.driver)) Input.shiftPipe(Input.backLime);
+		if(Input.getBack(Input.driver)) Input.backLime.toggleLight();
+	}
+
 	private static void drive(){
 		//*arcade drive
-		double forward = Input.getLeftY(Input.xbox);
-		double turn = Input.getRightX(Input.xbox);
+		double forward = Input.getLeftY(Input.driver);
+		double turn = Input.getRightX(Input.driver);
 		dVelPID(forward, turn);
 		//arcadeDrive(forward, turn);
 		//setDrive(forward, forward);
@@ -59,64 +67,78 @@ public class Teleop{
 
 	private static void pnuematics(){
 		//*Pnuematics
-		if(Input.getLeftBumper(Input.xbox)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kReverse);
-		else if(Input.getRightBumper(Input.xbox)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kForward);
+		if(Input.getLeftBumper(Input.driver)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kReverse);
+		else if(Input.getRightBumper(Input.driver)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kForward);
 		else setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kOff);
-		if(Input.getRightTrigger(Input.fightStick)>0) setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kForward);
-		else if(Input.getRightBumper(Input.fightStick)) setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kReverse);
-		if(Input.getRightStick(Input.fightStick)) setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kForward);
+
+		if(Input.getRightTrigger(Input.lifter)>0){
+			setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kReverse);//open
+			Constants.wkFFCoefficient = 0.35;
+		}
+		else if(Input.getRightBumper(Input.lifter)){
+			setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kForward);//closed
+			Constants.wkFFCoefficient = 0.22;
+		}
+
+		if(Input.getRightStick(Input.lifter)) setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kForward);
 		else setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kReverse);
 	}
 
 	private static void lift(){
 		//* Lift
-		double joy = (Input.getLeftTrigger(Input.fightStick)!=0)? Input.getLeftY(Input.fightStick):0;
+		boolean trig = Input.getLeftTrigger(Input.lifter)!=0;
+		double joy = (trig)? Input.getLeftY(Input.lifter):0;
 		double pos = RobotMap.getPos(liftF);
-		liftTarget = calcLiftTarget(joy);
+
+		liftTarget = joy!=0? calcLiftTarget(joy):liftTarget;
+		double targetAdjust = liftTarget;
+
+		if(trig && Input.getAButton(Input.lifter)) liftTarget = 0;
+		else if(trig && Input.getBButton(Input.lifter)) liftTarget = 4000;
+		else if(trig && Input.getYButton(Input.lifter)) liftTarget = 21500;
+		else if(trig && Input.getXButton(Input.lifter)) liftTarget = 48000;
+
 		boolean stageBot = RobotMap.getSwitch(stage1Bot);
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
 		boolean carrBot = RobotMap.getSwitch(carriageBot);
+
 		if(Math.abs(RobotMap.getDegrees(wrist))<15 && liftTarget<pos-100){
-			liftTarget=pos;
+			targetAdjust=pos;
 		}
-		//double target = 3900;
-		//movement
-		if(stageBot && !carrTop){
-			liftTarget = Input.limit(liftTarget,0,22000);
-			if(pos>=19000 && liftTarget>=pos+100){
-				liftTarget=24000;
-			}
-		} else {
-			if(pos<=2000 && (!stageBot&&!carrBot) && liftTarget<=pos+100 && liftTarget>=pos-100){
-				liftTarget=-2000;
-			}
-			else if(liftTarget<0)liftTarget=Math.max(liftTarget,0);
-			liftTarget = Input.limit(liftTarget, 0, 47500);
+
+		targetAdjust = Input.limit(0, 48000, targetAdjust);
+
+		if(pos<=2000 && (!stageBot||!carrBot) && liftTarget<=pos+100 && liftTarget>=pos-100){
+			liftTarget=-1000;
 		}
 		//setLift(lift*0.3);
-		lPosPID(liftTarget);
+		lPosPID(targetAdjust);
 	}
 
 	public static void wrist(){
 		boolean stageBot = RobotMap.getSwitch(stage1Bot);
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
-		double feed = RobotMap.calculateArmFF(wrist); 
-		if(Input.getAButton(Input.fightStick)) wristTarget = RobotMap.degreesToCounts(-90);
-		else if(Input.getXButton(Input.fightStick)) wristTarget = RobotMap.degreesToCounts(90);
-		else if(Input.getBButton(Input.fightStick)) wristTarget = RobotMap.degreesToCounts(0);
-		//else if(Input.getYButton(Input.fightStick)) wristTarget = ;
-		if(RobotMap.getDegrees(wristTarget)<20 && !carrTop) Input.limit(RobotMap.degreesToCounts(15), RobotMap.degreesToCounts(170), wristTarget);
+		boolean bump = Input.getLeftBumper(Input.lifter);
+		double feed = RobotMap.calcArmFF();
+		double pos = RobotMap.getDegrees(wrist);
+		if(bump && Input.getAButton(Input.lifter)) wristTarget = RobotMap.degreesToCounts(-90);
+		else if(bump && Input.getXButton(Input.lifter)) wristTarget = RobotMap.degreesToCounts(90);
+		else if(bump && Input.getBButton(Input.lifter)) wristTarget = RobotMap.degreesToCounts(0);
+		//else if(Input.getYButton(Input.lifter)) wristTarget = ;
+
+		if((pos<20 && pos>=0) && !carrTop) Input.limit(RobotMap.degreesToCounts(15), RobotMap.degreesToCounts(170), wristTarget);
+		else if((pos>-20 && pos<0) && !carrTop) Input.limit(RobotMap.degreesToCounts(-95), RobotMap.degreesToCounts(-15), wristTarget);
 		wristTarget = Input.limit(RobotMap.degreesToCounts(-95), RobotMap.degreesToCounts(170), wristTarget);
 		SmartDashboard.putNumber("Wrist Target", wristTarget);
-		SmartDashboard.putNumber("Wrist Target Degrees", RobotMap.getDegrees(wristTarget));
+		SmartDashboard.putNumber("Wrist Target Degrees", pos);
 		wPosPID(wristTarget, feed);
 		//setWrist(test);
 	}
 
 	private static void intake(){
 		//* Intake
-		double lTrigger = Input.getLeftTrigger(Input.xbox);
-		double rTrigger = Input.getRightTrigger(Input.xbox);
+		double lTrigger = Input.getLeftTrigger(Input.driver);
+		double rTrigger = Input.getRightTrigger(Input.driver);
 		if(lTrigger != 0) setIntake(lTrigger);
 		else if(rTrigger != 0) setIntake(-rTrigger);
 		else setIntake(0);//-0.3
@@ -163,7 +185,7 @@ public class Teleop{
 	 */
 	private static double arcadeMath(double forward, double turn, boolean right){
 		forward*=dSpeed;
-		turn*=dSpeed*0.9;
+		turn*=dSpeed*0.95;
 		if(right) return Input.limit(forward-turn);
 		else return Input.limit(forward+turn);
 	}
@@ -196,7 +218,7 @@ public class Teleop{
 	}
 
 	public static double calcLiftTarget(double joy){
-		return RobotMap.getPos(liftF)+(4000*((joy<0)? 0.66*joy:joy));
+		return RobotMap.getPos(liftF)+(4000*((joy<0)? 0.6*joy:joy));
 	}
 	
 	public static void wPosPID(double pos){
