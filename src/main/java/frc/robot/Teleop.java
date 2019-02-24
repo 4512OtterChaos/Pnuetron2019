@@ -43,17 +43,11 @@ public class Teleop{
     }
 
     public static void periodic(){
-		camera();
 		drive();
 		pnuematics();
 		lift();
 		wrist();
 		intake();
-	}
-
-	private static void camera(){
-		if(Input.getStart(Input.driver)) Input.shiftPipe(Input.backLime);
-		if(Input.getBack(Input.driver)) Input.backLime.toggleLight();
 	}
 
 	private static void drive(){
@@ -96,7 +90,7 @@ public class Teleop{
 		if(trig && Input.getAButton(Input.lifter)) liftTarget = 0;
 		else if(trig && Input.getBButton(Input.lifter)) liftTarget = 4000;
 		else if(trig && Input.getYButton(Input.lifter)) liftTarget = 21500;
-		else if(trig && Input.getXButton(Input.lifter)) liftTarget = 48000;
+		else if(trig && Input.getXButton(Input.lifter)) liftTarget = 47000;
 
 		boolean stageBot = RobotMap.getSwitch(stage1Bot);
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
@@ -106,7 +100,7 @@ public class Teleop{
 			targetAdjust=pos;
 		}
 
-		targetAdjust = Input.limit(0, 48000, targetAdjust);
+		targetAdjust = Input.limit(0, 47000, targetAdjust);
 
 		if(pos<=2000 && (!stageBot||!carrBot) && liftTarget<=pos+100 && liftTarget>=pos-100){
 			liftTarget=-1000;
@@ -216,6 +210,9 @@ public class Teleop{
 	public static void lPosPID(double pos){
 		liftF.set(ControlMode.Position, pos);
 	}
+	public static void lPosPID(double pos, double feed){
+		liftF.set(ControlMode.Position, pos, DemandType.ArbitraryFeedForward, feed);
+	}
 
 	public static double calcLiftTarget(double joy){
 		return RobotMap.getPos(liftF)+(4000*((joy<0)? 0.6*joy:joy));
@@ -224,8 +221,8 @@ public class Teleop{
 	public static void wPosPID(double pos){
 		wrist.set(ControlMode.Position, pos);
 	}
-	public static void wPosPID(double pos, double feedforward){
-		wrist.set(ControlMode.Position, pos, DemandType.ArbitraryFeedForward, feedforward);
+	public static void wPosPID(double pos, double feed){
+		wrist.set(ControlMode.Position, pos, DemandType.ArbitraryFeedForward, feed);
 	}
 
 	//basic motor control
