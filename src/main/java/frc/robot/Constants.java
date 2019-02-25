@@ -41,8 +41,8 @@ public class Constants{
     public static double wkI = 0;
     public static double wkD = 30;
     public static double wkF = 0;
-    public static double wkPeak = 0.35;
-    public static double wkRamp = 0.65;
+    public static double wkPeak = 0.5;
+    public static double wkRamp = 0.85;
     public static final double kRotCounts = 4096;//1 rotation is 4096 counts(4x encoder)
     public static  double wkFFCoefficient = 0.22;//How much PercentOutput is required for the motor to stall while flat
 
