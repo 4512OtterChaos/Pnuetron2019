@@ -11,8 +11,8 @@ public class Constants{
     public static final int kTimeout = 30;
     public static final double ikRamp = 0.25;
     public static final double dkMaxRPM = 500;
-    public static final double lkMaxRPM = 500;
     public static final int kAllowableClosed = 0;
+    public static final int kAllowableBehavior = 100;
     public static final int kIdx = 0;
     //*PID
     public static double dkP = 0.5;
@@ -20,7 +20,7 @@ public class Constants{
     public static double dkD = 40;
     public static double dkF = 1023/2600.0;
     public static double dkPeak = 0.7;
-    public static double dkRamp = 0.45;
+    public static double dkRamp = 0.4;
 
     /*
     wrist flat = 3900(lift)
@@ -29,16 +29,13 @@ public class Constants{
     wrist other flat = 6000(lift)
     wrist other flat = 1400(wrist)
     carriage top = 21400(lift)
-
-    2000
-
     */
     public static double lkP = 0.25;
     public static double lkI = 0;
     public static double lkD = 20;
     public static double lkF = 0;
     public static double lkPeak = 0.6;
-    public static double lkRamp = 0.5;
+    public static double lkRamp = 0.4;
     public static int lkCruise = 1200;
     public static int lkAccel = lkCruise*2;//encoder counts per 100 ms per second
 
@@ -47,7 +44,7 @@ public class Constants{
     public static double wkD = 30;
     public static double wkF = 0;
     public static double wkPeak = 0.5;
-    public static double wkRamp = 0.5;
+    public static double wkRamp = 0.4;
     public static int wkCruise = 130;
     public static int wkAccel = wkCruise*2;
     public static final double kRotCounts = 4096;//1 rotation is 4096 counts(4x encoder)

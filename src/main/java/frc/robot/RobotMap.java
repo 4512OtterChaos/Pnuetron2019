@@ -190,15 +190,7 @@ public class RobotMap{
 		double percent = degree/360;
 		return percent*Constants.kRotCounts;
 	}
-	public static double calcArmFF(){
-		double math = Math.sin(Input.toRadians(getDegrees(wrist)));
-		double stall = Constants.wkAntiGrav;
-		return -math*stall;
-	}
-	public static double calcArmIntake(){
-		double math = 1;
-		return math;
-	}
+	
 
 	public static boolean getSwitch(DigitalInput dio){
 		return !dio.get();

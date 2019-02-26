@@ -19,6 +19,7 @@ public class Teleop{
 	private static double wristCoefficient = 1;
 	private static VictorSPX intakeR = RobotMap.intakeR;
 	private static VictorSPX intakeL = RobotMap.intakeL;
+
 	private static DigitalInput stage1Bot = RobotMap.stage1Bot;
 	private static DigitalInput stage1Top = RobotMap.stage1Top;
 	private static DigitalInput carriageBot = RobotMap.carriageBot;
@@ -86,7 +87,7 @@ public class Teleop{
 		double pos = RobotMap.getPos(liftF);
 
 		liftTarget = joy!=0? calcLiftTarget(joy):liftTarget;
-		double targetAdjust = liftTarget;
+		double targetAdjusted = liftTarget;
 
 		if(trig && Input.getAButton(Input.lifter)) liftTarget = 0;
 		else if(trig && Input.getBButton(Input.lifter)) liftTarget = 4000;
@@ -97,24 +98,27 @@ public class Teleop{
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
 		boolean carrBot = RobotMap.getSwitch(carriageBot);
 
-		if(Math.abs(RobotMap.getDegrees(wrist))<15 && liftTarget<pos-100){
-			targetAdjust=pos;
+		if(Math.abs(RobotMap.getDegrees(wrist))<15 && liftTarget<pos-Constants.kAllowableBehavior){
+			targetAdjusted=pos;
 		}
 
-		targetAdjust = Input.limit(0, 47000, targetAdjust);
+		targetAdjusted = Input.limit(0, 47000, targetAdjusted);
 
-		if(pos<=2000 && (!stageBot||!carrBot) && liftTarget<=pos+100 && liftTarget>=pos-100){
+		if(pos<=2000 && (!stageBot||!carrBot) && liftTarget<=pos+Constants.kAllowableBehavior && liftTarget>=pos-Constants.kAllowableBehavior){
 			liftTarget=-1000;
 		}
 		//setLift(lift*0.3);
-		lPosPID(targetAdjust);
+		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? RobotMap.toRPM(liftF.getSelectedSensorVelocity()):0;
+		double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? 0.1:0;
+		lMotionPID(targetAdjusted, antiGrav);
+		//lPosPID(targetAdjusted, antiGrav);
 	}
 
 	public static void wrist(){
 		boolean stageBot = RobotMap.getSwitch(stage1Bot);
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
 		boolean bump = Input.getLeftBumper(Input.lifter);
-		double feed = RobotMap.calcArmFF();
+		double feed = calcArmFF();
 		double pos = RobotMap.getDegrees(wrist);
 		if(bump && Input.getAButton(Input.lifter)) wristTarget = RobotMap.degreesToCounts(-90);
 		else if(bump && Input.getXButton(Input.lifter)) wristTarget = RobotMap.degreesToCounts(90);
@@ -126,7 +130,8 @@ public class Teleop{
 		wristTarget = Input.limit(RobotMap.degreesToCounts(-95), RobotMap.degreesToCounts(170), wristTarget);
 		SmartDashboard.putNumber("Wrist Target", wristTarget);
 		SmartDashboard.putNumber("Wrist Target Degrees", pos);
-		wPosPID(wristTarget, feed);
+		wMotionPID(wristTarget, feed);
+		//wPosPID(wristTarget, feed);
 		//setWrist(test);
 	}
 
@@ -208,6 +213,12 @@ public class Teleop{
 		dLeftF.set(ControlMode.PercentOutput, left);
 	}
 
+	public static void lMotionPID(double pos){
+		liftF.set(ControlMode.MotionMagic, pos);
+	}
+	public static void lMotionPID(double pos, double feed){
+		liftF.set(ControlMode.MotionMagic, pos, DemandType.ArbitraryFeedForward, feed);
+	}
 	public static void lPosPID(double pos){
 		liftF.set(ControlMode.Position, pos);
 	}
@@ -219,6 +230,12 @@ public class Teleop{
 		return RobotMap.getPos(liftF)+(4000*((joy<0)? 0.6*joy:joy));
 	}
 	
+	public static void wMotionPID(double pos){
+		wrist.set(ControlMode.MotionMagic, pos);
+	}
+	public static void wMotionPID(double pos, double feed){
+		wrist.set(ControlMode.MotionMagic, pos, DemandType.ArbitraryFeedForward, feed);
+	}
 	public static void wPosPID(double pos){
 		wrist.set(ControlMode.Position, pos);
 	}
@@ -226,7 +243,17 @@ public class Teleop{
 		wrist.set(ControlMode.Position, pos, DemandType.ArbitraryFeedForward, feed);
 	}
 
-	//basic motor control
+	public static double calcArmFF(){
+		double math = Math.sin(Input.toRadians(RobotMap.getDegrees(wrist)));
+		double stall = Constants.wkAntiGrav*wristCoefficient;
+		return -math*stall;
+	}
+	public static double calcArmIntake(){//TODO position arm for cargo
+		double math = 1;
+		return math;
+	}
+
+	//arbitrary motor control
 	public static void setDrive(double left, double right){
 		dRightF.set(ControlMode.PercentOutput, right);
 		dLeftF.set(ControlMode.PercentOutput, left);
