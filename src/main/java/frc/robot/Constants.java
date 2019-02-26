@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Constants{
+    //*motor behavior
     public static final double kPeakForward = 1;
     public static final double kPeakReverse = -1;
     public static final double kNominalForward = 0.05;
@@ -14,6 +15,7 @@ public class Constants{
     public static final int kAllowableClosed = 0;
     public static final int kAllowableBehavior = 100;
     public static final int kIdx = 0;
+    public static final double kRotCounts = 4096;//1 rotation is 4096 counts(4x encoder)
     //*PID
     public static double dkP = 0.5;
     public static double dkI = 0;
@@ -37,19 +39,24 @@ public class Constants{
     public static double lkPeak = 0.6;
     public static double lkRamp = 0.4;
     public static int lkCruise = 1200;
-    public static int lkAccel = lkCruise*2;//encoder counts per 100 ms per second
+    public static int lkAccel = (int)(lkCruise/0.75);//encoder counts per 100 ms per second
+    public static double lkAntiGrav = 0.1;
+    public static final double lkBottom=0;
+    public static final double lkHatch1=4000;
+    public static final double lkHatch2=21500;
+    public static final double lkHatch3=47000;
 
     public static double wkP = 0.3;
     public static double wkI = 0;
-    public static double wkD = 30;
+    public static double wkD = 10;
     public static double wkF = 0;
-    public static double wkPeak = 0.5;
-    public static double wkRamp = 0.4;
+    public static double wkPeak = 0.6;
+    public static double wkRamp = 0.3;
     public static int wkCruise = 130;
-    public static int wkAccel = wkCruise*2;
-    public static final double kRotCounts = 4096;//1 rotation is 4096 counts(4x encoder)
+    public static int wkAccel = (int)(wkCruise/0.5);
     public static final double wkAntiGrav = 0.22;//How much PercentOutput is required for the motor to stall while horizontal
 
+    
     /* 
     PIDConfig pid = new PIDConfig(motors[], subsystem, 
     p, i, d, f, 

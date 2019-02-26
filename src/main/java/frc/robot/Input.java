@@ -16,6 +16,10 @@ public class Input{
     /* Controls */
     public static XboxController driver; //object for controller --more buttons :)
     public static XboxController lifter;
+    public static Debouncer dUpPOV;
+    public static Debouncer dDownPOV;
+    public static Debouncer lUpPOV;
+    public static Debouncer lDownPOV;
     private static Hand KLEFT = GenericHID.Hand.kLeft; //constant referring to
     private static Hand KRIGHT = GenericHID.Hand.kRight;//the side of controller
 
@@ -23,6 +27,10 @@ public class Input{
         /* Controls' assignment*/
         driver = new XboxController(0);
         lifter = new XboxController(1);
+        dUpPOV = new Debouncer(driver, 0f, 0.2);
+        dDownPOV = new Debouncer(driver, 180f, 0.2);
+        lUpPOV = new Debouncer(lifter, 0f, 0.2);
+        lDownPOV = new Debouncer(lifter, 180f, 0.2);
         
         /* Sensor assignment *///code matches electrical
         //comment these out as necessary

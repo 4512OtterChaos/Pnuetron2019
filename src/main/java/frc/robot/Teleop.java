@@ -16,7 +16,6 @@ public class Teleop{
 	private static TalonSRX dLeftF = RobotMap.dLeftF;
 	private static TalonSRX liftF = RobotMap.liftF;
 	private static TalonSRX wrist = RobotMap.wrist;
-	private static double wristCoefficient = 1;
 	private static VictorSPX intakeR = RobotMap.intakeR;
 	private static VictorSPX intakeL = RobotMap.intakeL;
 
@@ -26,6 +25,8 @@ public class Teleop{
 	private static DigitalInput carriageTop = RobotMap.carriageTop;
     /* Targets */
 	private static float dSpeed = 0.3f;//coefficient of drivespeed
+	private static int liftState = 0;
+	private static double wristCoefficient = 1;
 	public static double rightTarget;
 	public static double leftTarget;
 	public static double liftTarget;
@@ -56,6 +57,10 @@ public class Teleop{
 		//*arcade drive
 		double forward = Input.getLeftY(Input.driver);
 		double turn = Input.getRightX(Input.driver);
+
+		if(Input.dUpPOV.get()) dSpeed=(dSpeed==0.4f)? 0.4f:dSpeed+0.1f;
+		else if(Input.dDownPOV.get()) dSpeed=(dSpeed==0.2f)? 0.2f:dSpeed-0.1f;
+
 		dVelPID(forward, turn);
 		//arcadeDrive(forward, turn);
 		//setDrive(forward, forward);
@@ -67,50 +72,57 @@ public class Teleop{
 		else if(Input.getRightBumper(Input.driver)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kForward);
 		else setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kOff);
 
-		if(Input.getRightTrigger(Input.lifter)>0){
+		if(Input.getAButton(Input.lifter)||Input.getAButton(Input.lifter)){
 			setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kReverse);//open
 			wristCoefficient = 1.5;
 		}
-		else if(Input.getRightBumper(Input.lifter)){
+		else if(Input.getBButton(Input.lifter)||Input.getBButton(Input.driver)){
 			setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kForward);//closed
 			wristCoefficient = 1;
 		}
 
-		if(Input.getRightStick(Input.lifter)) setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kForward);
+		if(Input.getXButton(Input.lifter)||Input.getXButton(Input.driver)) setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kForward);
 		else setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kReverse);
 	}
 
 	private static void lift(){
 		//* Lift
-		boolean trig = Input.getLeftTrigger(Input.lifter)!=0;
-		double joy = (trig)? Input.getLeftY(Input.lifter):0;
-		double pos = RobotMap.getPos(liftF);
-
-		liftTarget = joy!=0? calcLiftTarget(joy):liftTarget;
-		double targetAdjusted = liftTarget;
-
-		if(trig && Input.getAButton(Input.lifter)) liftTarget = 0;
-		else if(trig && Input.getBButton(Input.lifter)) liftTarget = 4000;
-		else if(trig && Input.getYButton(Input.lifter)) liftTarget = 21500;
-		else if(trig && Input.getXButton(Input.lifter)) liftTarget = 47000;
-
 		boolean stageBot = RobotMap.getSwitch(stage1Bot);
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
 		boolean carrBot = RobotMap.getSwitch(carriageBot);
+		double liftPos = RobotMap.getPos(liftF);
+		double wristDeg = RobotMap.getDegrees(wrist);
 
-		if(Math.abs(RobotMap.getDegrees(wrist))<15 && liftTarget<pos-Constants.kAllowableBehavior){
-			targetAdjusted=pos;
-		}
+		boolean isLift = Input.getLeftBumper(Input.lifter);
+		double joy = Input.getLeftY(Input.lifter);
+
+		boolean resting = false;
+
+		liftTarget = joy!=0? calcLiftTarget(joy):liftTarget;
+
+		if(isLift && Input.getAButton(Input.lifter)) liftTarget = Constants.lkBottom;
+		else if(isLift && Input.getBButton(Input.lifter)) liftTarget = Constants.lkHatch1;
+		else if(isLift && Input.getYButton(Input.lifter)) liftTarget = Constants.lkHatch2;
+		else if(isLift && Input.getXButton(Input.lifter)) liftTarget = Constants.lkHatch3;
+		
+		double targetAdjusted = liftTarget;
+
+		if(Math.abs(wristDeg)<=10 && targetAdjusted<liftPos-Constants.kAllowableBehavior) targetAdjusted=liftPos;
+		else if(wristDeg<-5) Input.limit(9000, 47000, targetAdjusted);
 
 		targetAdjusted = Input.limit(0, 47000, targetAdjusted);
 
-		if(pos<=2000 && (!stageBot||!carrBot) && liftTarget<=pos+Constants.kAllowableBehavior && liftTarget>=pos-Constants.kAllowableBehavior){
-			liftTarget=-1000;
+		if(liftPos<=2000 && (!stageBot||!carrBot) && targetAdjusted<=liftPos+Constants.kAllowableBehavior && targetAdjusted>=liftPos-Constants.kAllowableBehavior){
+			targetAdjusted=-1000;
+		}
+		else if(stageBot&&carrBot){
+			resting = true;
 		}
 		//setLift(lift*0.3);
 		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? RobotMap.toRPM(liftF.getSelectedSensorVelocity()):0;
-		double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? 0.1:0;
-		lMotionPID(targetAdjusted, antiGrav);
+		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? 0.1:0;
+		if(!resting) lMotionPID(targetAdjusted, Constants.lkAntiGrav);
+		else setLift(0);
 		//lPosPID(targetAdjusted, antiGrav);
 	}
 
@@ -120,10 +132,10 @@ public class Teleop{
 		boolean bump = Input.getLeftBumper(Input.lifter);
 		double feed = calcArmFF();
 		double pos = RobotMap.getDegrees(wrist);
-		if(bump && Input.getAButton(Input.lifter)) wristTarget = RobotMap.degreesToCounts(-90);
-		else if(bump && Input.getXButton(Input.lifter)) wristTarget = RobotMap.degreesToCounts(90);
-		else if(bump && Input.getBButton(Input.lifter)) wristTarget = RobotMap.degreesToCounts(0);
-		//else if(Input.getYButton(Input.lifter)) wristTarget = ;
+
+		if(Input.getRightY(Input.lifter)==1) wristTarget = RobotMap.degreesToCounts(90);
+		else if(Input.getRightY(Input.lifter)==-1) wristTarget = RobotMap.degreesToCounts(-90);
+		else if(Math.abs(Input.getRightX(Input.lifter))==1) wristTarget = RobotMap.degreesToCounts(0);
 
 		if((pos<20 && pos>=0) && !carrTop) Input.limit(RobotMap.degreesToCounts(15), RobotMap.degreesToCounts(170), wristTarget);
 		else if((pos>-20 && pos<0) && !carrTop) Input.limit(RobotMap.degreesToCounts(-95), RobotMap.degreesToCounts(-15), wristTarget);
@@ -246,7 +258,8 @@ public class Teleop{
 	public static double calcArmFF(){
 		double math = Math.sin(Input.toRadians(RobotMap.getDegrees(wrist)));
 		double stall = Constants.wkAntiGrav*wristCoefficient;
-		return -math*stall;
+		double inertia = liftF.getMotorOutputPercent()/6;
+		return -math*(stall+inertia);
 	}
 	public static double calcArmIntake(){//TODO position arm for cargo
 		double math = 1;
