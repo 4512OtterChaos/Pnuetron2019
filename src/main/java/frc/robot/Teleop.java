@@ -16,6 +16,7 @@ public class Teleop{
 	private static TalonSRX dLeftF = RobotMap.dLeftF;
 	private static TalonSRX liftF = RobotMap.liftF;
 	private static TalonSRX wrist = RobotMap.wrist;
+	private static double wristCoefficient = 1;
 	private static VictorSPX intakeR = RobotMap.intakeR;
 	private static VictorSPX intakeL = RobotMap.intakeL;
 	private static DigitalInput stage1Bot = RobotMap.stage1Bot;
@@ -67,11 +68,11 @@ public class Teleop{
 
 		if(Input.getRightTrigger(Input.lifter)>0){
 			setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kReverse);//open
-			Constants.wkFFCoefficient = 0.35;
+			wristCoefficient = 1.5;
 		}
 		else if(Input.getRightBumper(Input.lifter)){
 			setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kForward);//closed
-			Constants.wkFFCoefficient = 0.22;
+			wristCoefficient = 1;
 		}
 
 		if(Input.getRightStick(Input.lifter)) setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kForward);
@@ -252,7 +253,7 @@ public class Teleop{
 	public static void disableMotors(){
 		setDrive(0, 0);
 		setLift(0);
-		//setWrist(0);
+		setWrist(0);
 		setIntake(0);
 	}
 

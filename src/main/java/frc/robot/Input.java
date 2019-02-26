@@ -37,7 +37,7 @@ public class Input{
      * @return Value constrained to deadband.
      */
 	private static double deadband(double value) {
-		double deadzone = 0.14;//smallest amount you can recognize from the controller
+		double deadzone = 0.15;//smallest amount you can recognize from the controller
 		if ((value >= +deadzone)||(value <= -deadzone)) {
 			return value;//outside deadband
 		}else{
@@ -142,15 +142,14 @@ public class Input{
     }
 
     public static void displayStats(){
-        SmartDashboard.putNumber("RJoyX", getRightX(driver));
-        SmartDashboard.putNumber("RJoyY", getRightY(driver));
-        SmartDashboard.putNumber("LJoyX", getLeftX(driver));
-        SmartDashboard.putNumber("LJoyY", getLeftY(driver));
-
-        SmartDashboard.putNumber("FightX", getLeftX(lifter));
-        SmartDashboard.putNumber("FightY", getLeftY(lifter));
+        SmartDashboard.putNumber("Drive Turn", getRightX(driver));
+        //SmartDashboard.putNumber("RJoyY", getRightY(driver));
+        //SmartDashboard.putNumber("LJoyX", getLeftX(driver));
+        SmartDashboard.putNumber("Drive Forward", getLeftY(driver));
+        SmartDashboard.putNumber("Lift Y", getLeftY(lifter));
+        SmartDashboard.putNumber("Wrist Y", getRightY(lifter));
         SmartDashboard.putNumberArray("YPR", ypr);
-        frontLime.displayStats();
+        //frontLime.displayStats();
         backLime.displayStats();
     }
 }

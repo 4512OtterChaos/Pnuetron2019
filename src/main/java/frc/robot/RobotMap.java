@@ -69,16 +69,16 @@ public class RobotMap{
 		configPeak(-Constants.dkPeak, Constants.dkPeak, driveMotors);
 		//define sensor
 		dRightF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
-		dRightF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
+		dRightF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Constants.kTimeout);
 
 		dLeftF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kIdx, Constants.kTimeout);
-		dLeftF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
+		dLeftF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Constants.kTimeout);
 
 		liftF.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, Constants.kIdx, Constants.kTimeout);
-		liftF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
+		liftF.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Constants.kTimeout);
 
 		wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, Constants.kIdx, Constants.kTimeout);
-		wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeout);
+		wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Constants.kTimeout);
         //behavior
         dRightB.follow(dRightF);
 		dLeftB.follow(dLeftF);
@@ -109,6 +109,10 @@ public class RobotMap{
 		configClosed(driveMotors, Constants.dkP, Constants.dkI, Constants.dkD, Constants.dkF, Constants.dkPeak, Constants.dkRamp);
 		configClosed(liftMotors, Constants.lkP, Constants.lkI, Constants.lkD, Constants.lkF, Constants.lkPeak, Constants.lkRamp);
 		configClosed(wristMotors, Constants.wkP, Constants.wkI, Constants.wkD, Constants.wkF, Constants.wkPeak, Constants.wkRamp);
+		liftF.configMotionCruiseVelocity(Constants.lkCruise, Constants.kTimeout);
+		liftF.configMotionAcceleration(Constants.lkAccel, Constants.kTimeout);
+		wrist.configMotionCruiseVelocity(Constants.wkCruise, Constants.kTimeout);
+		wrist.configMotionAcceleration(Constants.wkAccel, Constants.kTimeout);
 	}
 	
 	public static void zeroSensor(BaseMotorController motor){
@@ -188,7 +192,7 @@ public class RobotMap{
 	}
 	public static double calcArmFF(){
 		double math = Math.sin(Input.toRadians(getDegrees(wrist)));
-		double stall = Constants.wkFFCoefficient;
+		double stall = Constants.wkAntiGrav;
 		return -math*stall;
 	}
 	public static double calcArmIntake(){
@@ -203,12 +207,14 @@ public class RobotMap{
     public static void displayStats(){
 		//pid/electrical systems
 		String[] tabs = {"PID","Electrical"};
+		/*
 		Network.put("Right Drive Counts", getPos(dRightF), tabs);
 		Network.put("Right Drive RPM", getRPM(dRightF), tabs);
 		Network.put("Right Drive NativeV", getNative(dRightF), tabs);
 		Network.put("Left Drive Counts", getPos(dLeftF), tabs);
 		Network.put("Left Drive RPM", getRPM(dLeftF), tabs);
 		Network.put("Left Drive NativeV", getNative(dLeftF), tabs);
+		*/
 		Network.put("Lift Counts", getPos(liftF), tabs);
 		Network.put("Lift RPM", getRPM(liftF), tabs);
 		Network.put("Lift NativeV", getNative(liftF), tabs);
