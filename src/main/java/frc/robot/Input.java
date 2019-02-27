@@ -64,6 +64,11 @@ public class Input{
         return Math.max(low,Math.min(high,value));
     }
 
+    public static double interpolate(double a, double b, double x){//given x as a fraction between a and b
+		double math = a+(x*(b-a));
+		return math;
+	}
+
     public static double constrainAngle(double x, double min, double max){
         while(x<min){//constrain angles 0 - 360
             x += max;

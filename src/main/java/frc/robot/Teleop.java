@@ -24,7 +24,7 @@ public class Teleop{
 	private static DigitalInput carriageBot = RobotMap.carriageBot;
 	private static DigitalInput carriageTop = RobotMap.carriageTop;
     /* Targets */
-	private static float dSpeed = 0.3f;//coefficient of drivespeed
+	private static float dSpeed = 0.5f;//coefficient of drivespeed
 	private static int liftState = 0;
 	private static double wristCoefficient = 1;
 	public static double rightTarget;
@@ -58,8 +58,8 @@ public class Teleop{
 		double forward = Input.getLeftY(Input.driver);
 		double turn = Input.getRightX(Input.driver);
 
-		if(Input.dUpPOV.get()) dSpeed=(dSpeed==0.4f)? 0.4f:dSpeed+0.1f;
-		else if(Input.dDownPOV.get()) dSpeed=(dSpeed==0.2f)? 0.2f:dSpeed-0.1f;
+		if(Input.dUpPOV.get()) dSpeed=(dSpeed==0.75f)? 0.75f:dSpeed+0.25f;
+		else if(Input.dDownPOV.get()) dSpeed=(dSpeed==0.25f)? 0.25f:dSpeed-0.25f;
 
 		dVelPID(forward, turn);
 		//arcadeDrive(forward, turn);
@@ -98,30 +98,34 @@ public class Teleop{
 		boolean isLift = Input.getLeftBumper(Input.lifter);
 		double joy = Input.getLeftY(Input.lifter);
 
-		boolean resting = false;
-
-		liftTarget = joy!=0? calcLiftManual(joy):liftTarget;
-
 		if(isLift && Input.getAButton(Input.lifter)) liftState = 1;
 		else if(isLift && Input.getBButton(Input.lifter)) liftState = 2;
 		else if(isLift && Input.getYButton(Input.lifter)) liftState = 3;
 		else if(isLift && Input.getXButton(Input.lifter)) liftState = 4;
 
-		if(wristTarget<0+Constants.kAllowableBehavior && wristPos>0+Constants.kAllowableBehavior){
+		if((wristTarget<0+Constants.kAllowableBehavior && wristPos>0+Constants.kAllowableBehavior)||
+		   (wristTarget>0-Constants.kAllowableBehavior && wristPos<0-Constants.kAllowableBehavior)
+		){
 			if(!carrTop){
 				if(liftPos<Constants.lkHatch2) liftState=3;
 				else liftState = 4;
 			}
 		}
 		
-		if(liftState==1) liftTarget = Constants.lkBottom;
+		if(liftState==1){
+			liftTarget = Constants.lkBottom;
+			wristTarget = RobotMap.getCounts(15);
+		}
 		else if(liftState==2) liftTarget = Constants.lkHatch1;
 		else if(liftState==3) liftTarget = Constants.lkHatch2;
 		else if(liftState==4) liftTarget = Constants.lkHatch3;
+
+		liftTarget = joy!=0? calcLiftManual(joy):liftTarget;
+
 		double targetAdjusted = liftTarget;
 
-		if(Math.abs(wristDeg)<=10 && targetAdjusted<liftPos-Constants.kAllowableBehavior) targetAdjusted=liftPos;
-		else if(wristDeg<-5) Input.limit(9000, 47000, targetAdjusted);
+		if(Math.abs(wristDeg)<=12 && targetAdjusted<liftPos-Constants.kAllowableBehavior) targetAdjusted=liftPos;
+		else if(wristDeg<0) Input.limit(7000, 47000, targetAdjusted);
 
 		targetAdjusted = Input.limit(0, 47000, targetAdjusted);
 
@@ -129,15 +133,13 @@ public class Teleop{
 			targetAdjusted=-1000;
 		}
 		else if(liftPos<=2000 && targetAdjusted<=liftPos+Constants.kAllowableBehavior){
-			resting = true;
+			liftState=0;
 		}
 
 		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? RobotMap.toRPM(liftF.getSelectedSensorVelocity()):0;
 		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? 0.1:0;
-		if(!resting) lMotionPID(targetAdjusted, Constants.lkAntiGrav);
-		else {
-			setLift(0);
-		}
+		if(liftState!=0) lMotionPID(targetAdjusted, Constants.lkAntiGrav);//go limp
+		else setLift(0);
 		//lPosPID(targetAdjusted, antiGrav);
 	}
 
@@ -145,25 +147,33 @@ public class Teleop{
 		boolean stageBot = RobotMap.getSwitch(stage1Bot);
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
 		boolean bump = Input.getRightBumper(Input.lifter);
-		double feed = calcArmFF();
+
+		double joyY = Input.getRightY(Input.lifter);
+		double joyX = Input.getRightX(Input.lifter);
+		double feed = calcWristFF();
 		double wristDeg = RobotMap.getDegrees(wrist);
 		double liftPos = RobotMap.getPos(liftF);
 
-		if(Input.getRightY(Input.lifter)==1) wristTarget = RobotMap.getCounts(90);
-		else if(Input.getRightY(Input.lifter)==-1) wristTarget = RobotMap.getCounts(-90);
-		else if(Math.abs(Input.getRightX(Input.lifter))==1) wristTarget = RobotMap.getCounts(0);
-		if(bump) wristTarget = calcArmIntake();
-
+		if(bump){
+			if(joyY==1) wristTarget = RobotMap.getCounts(90);
+			else if(joyY==-1) wristTarget = RobotMap.getCounts(-90);
+			else if(Math.abs(joyX)==1) wristTarget = RobotMap.getCounts(0);
+		}else{
+			wristTarget = calcWristManual(joyY);
+		}
+		if(Input.getRightTrigger(Input.lifter)>0) wristTarget = calcWristIntake();
+		
 		double targetAdjusted = wristTarget;
 
-		if((wristDeg<20 && wristDeg>=0) && !carrTop) targetAdjusted=Input.limit(RobotMap.getCounts(12), RobotMap.getCounts(170), targetAdjusted);
-		else if((wristDeg>-20 && wristDeg<0) && !carrTop) targetAdjusted=Input.limit(RobotMap.getCounts(-95), RobotMap.getCounts(-12), targetAdjusted);
-		if(liftPos<=5000) targetAdjusted=Input.limit(RobotMap.getCounts(12), RobotMap.getCounts(((5000-liftPos)/5000)*90), targetAdjusted);
+		if((wristDeg<15 && wristDeg>=0) && !carrTop) targetAdjusted=Input.limit(RobotMap.getCounts(12), RobotMap.getCounts(170), targetAdjusted);
+		else if((wristDeg>-15 && wristDeg<0) && !carrTop) targetAdjusted=Input.limit(RobotMap.getCounts(-95), RobotMap.getCounts(-12), targetAdjusted);
+		if(liftPos<=5000) targetAdjusted=Input.limit(RobotMap.getCounts(12), Input.interpolate(RobotMap.getDegrees(280), 100, liftPos/5000), targetAdjusted);
 		targetAdjusted = Input.limit(RobotMap.getCounts(-95), RobotMap.getCounts(170), targetAdjusted);
 		
 		SmartDashboard.putNumber("Wrist Target", targetAdjusted);
 		SmartDashboard.putNumber("Wrist Target Degrees", wristDeg);
-		wMotionPID(targetAdjusted, feed);
+		if(liftState!=0) wMotionPID(targetAdjusted, feed);//go limp
+		else setWrist(0);
 		//wPosPID(targetAdjusted, feed);
 		//setWrist(test);
 	}
@@ -276,7 +286,11 @@ public class Teleop{
 		wrist.set(ControlMode.Position, pos, DemandType.ArbitraryFeedForward, feed);
 	}
 
-	public static double calcArmFF(){
+	public static double calcWristManual(double joy){
+		return RobotMap.getPos(wrist)+(250*joy);
+	}
+
+	public static double calcWristFF(){
 		//i want wind speed accounted for !!
 		double gravity = Math.sin(Math.toRadians(RobotMap.getDegrees(wrist)));//how much gravity affects (0-1)
 		double stall = Constants.wkAntiGrav*wristCoefficient;//how much power to counter max gravity
@@ -286,7 +300,7 @@ public class Teleop{
 		double counterVector = -gravity*(stall+liftInertia);//total power to keep arm stable
 		return Input.limit(counterVector);
 	}
-	public static double calcArmIntake(){
+	public static double calcWristIntake(){
 		double liftPos = RobotMap.getPos(liftF);
 		double liftTop = 40000;//maximum lift counts to optimal pos
 		double liftBot = 5000;//minimum lift to 90 degrees

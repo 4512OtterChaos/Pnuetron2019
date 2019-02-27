@@ -11,7 +11,7 @@ public class Constants{
     public static final double kNominalReverse = -0.05;
     public static final int kTimeout = 30;
     public static final double ikRamp = 0.25;
-    public static final double dkMaxRPM = 500;
+    public static final double dkMaxRPM = 300;
     public static final int kAllowableClosed = 0;
     public static final int kAllowableBehavior = 100;
     public static final int kIdx = 0;
@@ -25,12 +25,12 @@ public class Constants{
     public static double dkRamp = 0.4;
 
     /*
-    wrist flat = 3900(lift)
-    wrist flat = -600(wrist)
-    lift top = 47500(lift)
+    wrist flat = 4000(lift)
+    wrist flat = 1000(wrist)
+    lift top = 47000(lift)
     wrist other flat = 6000(lift)
-    wrist other flat = 1400(wrist)
-    carriage top = 21400(lift)
+    wrist other flat = -1000(wrist)
+    carriage top = 22000(lift)
     */
     public static double lkP = 0.25;
     public static double lkI = 0;
