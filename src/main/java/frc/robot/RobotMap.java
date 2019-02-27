@@ -34,9 +34,9 @@ public class RobotMap{
 	public static VictorSPX intakeR = new VictorSPX(8);
     public static VictorSPX intakeL = new VictorSPX(9);
 
-    public static TalonSRX[] driveMotors = {dRightF, dRightB, dLeftF, dLeftB};
-    public static TalonSRX[] liftMotors = {liftF, liftB};
-    public static TalonSRX[] wristMotors = {wrist};
+    public static TalonSRX[] driveMotors = {dRightF, dRightB, dLeftF, dLeftB};//12.75:1 400 rpm
+    public static TalonSRX[] liftMotors = {liftF, liftB};//5.95:1 800 rpm 
+    public static TalonSRX[] wristMotors = {wrist};//100:1 132 rpm
     public static BaseMotorController[] intakeMotors = {intakeR, intakeL};
 	public static BaseMotorController[] allMotors = {dRightF, dRightB, dLeftF, dLeftB, liftF, liftB, wrist, intakeR, intakeL};
 	

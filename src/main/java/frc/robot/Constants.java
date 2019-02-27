@@ -35,9 +35,9 @@ public class Constants{
     public static double lkP = 0.25;
     public static double lkI = 0;
     public static double lkD = 20;
-    public static double lkF = 0;
+    public static double lkF = 1023/5000;
     public static double lkPeak = 0.6;
-    public static double lkRamp = 0.4;
+    public static double lkRamp = 0.3;
     public static int lkCruise = 1200;
     public static int lkAccel = (int)(lkCruise/0.75);//encoder counts per 100 ms per second
     public static double lkAntiGrav = 0.1;
@@ -46,10 +46,10 @@ public class Constants{
     public static final double lkHatch2=22000;
     public static final double lkHatch3=47000;
 
-    public static double wkP = 0.3;
+    public static double wkP = 0.2;
     public static double wkI = 0;
-    public static double wkD = 10;
-    public static double wkF = 0;
+    public static double wkD = 25;
+    public static double wkF = 1023/1200;
     public static double wkPeak = 0.6;
     public static double wkRamp = 0.3;
     public static int wkCruise = 130;

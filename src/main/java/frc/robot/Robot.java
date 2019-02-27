@@ -20,9 +20,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    autoChoose.addDefault("Hybrid", kHybrid);
     autoChoose.addOption("Auto Forward", kForward);
     autoChoose.addOption("Nothing :)", kNothing);
+    autoChoose.setDefaultOption("Hybrid", kHybrid);
     SmartDashboard.putData("Auto choices", autoChoose);
     //---------------------------------//
     Constants.init();
