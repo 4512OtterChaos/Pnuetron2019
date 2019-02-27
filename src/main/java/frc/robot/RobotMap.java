@@ -186,7 +186,7 @@ public class RobotMap{
 		double percent = counts/Constants.kRotCounts;
 		return percent*360;
 	}
-	public static double degreesToCounts(double degree){
+	public static double getCounts(double degree){
 		double percent = degree/360;
 		return percent*Constants.kRotCounts;
 	}

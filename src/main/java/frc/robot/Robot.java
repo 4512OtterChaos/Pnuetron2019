@@ -12,15 +12,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
-  private static final String kDefault = "Default";
-  private static final String kTest = "Test";
+  private static final String kHybrid = "hybrid";
+  private static final String kForward = "forward";
+  private static final String kNothing = "nothing";
   private String autoSelected;
   private final SendableChooser<String> autoChoose = new SendableChooser<>();
 
   @Override
   public void robotInit() {
-    autoChoose.addOption("Default Auto", kDefault);
-    autoChoose.addOption("Test Auto", kTest);
+    autoChoose.addDefault("Hybrid", kHybrid);
+    autoChoose.addOption("Auto Forward", kForward);
+    autoChoose.addOption("Nothing :)", kNothing);
     SmartDashboard.putData("Auto choices", autoChoose);
     //---------------------------------//
     Constants.init();
@@ -44,12 +46,21 @@ public class Robot extends TimedRobot {
   
   @Override
   public void autonomousInit() {
-    Teleop.init();
+    autoSelected = autoChoose.getSelected();
+    if(autoSelected.equals(kHybrid)){
+      Teleop.init();
+    }else{
+      Autonomous.init(autoSelected);
+    }
   }
 
   @Override
   public void autonomousPeriodic() {
-    Teleop.periodic();
+    if(autoSelected.equals(kHybrid)){
+      Teleop.periodic();
+    }else{
+      Autonomous.periodic();
+    }
   }
 
   @Override

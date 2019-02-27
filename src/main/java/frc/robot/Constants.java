@@ -43,7 +43,7 @@ public class Constants{
     public static double lkAntiGrav = 0.1;
     public static final double lkBottom=0;
     public static final double lkHatch1=4000;
-    public static final double lkHatch2=21500;
+    public static final double lkHatch2=22000;
     public static final double lkHatch3=47000;
 
     public static double wkP = 0.3;
@@ -53,7 +53,7 @@ public class Constants{
     public static double wkPeak = 0.6;
     public static double wkRamp = 0.3;
     public static int wkCruise = 130;
-    public static int wkAccel = (int)(wkCruise/0.5);
+    public static int wkAccel = (int)(wkCruise/0.75);
     public static final double wkAntiGrav = 0.22;//How much PercentOutput is required for the motor to stall while horizontal
 
     
