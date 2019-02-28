@@ -40,25 +40,30 @@ public class Constants{
     public static double lkPeak = 0.6;
     public static double lkRamp = 0.3;
     public static int lkAllowableClosed = 2;
-    public static int lkCruise = 2200;
-    public static int lkAccel = (int)(lkCruise/0.6);//encoder counts per 100 ms per second
+    public static int lkCruise = 2000;
+    public static int lkAccel = (int)(lkCruise/0.75);//encoder counts per 100 ms per second
     public static double lkAntiGrav = 0;
     private static final double lkAntiGravMax = 0.1;
     public static final double lkBottom=0;
     public static final double lkHatch1=4000;
+    public static final double lkLowOver=6500;
     public static final double lkHatch2=24500;
+    public static final double lkCargoIn=29000;
     public static final double lkHatch3=47700;
 
     public static double wkP = 0.3;
     public static double wkI = 0;
     public static double wkD = 25;
     public static double wkF = 1023/1300.0;
-    public static double wkPeak = 0.7;
+    public static double wkPeak = 0.9;
     public static double wkRamp = 0.3;
     public static int wkCruise = 800;
-    public static int wkAccel = (int)(wkCruise/0.75);
+    public static int wkAccel = (int)(wkCruise/1);
     public static final double wkAntiGrav = 0.25;//How much PercentOutput is required for the motor to stall while horizontal
-
+    public static final int wkMinB = -95;
+    public static final int wkMaxB = -75;
+    public static final int wkMinF = 13;
+    public static final int wkMaxF = 170;
     
     /* 
     PIDConfig pid = new PIDConfig(motors[], subsystem, 

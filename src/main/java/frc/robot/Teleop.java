@@ -32,6 +32,7 @@ public class Teleop{
 	public static double liftTarget;
 	public static double wristTarget;
 	public static boolean wristOver = false;
+	public static boolean wristWantOver = false;
 
     public static void init(){
 		//*
@@ -127,9 +128,14 @@ public class Teleop{
 
 		double targetAdjusted = liftTarget;
 
-		if((wristDeg<=10 && wristDeg>=-66) && targetAdjusted<liftPos-Constants.kAllowableBehavior) targetAdjusted=liftPos;
+		if((wristDeg<=10 && wristDeg>=-66) && targetAdjusted<liftPos-Constants.kAllowableBehavior){//null zone
+			if(liftPos<Constants.lkHatch2+2500)
+				targetAdjusted=Constants.lkHatch2;
+			else if(liftPos<Constants.lkHatch3+500)
+				targetAdjusted=Constants.lkHatch3;
+		}
 		
-		if(wristOver) Input.limit(7000, Constants.lkHatch3, targetAdjusted);
+		if(wristOver) targetAdjusted=Math.max(Constants.lkLowOver, targetAdjusted);
 
 		targetAdjusted = Input.limit(Constants.lkBottom, Constants.lkHatch3, targetAdjusted);
 
@@ -143,7 +149,8 @@ public class Teleop{
 		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? RobotMap.toRPM(liftF.getSelectedSensorVelocity()):0;
 		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? 0.1:0;
 		SmartDashboard.putNumber("Lift Target", targetAdjusted);
-		if(liftState!=0) lMotionPID(targetAdjusted);//go limp
+		double antiGrav = (liftPos<5000)? Constants.lkAntiGrav*((5000-liftPos)/5000.0):0;
+		if(liftState!=0) lMotionPID(targetAdjusted);
 		else{
 			setLift(0);
 			liftTarget=0;
@@ -160,12 +167,13 @@ public class Teleop{
 		double feed = calcWristFF();
 		double wristDeg = RobotMap.getDegrees(wrist);
 		double liftPos = RobotMap.getPos(liftF);
-		double wristMinB = -95;
-		double wristMaxB = -70;
-		double wristMinF = 13;
-		double wristMaxF = 170;
+		double wristMinB = RobotMap.getCounts(Constants.wkMinB);
+		double wristMaxB = RobotMap.getCounts(Constants.wkMaxB);
+		double wristMinF = RobotMap.getCounts(Constants.wkMinF);
+		double wristMaxF = RobotMap.getCounts(Constants.wkMaxF);
 
-		wristOver = wristDeg<-1;
+		wristOver = wristDeg<1;
+		wristWantOver = RobotMap.getDegrees(wristTarget)<1;
 
 		if(bump){
 			if(joyY==1) wristTarget = RobotMap.getCounts(90);
@@ -178,22 +186,20 @@ public class Teleop{
 		
 		double targetAdjusted = wristTarget;
 
-		if(wristOver && !carrTop)
-			targetAdjusted=Math.min(RobotMap.getCounts(wristMaxB), targetAdjusted);
-		else if(!wristOver && !carrTop)
-			targetAdjusted=Math.max(RobotMap.getCounts(wristMinF), targetAdjusted);
-		if(liftPos<=29000 && !wristOver)
-			targetAdjusted=Input.limit(RobotMap.getCounts(wristMinF), Input.interpolate(280, RobotMap.getCounts(wristMaxF), liftPos/29000.0), targetAdjusted);
+		if(liftPos<=Constants.lkCargoIn && !wristOver && !wristWantOver)//avoid chassis
+			targetAdjusted=Math.min(targetAdjusted,
+			((wristMaxF-wristMinF)*((liftPos-100)/Constants.lkCargoIn))+wristMinF);
+		if(wristOver && !carrTop)//avoid elevator
+			targetAdjusted=Math.min(wristMaxB, targetAdjusted);
+		else if(!wristOver && !carrTop)//avoid elevator
+			targetAdjusted=Math.max(wristMinF, targetAdjusted);
 		
 		targetAdjusted = Input.limit(RobotMap.getCounts(wristMinB), RobotMap.getCounts(wristMaxF), targetAdjusted);
 		
-		SmartDashboard.putNumber("Wrist Target", wristTarget);
-		SmartDashboard.putNumber("Wrist TargetA Degrees", RobotMap.getDegrees(targetAdjusted));
-		SmartDashboard.putNumber("Wrist Target Degrees", RobotMap.getDegrees(wristTarget));
+		Network.put("Wrist ATarDeg", RobotMap.getDegrees(targetAdjusted));
 		if(liftState!=0) wMotionPID(targetAdjusted, feed);//go limp
 		else{
-			setWrist(0);
-			wristTarget = 280;
+			wMotionPID(300);
 		}
 		//wPosPID(targetAdjusted, feed);
 		//setWrist(test);
@@ -318,16 +324,16 @@ public class Teleop{
 		double liftInertia = liftF.getMotorOutputPercent()/6.0;//how much power to counter lift movement
 		double driveInertia = (dRightF.getMotorOutputPercent()+dLeftF.getMotorOutputPercent())/2.0;//forward heading
 		driveInertia*=Math.cos(Math.toRadians(RobotMap.getDegrees(wrist)));//how much power to counter drive movement
-		double counterVector = -gravity*(stall+liftInertia);//total power to keep arm stable
+		double counterVector = -gravity*(stall);//total power to keep arm stable
 		return Input.limit(counterVector);
 	}
 	public static double calcWristIntake(){
 		double liftPos = RobotMap.getPos(liftF);
-		double liftTop = 40000;//maximum lift counts to optimal pos
+		double liftTop = Constants.lkCargoIn;//maximum lift counts to optimal pos
 		double liftBot = 5000;//minimum lift to 90 degrees
 		double degTop = 170;
 		double degBot = 90;
-		liftPos = Input.limit(5000, 40000, liftPos);
+		liftPos = Input.limit(liftBot, liftTop, liftPos);
 		liftPos-=liftBot;
 		liftTop-=liftBot;
 		liftBot=0;
@@ -367,5 +373,9 @@ public class Teleop{
 	}
 
 	public static void displayStats(){
+		String[] tabs = {"Drive","PID"};
+		Network.put("Wrist Target", wristTarget, tabs);
+		Network.put("Wrist TarDeg", RobotMap.getDegrees(wristTarget), tabs);
+		Network.put("Lift  Target", liftTarget);
 	}
 }

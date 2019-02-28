@@ -199,7 +199,6 @@ public class RobotMap{
 
     public static void displayStats(){
 		//pid/electrical systems
-		String[] tabs = {"PID","Electrical"};
 		/*
 		Network.put("Right Drive Counts", getPos(dRightF), tabs);
 		Network.put("Right Drive RPM", getRPM(dRightF), tabs);
@@ -208,23 +207,24 @@ public class RobotMap{
 		Network.put("Left Drive RPM", getRPM(dLeftF), tabs);
 		Network.put("Left Drive NativeV", getNative(dLeftF), tabs);
 		*/
+		String[] tabs = {"PID","Drive"};
 		Network.put("Lift Counts", getPos(liftF), tabs);
-		Network.put("Lift RPM", getRPM(liftF), tabs);
-		Network.put("Lift NativeV", getNative(liftF), tabs);
+		Network.put("Lift RPM", getRPM(liftF), "PID");
+		Network.put("Lift NativeV", getNative(liftF), "PID");
 		Network.put("Wrist Counts", getPos(wrist), tabs);
-		Network.put("Wrist RPM", getRPM(wrist), tabs);
-		Network.put("Wrist NativeV", getNative(wrist), tabs);
+		Network.put("Wrist RPM", getRPM(wrist), "PID");
+		Network.put("Wrist NativeV", getNative(wrist), "PID");
 		Network.put("Wrist Degree", getDegrees(wrist), tabs);
 		//pid
 		double[] dPIDMap = {toRPM(Teleop.rightTarget), getRPM(dRightF), toRPM(Teleop.leftTarget), getRPM(dLeftF)};
-		double[] lPIDMap = {toRPM(Teleop.liftTarget), getRPM(liftF)};
-		double[] wPIDMap = {toRPM(Teleop.wristTarget), getRPM(wrist)};
-		SmartDashboard.putNumberArray("Drive PID Map", dPIDMap);
-		SmartDashboard.putNumberArray("Lift PID Map", lPIDMap);
-		SmartDashboard.putNumberArray("Wrist PID Map", wPIDMap);
-		//Network.putArr("Drive PID Map", dPIDMap, "PID");
-		//Network.putArr("Lift PID Map", lPIDMap, "PID");
-		//Network.putArr("Wrist PID Map", wPIDMap, "PID");
+		double[] lPIDMap = {Teleop.liftTarget, getPos(liftF)};
+		double[] wPIDMap = {Teleop.wristTarget, getPos(wrist)};
+		//SmartDashboard.putNumberArray("Drive PID Map", dPIDMap);
+		//SmartDashboard.putNumberArray("Lift PID Map", lPIDMap);
+		//SmartDashboard.putNumberArray("Wrist PID Map", wPIDMap);
+		Network.putArr("Drive PID Map", dPIDMap, "PID");
+		Network.putArr("Lift PID Map", lPIDMap, "PID");
+		Network.putArr("Wrist PID Map", wPIDMap, "PID");
 		//electrical
 		Network.put("Compressor Current", compressor.getCompressorCurrent(), "Electrical");
 		Network.put("Compressor Switch", compressor.getPressureSwitchValue(), "Electrical");
