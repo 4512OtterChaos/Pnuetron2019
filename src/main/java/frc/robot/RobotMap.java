@@ -111,6 +111,7 @@ public class RobotMap{
 		configClosed(wristMotors, Constants.wkP, Constants.wkI, Constants.wkD, Constants.wkF, Constants.wkPeak, Constants.wkRamp);
 		liftF.configMotionCruiseVelocity(Constants.lkCruise, Constants.kTimeout);
 		liftF.configMotionAcceleration(Constants.lkAccel, Constants.kTimeout);
+		liftF.configAllowableClosedloopError(Constants.kIdx, Constants.lkAllowableClosed, Constants.kTimeout);
 		wrist.configMotionCruiseVelocity(Constants.wkCruise, Constants.kTimeout);
 		wrist.configMotionAcceleration(Constants.wkAccel, Constants.kTimeout);
 	}

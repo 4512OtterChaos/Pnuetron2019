@@ -28,6 +28,7 @@ public class Constants{
     wrist flat = 4000(lift)
     wrist flat = 1000(wrist)
     lift top = 47000(lift)
+    lift cargo intake = 29000(lift)
     wrist other flat = 6000(lift)
     wrist other flat = -1000(wrist)
     carriage top = 22000(lift)
@@ -35,26 +36,28 @@ public class Constants{
     public static double lkP = 0.25;
     public static double lkI = 0;
     public static double lkD = 20;
-    public static double lkF = 1023/5000;
+    public static double lkF = 1023/5000.0;
     public static double lkPeak = 0.6;
     public static double lkRamp = 0.3;
-    public static int lkCruise = 1200;
-    public static int lkAccel = (int)(lkCruise/0.75);//encoder counts per 100 ms per second
-    public static double lkAntiGrav = 0.1;
+    public static int lkAllowableClosed = 2;
+    public static int lkCruise = 2200;
+    public static int lkAccel = (int)(lkCruise/0.6);//encoder counts per 100 ms per second
+    public static double lkAntiGrav = 0;
+    private static final double lkAntiGravMax = 0.1;
     public static final double lkBottom=0;
     public static final double lkHatch1=4000;
-    public static final double lkHatch2=22000;
-    public static final double lkHatch3=47000;
+    public static final double lkHatch2=24500;
+    public static final double lkHatch3=47700;
 
-    public static double wkP = 0.2;
+    public static double wkP = 0.3;
     public static double wkI = 0;
     public static double wkD = 25;
-    public static double wkF = 1023/1200;
-    public static double wkPeak = 0.6;
+    public static double wkF = 1023/1300.0;
+    public static double wkPeak = 0.7;
     public static double wkRamp = 0.3;
-    public static int wkCruise = 130;
+    public static int wkCruise = 800;
     public static int wkAccel = (int)(wkCruise/0.75);
-    public static final double wkAntiGrav = 0.22;//How much PercentOutput is required for the motor to stall while horizontal
+    public static final double wkAntiGrav = 0.25;//How much PercentOutput is required for the motor to stall while horizontal
 
     
     /* 
@@ -84,6 +87,12 @@ public class Constants{
         */
     }
     public static void update(){
+        double lift = RobotMap.liftF.getMotorOutputPercent();
+        if(lift<-0.05){
+            lkAntiGrav=-(lkAntiGravMax*lift);
+        }else{
+            lkAntiGrav=0;
+        }
         /*
         drivePID.update();
         liftPID.update();

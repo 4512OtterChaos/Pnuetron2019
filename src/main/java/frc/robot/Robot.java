@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     Teleop.disable();
     Input.backLime.lightOff();
+    Input.frontLime.lightOff();
   }
   
   @Override

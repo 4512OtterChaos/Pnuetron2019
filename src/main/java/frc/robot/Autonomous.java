@@ -17,7 +17,7 @@ public class Autonomous {
                 //haha nothing
                 break;
             default://cross line
-                schedule("line", 4);
+                schedule("line", 1);
                 break;
         }
     }
@@ -29,9 +29,9 @@ public class Autonomous {
                 break;
             default://cross line
                 if(schedule("line")){
-                    Teleop.dVelPID(1, 0);
+                    Teleop.dVelPID(0.2, 0);
                 }else{
-                    Teleop.dVelPID(1, 0);
+                    Teleop.dVelPID(0, 0);
                 }
                 break;
         }
