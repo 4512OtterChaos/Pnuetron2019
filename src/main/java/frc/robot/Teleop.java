@@ -146,11 +146,18 @@ public class Teleop{
 			liftState=0;
 		}
 
+		if(liftPos<=Constants.lkHatch1){
+			RobotMap.configAccel((int)(Constants.lkCruise/(Constants.lkAccelTime*1.5)), liftF);
+		}
+		else {
+			RobotMap.configAccel((int)(Constants.lkCruise/(Constants.lkAccelTime)), liftF);
+		}
+
+
 		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? RobotMap.toRPM(liftF.getSelectedSensorVelocity()):0;
 		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? 0.1:0;
 		SmartDashboard.putNumber("Lift Target", targetAdjusted);
-		double antiGrav = (liftPos<5000)? Constants.lkAntiGrav*((5000-liftPos)/5000.0):0;
-		if(liftState!=0) lMotionPID(targetAdjusted);
+		if(liftState!=0) lMotionPID(targetAdjusted, 0.05);
 		else{
 			setLift(0);
 			liftTarget=0;

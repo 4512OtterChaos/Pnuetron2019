@@ -8,10 +8,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
+  private static double mTime = -1;
+  private static double rumbleTime = 0.1;
   private static final String kHybrid = "hybrid";
   private static final String kForward = "forward";
   private static final String kNothing = "nothing";
@@ -36,6 +39,9 @@ public class Robot extends TimedRobot {
     Input.displayStats();
     Teleop.displayStats();
     RobotMap.displayStats();
+    mTime = Timer.getMatchTime();
+    Network.put("Robot Elapsed", Timer.getFPGATimestamp(), "Drive");
+    Network.put("Game Time", mTime, "Drive");
   }
 
   @Override
@@ -62,6 +68,14 @@ public class Robot extends TimedRobot {
     }else{
       Autonomous.periodic();
     }
+    if(mTime<5+rumbleTime && mTime>=5){
+      Input.setRumble(1, Input.driver);
+      Input.setRumble(1, Input.lifter);
+    }
+    else{
+      Input.setRumble(0, Input.driver);
+      Input.setRumble(0, Input.lifter);
+    }
   }
 
   @Override
@@ -72,5 +86,17 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Teleop.periodic();
+    if(mTime<30+rumbleTime && mTime>=30){
+      Input.setRumble(0.5, Input.driver);
+      Input.setRumble(0.5, Input.lifter);
+    }
+    else if(mTime<15+rumbleTime && mTime>=15){
+      Input.setRumble(1, Input.driver);
+      Input.setRumble(1, Input.lifter);
+    }
+    else{
+      Input.setRumble(0, Input.driver);
+      Input.setRumble(0, Input.lifter);
+    }
   }
 }

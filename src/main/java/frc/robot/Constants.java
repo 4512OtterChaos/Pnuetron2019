@@ -41,9 +41,9 @@ public class Constants{
     public static double lkRamp = 0.3;
     public static int lkAllowableClosed = 2;
     public static int lkCruise = 2000;
-    public static int lkAccel = (int)(lkCruise/0.75);//encoder counts per 100 ms per second
-    public static double lkAntiGrav = 0;
-    private static final double lkAntiGravMax = 0.1;
+    public static double lkAccelTime = 0.75;//seconds
+    public static int lkAccel = (int)(lkCruise/lkAccelTime);//encoder counts per 100 ms per second
+    public static final double lkAntiGrav = 0.1;
     public static final double lkBottom=0;
     public static final double lkHatch1=4000;
     public static final double lkLowOver=6500;
@@ -58,7 +58,8 @@ public class Constants{
     public static double wkPeak = 0.9;
     public static double wkRamp = 0.3;
     public static int wkCruise = 800;
-    public static int wkAccel = (int)(wkCruise/1);
+    public static double wkAccelTime = 1;//seconds
+    public static int wkAccel = (int)(wkCruise/wkAccelTime);
     public static final double wkAntiGrav = 0.25;//How much PercentOutput is required for the motor to stall while horizontal
     public static final int wkMinB = -95;
     public static final int wkMaxB = -75;
@@ -92,12 +93,6 @@ public class Constants{
         */
     }
     public static void update(){
-        double lift = RobotMap.liftF.getMotorOutputPercent();
-        if(lift<-0.05){
-            lkAntiGrav=-(lkAntiGravMax*lift);
-        }else{
-            lkAntiGrav=0;
-        }
         /*
         drivePID.update();
         liftPID.update();

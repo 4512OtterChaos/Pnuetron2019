@@ -109,11 +109,11 @@ public class RobotMap{
 		configClosed(driveMotors, Constants.dkP, Constants.dkI, Constants.dkD, Constants.dkF, Constants.dkPeak, Constants.dkRamp);
 		configClosed(liftMotors, Constants.lkP, Constants.lkI, Constants.lkD, Constants.lkF, Constants.lkPeak, Constants.lkRamp);
 		configClosed(wristMotors, Constants.wkP, Constants.wkI, Constants.wkD, Constants.wkF, Constants.wkPeak, Constants.wkRamp);
-		liftF.configMotionCruiseVelocity(Constants.lkCruise, Constants.kTimeout);
-		liftF.configMotionAcceleration(Constants.lkAccel, Constants.kTimeout);
 		liftF.configAllowableClosedloopError(Constants.kIdx, Constants.lkAllowableClosed, Constants.kTimeout);
-		wrist.configMotionCruiseVelocity(Constants.wkCruise, Constants.kTimeout);
-		wrist.configMotionAcceleration(Constants.wkAccel, Constants.kTimeout);
+		configCruise(Constants.lkCruise, liftF);
+		configAccel(Constants.lkAccel, liftF);
+		configCruise(Constants.wkCruise, wrist);
+		configAccel(Constants.wkAccel, wrist);
 	}
 	
 	public static void zeroSensor(BaseMotorController motor){
@@ -146,6 +146,12 @@ public class RobotMap{
         for(BaseMotorController motor:motors){
             motor.configFactoryDefault();
         }
+	}
+	public static void configCruise(int uPer100ms, BaseMotorController motor){
+		motor.configMotionCruiseVelocity(uPer100ms, Constants.kTimeout);
+	}
+	public static void configAccel(int uPer100msPer1s, BaseMotorController motor){
+		motor.configMotionAcceleration(uPer100msPer1s, Constants.kTimeout);
 	}
 	public static void configPID(TalonSRX motor, double p, double i, double d, double f){
 		motor.config_kP(Constants.kIdx, p, Constants.kTimeout);

@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.sensors.PigeonIMU;
 public class Input{
@@ -141,6 +142,10 @@ public class Input{
     }
     public static boolean getRightStickReleased(XboxController controller){
         return controller.getStickButtonReleased(KRIGHT);
+    }
+    public static void setRumble(double value, XboxController controller){
+        controller.setRumble(RumbleType.kLeftRumble, value);
+        controller.setRumble(RumbleType.kRightRumble, value);
     }
 
     public static void displayStats(){
