@@ -47,6 +47,10 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     Teleop.disable();
+  }
+
+  @Override
+  public void disabledPeriodic() {
     Input.backLime.lightOff();
     Input.frontLime.lightOff();
   }
@@ -65,16 +69,17 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     if(autoSelected.equals(kHybrid)){
       Teleop.periodic();
-    }else{
-      Autonomous.periodic();
-    }
-    if(mTime<5+rumbleTime && mTime>=5){
-      Input.setRumble(1, Input.driver);
-      Input.setRumble(1, Input.lifter);
+      if(mTime<5+rumbleTime && mTime>=5){
+        Input.setRumble(1, Input.driver);
+        Input.setRumble(1, Input.lifter);
+      }
+      else{
+        Input.setRumble(0, Input.driver);
+        Input.setRumble(0, Input.lifter);
+      }
     }
     else{
-      Input.setRumble(0, Input.driver);
-      Input.setRumble(0, Input.lifter);
+      Autonomous.periodic();
     }
   }
 

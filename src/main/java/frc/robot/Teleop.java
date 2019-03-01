@@ -32,7 +32,7 @@ public class Teleop{
 	public static double liftTarget;
 	public static double wristTarget;
 	public static boolean wristOver = false;
-	public static boolean wristWantOver = false;
+	public static boolean wristWantFlip = false;
 
     public static void init(){
 		//*
@@ -105,13 +105,6 @@ public class Teleop{
 		else if(isLift && Input.getBButton(Input.lifter)) liftState = 2;
 		else if(isLift && Input.getXButton(Input.lifter)) liftState = 3;
 		else if(isLift && Input.getYButton(Input.lifter)) liftState = 4;
-
-		if((wristOver&&wristTarget>0-Constants.kAllowableBehavior)||(!wristOver && wristTarget<0+Constants.kAllowableBehavior)){
-			if(!carrTop){
-				if(liftPos<Constants.lkHatch2) liftState=3;
-				else liftState = 4;
-			}
-		}
 		
 		if(liftState==1){
 			liftTarget = Constants.lkBottom;
@@ -120,6 +113,10 @@ public class Teleop{
 		else if(liftState==2) liftTarget = Constants.lkHatch1;
 		else if(liftState==3) liftTarget = Constants.lkHatch2;
 		else if(liftState==4) liftTarget = Constants.lkHatch3;
+		else if(liftState==5){
+			if(wristOver) liftTarget = Constants.lkLowOver;
+			wristTarget=RobotMap.getCounts(-90);
+		}
 
 		if(joy!=0){
 			liftTarget=calcLiftManual(joy);
@@ -128,10 +125,15 @@ public class Teleop{
 
 		double targetAdjusted = liftTarget;
 
-		if((wristDeg<=10 && wristDeg>=-66) && targetAdjusted<liftPos-Constants.kAllowableBehavior){//null zone
-			if(liftPos<Constants.lkHatch2+2500)
+		if(wristWantFlip && !carrTop){
+			if(liftPos<Constants.lkHatch2) liftState=3;
+			else liftState = 4;
+		}
+
+		if((wristDeg<=10 && wristDeg>=-66) && liftTarget<liftPos-Constants.kAllowableBehavior){//null zone
+			if(liftPos<Constants.lkHatch2+Constants.kAllowableBehavior)
 				targetAdjusted=Constants.lkHatch2;
-			else if(liftPos<Constants.lkHatch3+500)
+			else if(liftPos<Constants.lkHatch3+Constants.kAllowableBehavior)
 				targetAdjusted=Constants.lkHatch3;
 		}
 		
@@ -180,7 +182,7 @@ public class Teleop{
 		double wristMaxF = RobotMap.getCounts(Constants.wkMaxF);
 
 		wristOver = wristDeg<1;
-		wristWantOver = RobotMap.getDegrees(wristTarget)<1;
+		wristWantFlip = (wristOver)? RobotMap.getDegrees(wristTarget)>-1:RobotMap.getDegrees(wristTarget)<1;
 
 		if(bump){
 			if(joyY==1) wristTarget = RobotMap.getCounts(90);
@@ -193,7 +195,7 @@ public class Teleop{
 		
 		double targetAdjusted = wristTarget;
 
-		if(liftPos<=Constants.lkCargoIn && !wristOver && !wristWantOver)//avoid chassis
+		if(liftPos<=Constants.lkCargoIn && !wristOver && !wristWantFlip)//avoid chassis
 			targetAdjusted=Math.min(targetAdjusted,
 			((wristMaxF-wristMinF)*((liftPos-100)/Constants.lkCargoIn))+wristMinF);
 		if(wristOver && !carrTop)//avoid elevator
