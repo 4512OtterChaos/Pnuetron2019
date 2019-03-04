@@ -198,7 +198,7 @@ public class Teleop{
 
 		double targetAdjusted = liftTarget;
 
-		if(wristWantFlip && !carrTop){
+		if(wristWantOver && !carrTop){
 			if(liftPos<Constants.lkHatch2) liftState=3;
 			else liftState = 4;
 		}
