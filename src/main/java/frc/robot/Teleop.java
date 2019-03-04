@@ -26,24 +26,29 @@ public class Teleop{
     /* Targets */
 	private static float dSpeed = 0.5f;//coefficient of drivespeed
 	private static int liftState = 0;
-	private static boolean liftSticky = false;
+	
 	private static int wristState = 1;
 	private static double wristCoefficient = 1;
 	public static double rightTarget;
 	public static double leftTarget;
-	public static boolean driveFlip = false;
+	
 	public static double liftTarget;
 	public static double wristTarget=280;
-	public static boolean wristOver = false;
-	public static boolean wristWantOver = false;
-	public static boolean wristHasHatch = false;
-	public static boolean wristHasCargo = false;
-	public static boolean wristTest = false;
-	private static boolean wristTestDe = false;
-	public static boolean intakeBackdrive = false;
+	
 	public static double liftRumble = 0;
 	public static double driveRumble = 0;
 	public static double matchRumble = 0;
+	/* Behavior */
+	private static boolean driveFlip = false;
+	private static boolean liftSticky = false;
+	private static boolean wristOver = false;
+	private static boolean wristWantOver = false;
+	private static boolean wristHasHatch = false;
+	private static boolean wristHasCargo = false;
+	private static boolean wristTest = false;
+	private static boolean wristTestDe = false;
+	private static boolean intakeBackdrive = false;
+
 
     public static void init(){
 		//*
@@ -108,7 +113,14 @@ public class Teleop{
 			driveRumble=0;
 		}
 
-		dVelPID(forward, turn);
+		if(!Input.getRightStick(Input.driver)){
+			dVelPID(forward, turn);
+		}
+		else{
+			double r = arcadeMath(forward, turn, true);
+			double l = arcadeMath(forward, turn, false);
+			setDrive(l,r);
+		}
 		//arcadeDrive(forward, turn);
 		//setDrive(forward, forward);
 	}
@@ -228,9 +240,6 @@ public class Teleop{
 			RobotMap.configAccel((int)(Constants.lkCruise/(Constants.lkAccelTime)), liftF);
 		}
 
-
-		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? RobotMap.toRPM(liftF.getSelectedSensorVelocity()):0;
-		//double antiGrav = (liftF.getClosedLoopTarget()-liftF.getSelectedSensorPosition()<-Constants.kAllowableBehavior)? 0.1:0;
 		SmartDashboard.putNumber("Lift Target", targetAdjusted);
 		if(liftState!=0) lMotionPID(targetAdjusted, 0.05);
 		else{
@@ -375,9 +384,13 @@ public class Teleop{
 	 */
 	private static double arcadeMath(double forward, double turn, boolean right){
 		forward*=dSpeed;
-		turn*=dSpeed*1.75;
+		turn*=dSpeed;//1.75
 		if(right) return Input.limit(forward-turn);
 		else return Input.limit(forward+turn);
+	}
+	private static double arcadeMathRaw(double forward, double turn, boolean right){
+		if(right) return (forward-turn);
+		else return (forward+turn);
 	}
 	
 	/**
@@ -477,7 +490,7 @@ public class Teleop{
 	public static void setIntake(double x){
 		x*=(x<0)? 0.3:1;
 		intakeR.set(ControlMode.PercentOutput, x);
-		intakeL.set(ControlMode.PercentOutput, (x)+((x!=0)? ((x<0)?-0.15:0.15):0));
+		intakeL.set(ControlMode.PercentOutput, (x)+((x!=0)? ((x<0)? -0.15:0.15):0));
 	}
 	//basic solenoid control
 	public static void setSolenoid(Solenoid valve, boolean state){
