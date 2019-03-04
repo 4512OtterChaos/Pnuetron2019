@@ -198,10 +198,15 @@ public class Teleop{
 
 		double targetAdjusted = liftTarget;
 
-		if((wristDeg<=10 && wristDeg>=-66) && targetAdjusted<liftPos-Constants.kAllowableBehavior){//null zone
-			if(liftPos<Constants.lkHatch2+2500)
+		if(wristWantFlip && !carrTop){
+			if(liftPos<Constants.lkHatch2) liftState=3;
+			else liftState = 4;
+		}
+
+		if((wristDeg<=10 && wristDeg>=-66) && liftTarget<liftPos-Constants.kAllowableBehavior){//null zone
+			if(liftPos<Constants.lkHatch2+Constants.kAllowableBehavior)
 				targetAdjusted=Constants.lkHatch2;
-			else if(liftPos<Constants.lkHatch3+500)
+			else if(liftPos<Constants.lkHatch3+Constants.kAllowableBehavior)
 				targetAdjusted=Constants.lkHatch3;
 		}
 		
