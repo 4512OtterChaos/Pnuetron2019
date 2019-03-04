@@ -28,6 +28,7 @@ public class Network{
             SmartDashboard.putNumberArray(key, (double[])value);
     }
     private static void checkShuffle(String key, Object value, String tab){
+        /* //use networktables for sshuffleboard
         boolean repeat = false;
         int id = 0;
         NetworkTableEntry entry;
@@ -40,21 +41,12 @@ public class Network{
         if(repeat){
             entry = objects.get(id);
             entry.setValue(value);
-            /*
-            if(value instanceof String)
-                entry.setString((String)value);
-            else if(value instanceof Boolean)
-                entry.setBoolean((boolean)value);
-            else if(value instanceof Double || value instanceof Integer)
-                entry.setDouble((double)value);
-            else if(value instanceof Double[] || value instanceof Integer[])
-                entry.setDoubleArray((double[])value);
-            */
         }else{
             entry = Shuffleboard.getTab(tab).add(key, value).getEntry();
             keys.add(key+tab);
             objects.add(entry);
         }
+        */
     }
     private static void checkShuffle(String key, Object value, String tab, WidgetType widget){
         boolean repeat = false;

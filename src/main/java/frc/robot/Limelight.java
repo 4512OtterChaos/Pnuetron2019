@@ -57,6 +57,19 @@ public class Limelight{
         lightMode.setNumber(3);
     }
 
+    public void toggleCam(){
+        NetworkTableEntry camMode = table.getEntry("camMode");
+        camMode.setNumber((camMode.getDouble(0)==0)? 1:0);
+    }
+    public void camDriver(){
+        NetworkTableEntry camMode = table.getEntry("camMode");
+        camMode.setNumber(1);
+    }
+    public void camTarget(){
+        NetworkTableEntry camMode = table.getEntry("camMode");
+        camMode.setNumber(0);
+    }
+
     public void shiftPipe(){
         NetworkTableEntry pipe = table.getEntry("pipeline");
         pipe.setNumber(pipe.getDouble(0)+1);

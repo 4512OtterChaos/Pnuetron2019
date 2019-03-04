@@ -147,6 +147,10 @@ public class Input{
         controller.setRumble(RumbleType.kLeftRumble, value);
         controller.setRumble(RumbleType.kRightRumble, value);
     }
+    public static void setRumble(double value, XboxController controller, boolean rightSide){
+        if(rightSide) controller.setRumble(RumbleType.kRightRumble, value);
+        else controller.setRumble(RumbleType.kLeftRumble, value);
+    }
 
     public static void displayStats(){
         SmartDashboard.putNumber("Drive Turn", getRightX(driver));

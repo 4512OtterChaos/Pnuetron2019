@@ -63,18 +63,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    if(mTime<5+rumbleTime && mTime>=5){
+      Teleop.matchRumble=1;
+    }
+    else{
+      Teleop.matchRumble=0;
+    }
     if(autoSelected.equals(kHybrid)){
       Teleop.periodic();
     }else{
       Autonomous.periodic();
-    }
-    if(mTime<5+rumbleTime && mTime>=5){
-      Input.setRumble(1, Input.driver);
-      Input.setRumble(1, Input.lifter);
-    }
-    else{
-      Input.setRumble(0, Input.driver);
-      Input.setRumble(0, Input.lifter);
     }
   }
 
@@ -85,18 +83,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    Teleop.periodic();
     if(mTime<30+rumbleTime && mTime>=30){
-      Input.setRumble(0.5, Input.driver);
-      Input.setRumble(0.5, Input.lifter);
+      Teleop.matchRumble=0.5;
     }
     else if(mTime<15+rumbleTime && mTime>=15){
-      Input.setRumble(1, Input.driver);
-      Input.setRumble(1, Input.lifter);
+      Teleop.matchRumble=1;
     }
     else{
-      Input.setRumble(0, Input.driver);
-      Input.setRumble(0, Input.lifter);
+      Teleop.matchRumble=0;
     }
+    Teleop.periodic();
   }
 }
