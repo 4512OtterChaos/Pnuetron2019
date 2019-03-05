@@ -40,12 +40,12 @@ public class Constants{
     public static double lkPeak = 0.75;
     public static double lkRamp = 0.2;
     public static int lkAllowableClosed = 2;
-    public static int lkCruise = 2700;
+    public static int lkCruise = 3200;
     public static double lkAccelTime = 0.75;//seconds
     public static int lkAccel = (int)(lkCruise/lkAccelTime);//encoder counts per 100 ms per second
     public static final double lkAntiGrav = 0.15;
     public static final double lkBottom=0;
-    public static final double lkHatch1=4650;
+    public static final double lkHatch1=4750;
     public static final double lkLowOver=6000;
     public static final double lkHatch2=24500;
     public static final double lkCargoIn=28200;
@@ -62,6 +62,8 @@ public class Constants{
     public static int wkCruise = 100;//250
     public static double wkAccelTime = 0.8;//seconds (1.1)
     public static int wkAccel = (int)(wkCruise/wkAccelTime);
+    public static final double wkHatchOutF = 80;
+    public static final double wkHatchOutB = -85;
     //behavior
     public static double wkAntiGrav = 0.25;//How much PercentOutput is required for the motor to stall while horizontal
     public static double wkAntiHatch = 0.00;

@@ -26,8 +26,9 @@ public class Robot extends TimedRobot {
     autoChoose.addOption("Auto Forward", kForward);
     autoChoose.addOption("Nothing :)", kNothing);
     autoChoose.setDefaultOption("Hybrid", kHybrid);
-    SmartDashboard.putData("Auto choices", autoChoose);
+    Network.put("Auto choices", autoChoose);
     //---------------------------------//
+    Network.init();
     Constants.init();
     Input.init();
     RobotMap.config();
@@ -40,8 +41,8 @@ public class Robot extends TimedRobot {
     Teleop.displayStats();
     RobotMap.displayStats();
     mTime = Timer.getMatchTime();
-    Network.put("Robot Elapsed", Timer.getFPGATimestamp(), "Drive");
-    Network.put("Game Time", mTime, "Drive");
+    Network.put("Robot Elapsed", Timer.getFPGATimestamp());
+    Network.put("Game Time", mTime);
   }
 
   @Override

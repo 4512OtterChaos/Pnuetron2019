@@ -43,6 +43,7 @@ public class Teleop{
 	private static boolean liftSticky = false;
 	private static boolean wristOver = false;
 	private static boolean wristWantOver = false;
+	private static boolean wristNullZone = false;
 	private static boolean wristHasHatch = false;
 	private static boolean wristHasCargo = false;
 	private static boolean wristTest = false;
@@ -117,8 +118,8 @@ public class Teleop{
 			dVelPID(forward, turn);
 		}
 		else{
-			double r = arcadeMath(forward, turn, true);
-			double l = arcadeMath(forward, turn, false);
+			double r = arcadeMathRaw(forward, turn, true);
+			double l = arcadeMathRaw(forward, turn, false);
 			setDrive(l,r);
 		}
 		//arcadeDrive(forward, turn);
@@ -148,6 +149,7 @@ public class Teleop{
 	private static void lift(){
 		//* Lift
 		double liftPos = RobotMap.getPos(liftF);
+		double lastLiftState = liftState;
 		double wristPos = RobotMap.getPos(wrist);
 		double wristDeg = RobotMap.getDegrees(wrist);
 
@@ -192,15 +194,21 @@ public class Teleop{
 		
 		if(liftState==1){
 			liftTarget = Constants.lkBottom;
-			wristTarget = RobotMap.getCounts(16);
+			wristTarget = RobotMap.getCounts(13);
 		}
 		else if(liftState==2) {
 			liftTarget = Constants.lkHatch1;
 			wristTarget = RobotMap.getCounts(95);
 		}
-		else if(liftState==3) liftTarget = Constants.lkHatch2;
+		else if(liftState==3){
+			liftTarget = Constants.lkHatch2;
+			if(lastLiftState==2) wristTarget = RobotMap.getCounts(Constants.wkHatchOutF);
+		}
 		else if(liftState==4) liftTarget = Constants.lkCargoIn;
-		else if(liftState==5) liftTarget = Constants.lkHatch3;
+		else if(liftState==5){
+			liftTarget = Constants.lkHatch3;
+			if(lastLiftState==2) wristTarget = RobotMap.getCounts(Constants.wkHatchOutF);
+		}
 
 		if(joy!=0){
 			liftTarget=calcLiftManual(joy);
@@ -215,7 +223,7 @@ public class Teleop{
 			else liftState = 4;
 		}
 
-		if((wristDeg<=10 && wristDeg>=-66) && liftTarget<liftPos-Constants.kAllowableBehavior){//null zone
+		if(wristNullZone && liftTarget<liftPos-Constants.kAllowableBehavior){//null zone
 			if(liftPos<Constants.lkHatch2+Constants.kAllowableBehavior)
 				targetAdjusted=Constants.lkHatch2;
 			else if(liftPos<Constants.lkHatch3+Constants.kAllowableBehavior)
@@ -275,15 +283,18 @@ public class Teleop{
 			//liftRumble=0.5;
 			wristCoefficient = 2.2;
 			Constants.wkMinF=25;
+			Constants.wkMaxF=110;
 		}
 		else{
 			liftRumble=0;
 			wristCoefficient = 1;
 			Constants.wkMinF=13;
+			Constants.wkMaxF=170;
 		}
 
 		wristOver = wristDeg<1;
 		wristWantOver = ((wristOver&&wristTarget>0-Constants.kAllowableBehavior)||(!wristOver && wristTarget<0+Constants.kAllowableBehavior));
+		wristNullZone = (wristDeg<=8 && wristDeg>=-63);
 
 		if(bump){
 			if(Input.getAButton(Input.lifter)) wristTarget=wristMinB;
@@ -327,7 +338,7 @@ public class Teleop{
 		}
 		Network.put("Wrist Test", wristTest);
 		Network.put("Wrist ATarDeg", RobotMap.getDegrees(targetAdjusted));
-		if(liftState==0) wMotionPID((intakeBackdrive)? -50:300);
+		if(liftState==0) wMotionPID((intakeBackdrive)? -300:300);
 		else if(wristState==1) wMotionPID(targetAdjusted, feed);//go limp
 		//wPosPID(targetAdjusted, feed);
 		//setWrist(test);
@@ -389,8 +400,8 @@ public class Teleop{
 		else return Input.limit(forward+turn);
 	}
 	private static double arcadeMathRaw(double forward, double turn, boolean right){
-		if(right) return (forward-turn);
-		else return (forward+turn);
+		if(right) return Input.limit(forward-turn);
+		else return Input.limit(forward+turn);
 	}
 	
 	/**
@@ -497,7 +508,9 @@ public class Teleop{
 		valve.set(state);
 	}
 	public static void setSolenoid(DoubleSolenoid valve, Value state){
-		valve.set(state);
+		if(valve.get() != state){
+			valve.set(state);
+		}
 	}
 
 	public static void disableMotors(){
@@ -508,9 +521,8 @@ public class Teleop{
 	}
 
 	public static void displayStats(){
-		String[] tabs = {"Drive","PID"};
-		Network.put("Wrist Target", wristTarget, tabs);
-		Network.put("Wrist TarDeg", RobotMap.getDegrees(wristTarget), tabs);
+		Network.put("Wrist Target", wristTarget);
+		Network.put("Wrist TarDeg", RobotMap.getDegrees(wristTarget));
 		Network.put("Lift  Target", liftTarget);
 	}
 }

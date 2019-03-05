@@ -204,40 +204,33 @@ public class RobotMap{
 	}
 
     public static void displayStats(){
-		//pid/electrical systems
-		/*
-		Network.put("Right Drive Counts", getPos(dRightF), tabs);
-		Network.put("Right Drive RPM", getRPM(dRightF), tabs);
-		Network.put("Right Drive NativeV", getNative(dRightF), tabs);
-		Network.put("Left Drive Counts", getPos(dLeftF), tabs);
-		Network.put("Left Drive RPM", getRPM(dLeftF), tabs);
-		Network.put("Left Drive NativeV", getNative(dLeftF), tabs);
-		*/
-		String[] tabs = {"PID","Drive"};
-		Network.put("Lift Counts", getPos(liftF), tabs);
-		Network.put("Lift RPM", getRPM(liftF), "PID");
-		Network.put("Lift NativeV", getNative(liftF), "PID");
-		Network.put("Wrist Counts", getPos(wrist), tabs);
-		Network.put("Wrist RPM", getRPM(wrist), "PID");
-		Network.put("Wrist NativeV", getNative(wrist), "PID");
-		Network.put("Wrist Degree", getDegrees(wrist), tabs);
+		//motor outputs
+		Network.put("Right Drive Counts", getPos(dRightF));
+		Network.put("Right Drive RPM", getRPM(dRightF));
+		Network.put("Right Drive NativeV", getNative(dRightF));
+		Network.put("Left Drive Counts", getPos(dLeftF));
+		Network.put("Left Drive RPM", getRPM(dLeftF));
+		Network.put("Left Drive NativeV", getNative(dLeftF));
+		Network.put("Lift Counts", getPos(liftF));
+		Network.put("Lift RPM", getRPM(liftF));
+		Network.put("Lift NativeV", getNative(liftF));
+		Network.put("Wrist Counts", getPos(wrist));
+		Network.put("Wrist RPM", getRPM(wrist));
+		Network.put("Wrist NativeV", getNative(wrist));
+		Network.put("Wrist Degree", getDegrees(wrist));
 		//pid
 		double[] dPIDMap = {toRPM(Teleop.rightTarget), getRPM(dRightF), toRPM(Teleop.leftTarget), getRPM(dLeftF)};
 		double[] lPIDMap = {Teleop.liftTarget, getPos(liftF)};
 		double[] wPIDMap = {Teleop.wristTarget, getPos(wrist)};
-		//SmartDashboard.putNumberArray("Drive PID Map", dPIDMap);
-		//SmartDashboard.putNumberArray("Lift PID Map", lPIDMap);
-		//SmartDashboard.putNumberArray("Wrist PID Map", wPIDMap);
-		Network.putArr("Drive PID Map", dPIDMap, "PID");
-		Network.putArr("Lift PID Map", lPIDMap, "PID");
-		Network.putArr("Wrist PID Map", wPIDMap, "PID");
+		Network.put("Drive PID Map", dPIDMap);
+		Network.put("Lift PID Map", lPIDMap);
+		Network.put("Wrist PID Map", wPIDMap);
 		//electrical
-		Network.put("Compressor Current", compressor.getCompressorCurrent(), "Electrical");
-		Network.put("Compressor Switch", compressor.getPressureSwitchValue(), "Electrical");
-
-		Network.put("Stage 1 Bot", getSwitch(stage1Bot), "Electrical");
-		Network.put("Stage 1 Top", getSwitch(stage1Top), "Electrical");
-		Network.put("Carriage Top", getSwitch(carriageTop), "Electrical");
-		Network.put("Carriage Bot", getSwitch(carriageBot), "Electrical");
+		Network.put("Compressor Current", compressor.getCompressorCurrent());
+		Network.put("Compressor Switch", compressor.getPressureSwitchValue());
+		Network.put("Stage 1 Bot", getSwitch(stage1Bot));
+		Network.put("Stage 1 Top", getSwitch(stage1Top));
+		Network.put("Carriage Top", getSwitch(carriageTop));
+		Network.put("Carriage Bot", getSwitch(carriageBot));
 	}
 }
