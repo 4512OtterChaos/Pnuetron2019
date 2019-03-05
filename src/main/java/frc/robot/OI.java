@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.sensors.PigeonIMU;
-public class Input{
+public class OI{
     /* Sensors */
     private static PigeonIMU pigeon = new PigeonIMU(RobotMap.dRightB);
     private static PigeonIMU.GeneralStatus pStat = new PigeonIMU.GeneralStatus();

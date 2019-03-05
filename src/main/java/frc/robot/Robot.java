@@ -30,14 +30,14 @@ public class Robot extends TimedRobot {
     //---------------------------------//
     Network.init();
     Constants.init();
-    Input.init();
+    OI.init();
     RobotMap.config();
   }
 
   @Override
   public void robotPeriodic() {
     //Constants.update();
-    Input.displayStats();
+    OI.displayStats();
     Teleop.displayStats();
     RobotMap.displayStats();
     mTime = Timer.getMatchTime();
@@ -52,8 +52,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    Input.backLime.lightOff();
-    Input.frontLime.lightOff();
+    OI.backLime.lightOff();
+    OI.frontLime.lightOff();
   }
   
   @Override

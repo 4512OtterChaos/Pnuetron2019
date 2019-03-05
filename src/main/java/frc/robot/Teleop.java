@@ -60,7 +60,7 @@ public class Teleop{
 		disableMotors();
 		System.out.println("--Feed Forward Teleop--");
 		setIntake(-1);
-		//Input.backLime.lightOn();
+		//OI.backLime.lightOn();
     }
 
     public static void periodic(){
@@ -70,43 +70,43 @@ public class Teleop{
 		wrist();
 		intake();
 		if(matchRumble!=0) {
-			Input.setRumble(matchRumble, Input.lifter);
-			Input.setRumble(matchRumble, Input.driver);
+			OI.setRumble(matchRumble, OI.lifter);
+			OI.setRumble(matchRumble, OI.driver);
 		}
 		else{
-			Input.setRumble(liftRumble, Input.lifter);
-			Input.setRumble(driveRumble, Input.driver, false);
+			OI.setRumble(liftRumble, OI.lifter);
+			OI.setRumble(driveRumble, OI.driver, false);
 		}
 	}
 
 	private static void drive(){
 		//*arcade drive
-		double forward = Input.getLeftY(Input.driver);
-		double turn = Input.getRightX(Input.driver);
+		double forward = OI.getLeftY(OI.driver);
+		double turn = OI.getRightX(OI.driver);
 		forward*=(driveFlip)? -1:1;
 		turn*=(driveFlip)? -1:1;
 
-		if(Input.dUpPOV.get()) dSpeed=(dSpeed>=0.75f)? 0.75f:dSpeed+0.25f;
-		else if(Input.dDownPOV.get()) dSpeed=(dSpeed<=0.25f)? 0.25f:dSpeed-0.25f;
-		else dSpeed=(float)Input.limit(0.25, 0.75, (double)dSpeed);
+		if(OI.dUpPOV.get()) dSpeed=(dSpeed>=0.75f)? 0.75f:dSpeed+0.25f;
+		else if(OI.dDownPOV.get()) dSpeed=(dSpeed<=0.25f)? 0.25f:dSpeed-0.25f;
+		else dSpeed=(float)OI.limit(0.25, 0.75, (double)dSpeed);
 
-		if(Input.driver.getYButtonPressed()){
+		if(OI.driver.getYButtonPressed()){
 			intakeBackdrive=(intakeBackdrive)? false:true;
 		}
 
 		/*
-		if(Input.getRightStick(Input.driver)){
-			Input.backLime.lightOn();
-			Input.backLime.camTarget();
+		if(OI.getRightStick(OI.driver)){
+			OI.backLime.lightOn();
+			OI.backLime.camTarget();
 		}
 		else{
-			Input.backLime.lightOff();
-			Input.backLime.camDriver();
-			Input.frontLime.lightOff();
-			Input.frontLime.camDriver();
+			OI.backLime.lightOff();
+			OI.backLime.camDriver();
+			OI.frontLime.lightOff();
+			OI.frontLime.camDriver();
 		}*/
-		if(Input.getRightStick(Input.driver)) dSpeed=1f;
-		if(Input.getLeftStickReleased(Input.driver)){
+		if(OI.getRightStick(OI.driver)) dSpeed=1f;
+		if(OI.getLeftStickReleased(OI.driver)){
 			driveFlip=(driveFlip)? false:true;
 			driveRumble=0.5;
 		}
@@ -114,7 +114,7 @@ public class Teleop{
 			driveRumble=0;
 		}
 
-		if(!Input.getRightStick(Input.driver)){
+		if(!OI.getRightStick(OI.driver)){
 			dVelPID(forward, turn);
 		}
 		else{
@@ -128,20 +128,20 @@ public class Teleop{
 
 	private static void pnuematics(){
 		//*Pnuematics
-		if(Input.getLeftBumper(Input.driver)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kReverse);//down
-		else if(Input.getRightBumper(Input.driver)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kForward);//up
+		if(OI.getLeftBumper(OI.driver)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kReverse);//down
+		else if(OI.getRightBumper(OI.driver)) setSolenoid(RobotMap.intakeFlip, DoubleSolenoid.Value.kForward);//up
 
-		if(!Input.getLeftBumper(Input.lifter)&&!Input.getRightBumper(Input.lifter)){
-			if(Input.getAButton(Input.lifter)||Input.getAButton(Input.driver)){
+		if(!OI.getLeftBumper(OI.lifter)&&!OI.getRightBumper(OI.lifter)){
+			if(OI.getAButton(OI.lifter)||OI.getAButton(OI.driver)){
 				setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kReverse);//open
 				wristHasHatch=true;
 			}
-			else if(Input.getBButton(Input.lifter)||Input.getBButton(Input.driver)){
+			else if(OI.getBButton(OI.lifter)||OI.getBButton(OI.driver)){
 				setSolenoid(RobotMap.crabber, DoubleSolenoid.Value.kForward);//closed
 				wristHasHatch=false;
 			}
 	
-			if(Input.getXButton(Input.lifter)||Input.getXButton(Input.driver)) setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kForward);
+			if(OI.getXButton(OI.lifter)||OI.getXButton(OI.driver)) setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kForward);
 			else setSolenoid(RobotMap.crabPop, DoubleSolenoid.Value.kReverse);
 		}
 	}
@@ -157,26 +157,26 @@ public class Teleop{
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
 		boolean carrBot = RobotMap.getSwitch(carriageBot);
 
-		boolean isLift = Input.getLeftBumper(Input.lifter);
-		double joy = Input.getLeftY(Input.lifter);
+		boolean isLift = OI.getLeftBumper(OI.lifter);
+		double joy = OI.getLeftY(OI.lifter);
 
-		if(isLift && Input.getAButton(Input.lifter)){
+		if(isLift && OI.getAButton(OI.lifter)){
 			liftState = 1;
 			liftSticky = true;
 		}
-		else if(isLift && Input.getBButton(Input.lifter)){
+		else if(isLift && OI.getBButton(OI.lifter)){
 			liftState = 2;
 			liftSticky = true;
 		}
-		else if(isLift && Input.getXButton(Input.lifter)){
+		else if(isLift && OI.getXButton(OI.lifter)){
 			liftState = 3;
 			liftSticky = true;
 		}
-		else if(isLift && Input.getYButton(Input.lifter)){
+		else if(isLift && OI.getYButton(OI.lifter)){
 			liftState = 5;
 			liftSticky = true;
 		}
-		else if(isLift && Input.getRightTrigger(Input.lifter)>0){
+		else if(isLift && OI.getRightTrigger(OI.lifter)>0){
 			liftState = 4;
 			liftSticky = true;
 		}
@@ -232,7 +232,7 @@ public class Teleop{
 		
 		if(wristOver) targetAdjusted=Math.max(Constants.lkLowOver, targetAdjusted);
 
-		targetAdjusted = Input.limit(Constants.lkBottom, Constants.lkHatch3, targetAdjusted);
+		targetAdjusted = OI.limit(Constants.lkBottom, Constants.lkHatch3, targetAdjusted);
 
 		if(liftPos<=2000 && (!stageBot||!carrBot) && targetAdjusted<=liftPos+Constants.kAllowableBehavior){
 			targetAdjusted=-1000;
@@ -259,10 +259,10 @@ public class Teleop{
 
 	public static void wrist(){
 		boolean carrTop = RobotMap.getSwitch(carriageTop);
-		boolean bump = Input.getRightBumper(Input.lifter);
+		boolean bump = OI.getRightBumper(OI.lifter);
 
-		double joyY = Input.getRightY(Input.lifter);
-		double joyX = Input.getRightX(Input.lifter);
+		double joyY = OI.getRightY(OI.lifter);
+		double joyX = OI.getRightX(OI.lifter);
 		double feed = calcWristFF();
 		double wristDeg = RobotMap.getDegrees(wrist);
 		double liftPos = RobotMap.getPos(liftF);
@@ -271,10 +271,10 @@ public class Teleop{
 		double wristMinF = RobotMap.getCounts(Constants.wkMinF);
 		double wristMaxF = RobotMap.getCounts(Constants.wkMaxF);
 
-		if(Input.getRightStickReleased(Input.lifter)){
+		if(OI.getRightStickReleased(OI.lifter)){
 			wristHasCargo=(wristHasCargo)? false:true;
 		}
-		if(Input.getLeftStickReleased(Input.lifter)){
+		if(OI.getLeftStickReleased(OI.lifter)){
 			wristTest=(wristTest)? false:true;
 			wristTestDe=true;
 		}
@@ -297,15 +297,15 @@ public class Teleop{
 		wristNullZone = (wristDeg<=8 && wristDeg>=-63);
 
 		if(bump){
-			if(Input.getAButton(Input.lifter)) wristTarget=wristMinB;
-			else if(Input.getBButton(Input.lifter)||Input.getXButton(Input.lifter)) wristTarget=0;
-			else if(Input.getYButton(Input.lifter)) wristTarget=RobotMap.getCounts(80);
+			if(OI.getAButton(OI.lifter)) wristTarget=wristMinB;
+			else if(OI.getBButton(OI.lifter)||OI.getXButton(OI.lifter)) wristTarget=0;
+			else if(OI.getYButton(OI.lifter)) wristTarget=RobotMap.getCounts(80);
 		}
 		else{
 			wristTarget = (joyY!=0)? calcWristManual(joyY):wristTarget;
 		}
-		//if(Input.getRightTrigger(Input.lifter)>0) wristTarget = calcWristIntake();
-		if(Input.getRightTrigger(Input.lifter)>0){
+		//if(OI.getRightTrigger(OI.lifter)>0) wristTarget = calcWristIntake();
+		if(OI.getRightTrigger(OI.lifter)>0){
 			wristTarget = wristMaxF;
 			liftTarget=Constants.lkCargoIn;
 		}
@@ -321,7 +321,7 @@ public class Teleop{
 		else if(!wristOver && !carrTop)//avoid elevator
 			targetAdjusted=Math.max(wristMinF, targetAdjusted);
 		
-		targetAdjusted = Input.limit(wristMinB, wristMaxF, targetAdjusted);
+		targetAdjusted = OI.limit(wristMinB, wristMaxF, targetAdjusted);
 
 
 		if(wristTestDe && wristTest){
@@ -346,8 +346,8 @@ public class Teleop{
 
 	private static void intake(){
 		//* Intake
-		double lTrigger = Input.getLeftTrigger(Input.driver);
-		double rTrigger = Input.getRightTrigger(Input.driver);
+		double lTrigger = OI.getLeftTrigger(OI.driver);
+		double rTrigger = OI.getRightTrigger(OI.driver);
 		if(lTrigger != 0) setIntake(lTrigger);//positive out
 		else if(rTrigger != 0) setIntake(-rTrigger);//negative in
 		else if(intakeBackdrive) setIntake(-0.25);
@@ -396,12 +396,12 @@ public class Teleop{
 	private static double arcadeMath(double forward, double turn, boolean right){
 		forward*=dSpeed;
 		turn*=dSpeed;//1.75
-		if(right) return Input.limit(forward-turn);
-		else return Input.limit(forward+turn);
+		if(right) return OI.limit(forward-turn);
+		else return OI.limit(forward+turn);
 	}
 	private static double arcadeMathRaw(double forward, double turn, boolean right){
-		if(right) return Input.limit(forward-turn);
-		else return Input.limit(forward+turn);
+		if(right) return OI.limit(forward-turn);
+		else return OI.limit(forward+turn);
 	}
 	
 	/**
@@ -471,7 +471,7 @@ public class Teleop{
 		double counterHatch = (wristOver)? Constants.wkAntiHatch:-Constants.wkAntiHatch;
 		counterHatch = (wristHasHatch && !(liftState==0))? counterHatch:0;
 		double counterVector = (gravity*(stall)+counterHatch);//total power to keep arm stable
-		return Input.limit(counterVector);
+		return OI.limit(counterVector);
 	}
 	public static double calcWristIntake(){
 		double liftPos = RobotMap.getPos(liftF);
@@ -479,7 +479,7 @@ public class Teleop{
 		double liftBot = 5000;//minimum lift to 90 degrees
 		double degTop = 170;
 		double degBot = 90;
-		liftPos = Input.limit(liftBot, liftTop, liftPos);
+		liftPos = OI.limit(liftBot, liftTop, liftPos);
 		liftPos-=liftBot;
 		liftTop-=liftBot;
 		liftBot=0;
