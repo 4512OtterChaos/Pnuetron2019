@@ -46,9 +46,9 @@ public class RobotMap{
 	public static DoubleSolenoid intakeFlip = new DoubleSolenoid(0,1);
 	public static DoubleSolenoid liftStop = new DoubleSolenoid(2,3);
 
-	public static DigitalInput stage1Bot = new DigitalInput(2);
 	public static DigitalInput stage1Top = new DigitalInput(0);
 	public static DigitalInput carriageTop = new DigitalInput(1);
+	public static DigitalInput stage1Bot = new DigitalInput(2);
 	public static DigitalInput carriageBot = new DigitalInput(3);
 
     
