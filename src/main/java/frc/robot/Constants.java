@@ -22,7 +22,7 @@ public class Constants{
     public static double dkD = 40;
     public static double dkF = 1023/2600.0;
     public static double dkPeak = 0.9;
-    public static double dkRamp = 0.35;
+    public static double dkRamp = 0.1;
 
     /*
     wrist flat = 4000(lift)
