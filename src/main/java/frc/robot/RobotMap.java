@@ -41,8 +41,8 @@ public class RobotMap{
 	public static BaseMotorController[] allMotors = {dRightF, dRightB, dLeftF, dLeftB, liftF, liftB, wrist, intakeR, intakeL};
 	
 	public static Compressor compressor = new Compressor(0);
-	public static DoubleSolenoid crabber = new DoubleSolenoid(6,7);
-	public static DoubleSolenoid crabPop = new DoubleSolenoid(4,5);
+	public static DoubleSolenoid crabber = new DoubleSolenoid(4,5);
+	public static DoubleSolenoid crabPop = new DoubleSolenoid(6,7);
 	public static DoubleSolenoid intakeFlip = new DoubleSolenoid(0,1);
 	public static DoubleSolenoid liftStop = new DoubleSolenoid(2,3);
 

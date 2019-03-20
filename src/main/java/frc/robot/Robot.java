@@ -26,9 +26,8 @@ public class Robot extends TimedRobot {
     autoChoose.addOption("Auto Forward", kForward);
     autoChoose.addOption("Nothing :)", kNothing);
     autoChoose.setDefaultOption("Hybrid", kHybrid);
-    Network.put("Auto choices", autoChoose);
+    //Network.put("Auto choices", autoChoose);
     //---------------------------------//
-    Network.init();
     Constants.init();
     OI.init();
     RobotMap.config();

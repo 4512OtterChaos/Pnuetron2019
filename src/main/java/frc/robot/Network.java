@@ -11,12 +11,10 @@ import edu.wpi.first.wpilibj.shuffleboard.*;
 public class Network{
     private static NetworkTable table;
 
-    public static void init(){
-        table = NetworkTableInstance.getDefault().getTable("RobotNet");
-    }
-
     public static void put(String key, Object value){
+        table = NetworkTableInstance.getDefault().getTable("LiveWindow");
         NetworkTableEntry entry = table.getEntry(key);
+        /*
         if(value instanceof String)
             if(!entry.getString("").equals((String)value))
                 entry.setString((String)value);
@@ -32,5 +30,7 @@ public class Network{
         else{
             entry.setValue(value);
         }
+        */
+        entry.setValue(value);
     }
 }
