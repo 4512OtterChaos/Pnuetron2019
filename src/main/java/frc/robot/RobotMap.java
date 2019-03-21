@@ -114,6 +114,8 @@ public class RobotMap{
 		configAccel(Constants.lkAccel, liftF);
 		configCruise(Constants.wkCruise, wrist);
 		configAccel(Constants.wkAccel, wrist);
+		liftF.configMotionSCurveStrength(3, Constants.kTimeout);
+		wrist.configMotionSCurveStrength(3, Constants.kTimeout);
 	}
 	
 	public static void zeroSensor(BaseMotorController motor){

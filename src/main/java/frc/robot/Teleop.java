@@ -173,15 +173,11 @@ public class Teleop{
 			liftSticky = true;
 		}
 		else if(isLift && OI.getYButton(OI.lifter)){
-			liftState = 5;
-			liftSticky = true;
-		}
-		else if(isLift && OI.getRightTrigger(OI.lifter)>0){
 			liftState = 4;
 			liftSticky = true;
 		}
 
-		if((wristOver&&wristTarget>0-Constants.kAllowableBehavior)||(!wristOver && wristTarget<0+Constants.kAllowableBehavior)){
+		if((wristOver&&wristTarget>0-Constants.kAllowableWrist)||(!wristOver && wristTarget<0+Constants.kAllowableWrist)){
 			if(!carrTop){
 				if(liftPos<Constants.lkHatch2) liftState=3;
 				else liftState = 5;
@@ -204,8 +200,7 @@ public class Teleop{
 			liftTarget = Constants.lkHatch2;
 			if(lastLiftState==2) wristTarget = RobotMap.getCounts(Constants.wkHatchOutF);
 		}
-		else if(liftState==4) liftTarget = Constants.lkCargoIn;
-		else if(liftState==5){
+		else if(liftState==4){
 			liftTarget = Constants.lkHatch3;
 			if(lastLiftState==2) wristTarget = RobotMap.getCounts(Constants.wkHatchOutF);
 		}
@@ -223,10 +218,10 @@ public class Teleop{
 			else liftState = 4;
 		}
 
-		if(wristNullZone && liftTarget<liftPos-Constants.kAllowableBehavior){//null zone
-			if(liftPos<Constants.lkHatch2+Constants.kAllowableBehavior)
+		if(wristNullZone && liftTarget<liftPos-Constants.kAllowableLift){//null zone
+			if(liftPos<Constants.lkHatch2+Constants.kAllowableLift)
 				targetAdjusted=Constants.lkHatch2;
-			else if(liftPos<Constants.lkHatch3+Constants.kAllowableBehavior)
+			else if(liftPos<Constants.lkHatch3+Constants.kAllowableLift)
 				targetAdjusted=Constants.lkHatch3;
 		}
 		
@@ -234,10 +229,10 @@ public class Teleop{
 
 		targetAdjusted = OI.limit(Constants.lkBottom, Constants.lkHatch3, targetAdjusted);
 
-		if(liftPos<=2000 && (!stageBot||!carrBot) && targetAdjusted<=liftPos+Constants.kAllowableBehavior){
+		if(liftPos<=2000 && (!stageBot||!carrBot) && targetAdjusted<=liftPos+Constants.kAllowableLift){
 			targetAdjusted=-1000;
 		}
-		else if(liftPos<=2000 && targetAdjusted<=liftPos+Constants.kAllowableBehavior){
+		else if(liftPos<=2000 && targetAdjusted<=liftPos+Constants.kAllowableLift){
 			liftState=0;
 		}
 
@@ -293,7 +288,7 @@ public class Teleop{
 		}
 
 		wristOver = wristDeg<1;
-		wristWantOver = ((wristOver&&wristTarget>0-Constants.kAllowableBehavior)||(!wristOver && wristTarget<0+Constants.kAllowableBehavior));
+		wristWantOver = ((wristOver&&wristTarget>0-Constants.kAllowableWrist)||(!wristOver && wristTarget<0+Constants.kAllowableWrist));
 		wristNullZone = (wristDeg<=8 && wristDeg>=-63);
 
 		if(bump){
@@ -305,10 +300,6 @@ public class Teleop{
 			wristTarget = (joyY!=0)? calcWristManual(joyY):wristTarget;
 		}
 		//if(OI.getRightTrigger(OI.lifter)>0) wristTarget = calcWristIntake();
-		if(OI.getRightTrigger(OI.lifter)>0){
-			wristTarget = wristMaxF;
-			liftTarget=Constants.lkCargoIn;
-		}
 		
 		double targetAdjusted = wristTarget;
 		/*
@@ -464,27 +455,10 @@ public class Teleop{
 	public static double calcWristFF(){
 		//i want wind speed accounted for !!
 		double gravity = -Math.sin(Math.toRadians(RobotMap.getDegrees(wrist)));//how much gravity affects (0-1)
-		double stall = Constants.wkAntiGrav*wristCoefficient;//how much power to counter max gravity
-		double liftInertia = liftF.getMotorOutputPercent()/6.0;//how much power to counter lift movement
-		double driveInertia = (dRightF.getMotorOutputPercent()+dLeftF.getMotorOutputPercent())/2.0;//forward heading
-		driveInertia*=Math.cos(Math.toRadians(RobotMap.getDegrees(wrist)));//how much power to counter drive movement
-		double counterHatch = (wristOver)? Constants.wkAntiHatch:-Constants.wkAntiHatch;
-		counterHatch = (wristHasHatch && !(liftState==0))? counterHatch:0;
-		double counterVector = (gravity*(stall)+counterHatch);//total power to keep arm stable
-		return OI.limit(counterVector);
-	}
-	public static double calcWristIntake(){
-		double liftPos = RobotMap.getPos(liftF);
-		double liftTop = Constants.lkCargoIn;//maximum lift counts to optimal pos
-		double liftBot = 5000;//minimum lift to 90 degrees
-		double degTop = 170;
-		double degBot = 90;
-		liftPos = OI.limit(liftBot, liftTop, liftPos);
-		liftPos-=liftBot;
-		liftTop-=liftBot;
-		liftBot=0;
-		double angle = degTop-(((liftTop-liftPos)/liftTop)*(degTop-degBot));
-		return angle;
+		double stall = (wristHasHatch)? Constants.wkAntiHatch:Constants.wkAntiGrav;
+		double counterForce = (gravity*stall);//multiply by the output percent for holding stable while 90 degrees
+        counterForce = OI.limit(counterForce);
+        return counterForce;
 	}
 
 	//arbitrary motor control
