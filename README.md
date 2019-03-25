@@ -1,3 +1,3 @@
 # YungPneumatic
- Staging repository for Deep Space build season's chassis
+ Repository for 2018-2019's robot, Pnuetron
 
