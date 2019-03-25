@@ -29,8 +29,7 @@ public class Network{
                 entry.setNumberArray((Number[])value);
         else{
             entry.setValue(value);
-        }
-        */
+        }*/
         entry.setValue(value);
     }
 }
