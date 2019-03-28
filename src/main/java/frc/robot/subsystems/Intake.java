@@ -17,7 +17,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import frc.robot.Config;
 import frc.robot.Network;
-import frc.robot.commands.IntakeManual;
+import frc.robot.subsystems.intakeCommands.*;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 

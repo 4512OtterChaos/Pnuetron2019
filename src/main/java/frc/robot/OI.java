@@ -11,24 +11,11 @@
 
 package frc.robot;
 
-import frc.robot.commands.CloseClaw;
-import frc.robot.commands.ClosePusher;
-import frc.robot.commands.DriveShiftDown;
-import frc.robot.commands.DriveShiftUp;
-import frc.robot.commands.DriveVision;
-import frc.robot.commands.DriveVroom;
-import frc.robot.commands.FlipIntakeDown;
-import frc.robot.commands.FlipIntakeUp;
-import frc.robot.commands.IntakeBackdrive;
-import frc.robot.commands.IntakeIn;
-import frc.robot.commands.IntakeOut;
-import frc.robot.commands.LiftSetCargo;
-import frc.robot.commands.LiftSetHatch1;
-import frc.robot.commands.LiftSetHatch2;
-import frc.robot.commands.LiftSetHatch3;
-import frc.robot.commands.LiftSetStart;
-import frc.robot.commands.OpenClaw;
-import frc.robot.commands.OpenPusher;
+import frc.robot.subsystems.liftgroupCommands.*;
+import frc.robot.subsystems.intakeCommands.*;
+import frc.robot.subsystems.manipulatorCommands.*;
+import frc.robot.subsystems.flipperCommands.*;
+import frc.robot.subsystems.driveCommands.*;
 
 
 /**

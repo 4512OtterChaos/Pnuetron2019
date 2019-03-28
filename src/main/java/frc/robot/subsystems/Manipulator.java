@@ -12,7 +12,7 @@
 package frc.robot.subsystems;
 
 
-import frc.robot.commands.*;
+import frc.robot.subsystems.manipulatorCommands.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.PIDOutput;

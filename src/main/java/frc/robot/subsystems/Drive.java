@@ -21,7 +21,7 @@ import frc.robot.Config;
 import frc.robot.Convert;
 import frc.robot.Network;
 import frc.robot.PIDConstants;
-import frc.robot.commands.DriveManual;
+import frc.robot.subsystems.driveCommands.*;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 

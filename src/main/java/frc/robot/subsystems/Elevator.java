@@ -24,7 +24,7 @@ import frc.robot.Convert;
 import frc.robot.Network;
 import frc.robot.PIDConstants;
 import frc.robot.Robot;
-import frc.robot.commands.ElevatorManual;
+import frc.robot.subsystems.elevatorCommands.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;

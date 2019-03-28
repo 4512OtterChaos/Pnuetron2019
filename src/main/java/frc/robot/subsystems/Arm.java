@@ -23,7 +23,7 @@ import frc.robot.Convert;
 import frc.robot.Network;
 import frc.robot.PIDConstants;
 import frc.robot.Robot;
-import frc.robot.commands.ArmManual;
+import frc.robot.subsystems.armCommands.*;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
