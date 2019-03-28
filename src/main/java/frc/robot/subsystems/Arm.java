@@ -35,15 +35,14 @@ public class Arm extends Subsystem {
     private double target = startPos;
     private double targetA = target;//adjusted target
     private double akP = 2.2;
-    private double akI = 0;
-    private double akD = 60;
-    private double akF = 1023.0/225.0;
+    private double akI = 0;//0.01
+    private double akD = 50;
+    private double akF = 1023.0/210.0;
     private double akPeak = 1;
-    private double akRamp = 0.09;
-    private double akAllowable = 25;
+    private double akRamp = 0.08;
+    private final int akAllowable = 40;
     private int akCruise = 130;
     private int akCruiseItem = 110;
-    //private double akAccelTime = 0.9;//seconds (1.1)
     private int akAccel = 260;
     private int akAccelItem = 210;
     //behavior constants
@@ -54,9 +53,7 @@ public class Arm extends Subsystem {
     public final int akMaxB = Convert.getCounts(-75);
     public final int akMinF = Convert.getCounts(23);
     public final int akMaxF = Convert.getCounts(120);
-    public final int akHatchOutFree = Convert.getCounts(80);
-    public final int akHatchOutItem = Convert.getCounts(78);
-    public int akHatchOutF = akHatchOutFree;
+    public int akHatchOutF = Convert.getCounts(80);
     public final int akHatchOutB = akMinB;
     //state
     private boolean manual=false;
@@ -76,8 +73,9 @@ public class Arm extends Subsystem {
         wrist.setSensorPhase(false);
         Config.configCruise(akCruise, wrist);
         Config.configAccel(akAccel, wrist);
-        wrist.configMotionSCurveStrength(4, Config.kTimeout);
+        wrist.configMotionSCurveStrength(6, Config.kTimeout);
         Config.configClosed(wrist, akP, akI, akD, akF, akPeak, akRamp);
+        wrist.config_IntegralZone(PIDConstants.kIdx, akAllowable, Config.kTimeout);
     }
 
     @Override
@@ -95,6 +93,7 @@ public class Arm extends Subsystem {
         targetA=target;
 
         targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? Convert.getCounts(7):akMinF), targetA);
+        targetA=Math.min(((Robot.elevator.getPos()<=Robot.elevator.ekSupply-500)? startPos:akMaxF), targetA);
         targetA=Convert.limit(akMinB, akMaxF, targetA);
 
         double ff = calcGrav();//feed forward
@@ -118,12 +117,10 @@ public class Arm extends Subsystem {
         armHadItem=getHasItem();
 
         if(armGotItem){
-            akHatchOutF=akHatchOutItem;
             Config.configCruise(akCruiseItem, wrist);
             Config.configAccel(akAccelItem, wrist);
         }
         else if(armLostItem){
-            akHatchOutF=akHatchOutFree;
             Config.configCruise(akCruise, wrist);
             Config.configAccel(akAccel, wrist);
         }
