@@ -22,7 +22,6 @@ public class CloseClaw extends InstantCommand {
     @Override
     protected void initialize() {
         Robot.manipulator.setClaw(false);
-        Robot.arm.setHasItem(false);
     }
 
 }

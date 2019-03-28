@@ -31,7 +31,8 @@ public class Arm extends Subsystem {
 
     public WPI_TalonSRX wrist;
 
-    private double target = 280;
+    private final int startPos = 280;
+    private double target = startPos;
     private double targetA = target;//adjusted target
     private double akP = 2.2;
     private double akI = 0;
@@ -58,16 +59,10 @@ public class Arm extends Subsystem {
     public int akHatchOutF = akHatchOutFree;
     public final int akHatchOutB = akMinB;
     //state
-    private int pos;
-    private double deg;
     private boolean manual=false;
-    private boolean carrTop;
-    private boolean liftResting;
-    private boolean intakeBackdrive;
-    private boolean armOver;
-    private boolean armWantOver;
-    private boolean armNullZone;
-    private boolean armHasItem;
+    private boolean armHadItem = false;
+    private boolean armGotItem = false;
+    private boolean armLostItem = false;
 
     public Arm() {
         wrist = new WPI_TalonSRX(7);
@@ -76,7 +71,7 @@ public class Arm extends Subsystem {
 
         wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, PIDConstants.kIdx, Config.kTimeout);
         wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
-        Config.configSensor(wrist, 280);
+        Config.configSensor(wrist, startPos);
         wrist.setInverted(false);
         wrist.setSensorPhase(false);
         Config.configCruise(akCruise, wrist);
@@ -97,14 +92,20 @@ public class Arm extends Subsystem {
         // Put code here to be run every loop
         checkState();
         
-        targetA=Math.max(((intakeBackdrive&&!armHasItem)? Convert.getCounts(7):akMinF), targetA);
+        targetA=target;
+
+        targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? Convert.getCounts(7):akMinF), targetA);
         targetA=Convert.limit(akMinB, akMaxF, targetA);
+
+        double ff = calcGrav();//feed forward
+
+        boolean liftResting = Robot.elevator.getIsResting();
         if(liftResting){
-            targetA=285;
+            targetA=startPos;//set to resting angle
+            ff=0.06;//forward pressure on arm while down
         }
 
-        double feed = (liftResting)? 0.06:calcGrav();
-        if(!manual) aMotionPID(targetA, feed);
+        if(!manual) aMotionPID(targetA, ff);
 
         putNetwork();
     }
@@ -112,36 +113,30 @@ public class Arm extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
     private void checkState(){//state changes
-        pos=wrist.getSelectedSensorPosition();
-        deg=Convert.getDegrees(pos);
-        intakeBackdrive=Robot.intake.getBackdriving();
-        armHasItem=Robot.manipulator.getIsOpen();
-        if(armHasItem){
+        armGotItem=getHasItem()&&!armHadItem;
+        armLostItem=!getHasItem()&&armHadItem;
+        armHadItem=getHasItem();
+
+        if(armGotItem){
             akHatchOutF=akHatchOutItem;
             Config.configCruise(akCruiseItem, wrist);
             Config.configAccel(akAccelItem, wrist);
         }
-        else{
+        else if(armLostItem){
             akHatchOutF=akHatchOutFree;
             Config.configCruise(akCruise, wrist);
             Config.configAccel(akAccel, wrist);
         }
-        akAntiGrav=(armHasItem)? akAntiItem:akAntiArm;
-        targetA=target;
-        armNullZone=(deg<=akMinF-4 && deg>=akMaxB+4);
-        armOver=deg<1;
-        armWantOver=
-            (armOver&&target>=0-akAllowable) ||
-            (!armOver&&target<=0+akAllowable) && !intakeBackdrive;
-        carrTop=Robot.elevator.getCarrTop();
-        liftResting=Robot.elevator.getIsResting();
+        
+        akAntiGrav=(getHasItem())? akAntiItem:akAntiArm;
+        
         //feed
     }
     private void putNetwork(){
         Network.put("Arm Target", target);
         Network.put("Arm TargetA", targetA);
-        Network.put("Arm Pos", pos);
-        Network.put("Arm Deg", deg);
+        Network.put("Arm Pos", getPos());
+        Network.put("Arm Deg", getDeg());
         Network.put("Arm Native", Convert.getNative(wrist));
         Network.put("Arm Power", wrist.getMotorOutputPercent());
     }
@@ -152,15 +147,9 @@ public class Arm extends Subsystem {
 	private void aMotionPID(double pos, double feed){
 		wrist.set(ControlMode.MotionMagic, pos, DemandType.ArbitraryFeedForward, feed);
 	}
-	private void aPosPID(double pos){
-		wrist.set(ControlMode.Position, pos);
-	}
-	private void aPosPID(double pos, double feed){
-		wrist.set(ControlMode.Position, pos, DemandType.ArbitraryFeedForward, feed);
-    }
 
     private double calcGrav(){//resist gravity
-        double gravity = -Math.sin(Math.toRadians(deg));//0 degrees is straight up, so gravity is a sin curve
+        double gravity = -Math.sin(Math.toRadians(getDeg()));//0 degrees is straight up, so gravity is a sin curve
         double counterForce = (gravity*akAntiGrav);//multiply by the output percent for holding stable while 90 degrees
         counterForce = Convert.limit(counterForce);
         return counterForce;
@@ -168,33 +157,20 @@ public class Arm extends Subsystem {
     
     //interaction
     public boolean isTarget(){
-        return (pos<=target+akAllowable && pos>=target-akAllowable);
+        return (getPos()<=target+akAllowable && getPos()>=target-akAllowable);
     }
     public boolean isTarget(int t){
-        return (pos<=t+akAllowable && pos>=t-akAllowable);
+        return (getPos()<=t+akAllowable && getPos()>=t-akAllowable);
     }
     
     public int getPos(){
-        return pos;
+        return wrist.getSelectedSensorPosition();
     }
     public double getDeg(){
-        return deg;
-    }
-    public boolean getIsOver(){
-        return armOver;
-    }
-    public boolean getWantOver(){
-        return armWantOver;
-    }
-    public boolean getIsNull(){
-        return armNullZone;
+        return Convert.getDegrees(getPos());
     }
     public boolean getHasItem(){
-        return armHasItem;
-    }
-
-    public void setHasItem(boolean has){
-        armHasItem=has;
+        return Robot.manipulator.getIsOpen();
     }
 
     public void setTarget(int t){

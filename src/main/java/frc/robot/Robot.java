@@ -66,9 +66,7 @@ public class Robot extends TimedRobot {
     }
     @Override
     public void robotPeriodic() {
-        double rTime = Timer.getFPGATimestamp();
         double gTime = Timer.getMatchTime();
-        Network.put("Robot Time", rTime);
         Network.put("Game Time", gTime);
     }
 

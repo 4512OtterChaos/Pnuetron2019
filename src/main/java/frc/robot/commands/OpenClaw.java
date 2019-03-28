@@ -22,7 +22,6 @@ public class OpenClaw extends InstantCommand {
     @Override
     protected void initialize() {
         Robot.manipulator.setClaw(true);
-        Robot.arm.setHasItem(true);
     }
 
 }

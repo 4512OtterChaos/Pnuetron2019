@@ -46,31 +46,21 @@ public class Elevator extends Subsystem {
     private double ekF = 1023.0/5000.0;
     private double ekPeak = 0.85;
     private double ekRamp = 0.13;
-    private int ekAllowableClosed = 0;
-    private int ekAllowable=500;
+    private int ekAllowable=400;
     private int ekCruise = 3500;
     //private double ekAccelTime = 0.8;//seconds
     private int ekAccel = 3900;//encoder counts per 100 ms per second
     //behavior
     public final double ekAntiGrav = 0.06;
     public final int ekBottom=0;
-    public final int ekHatch1=4850;
+    public final int ekHatch1=4950;
     public final int ekLowOver=6000;
     public final int ekCargoOut=7000;
     public final int ekHatch2=24500;
     public final int ekHatch3=47100;
     //public final int ekCargoIn=28200;
     //public final int ekCargoOut=40000;
-    private int pos=0;
-    private double armDeg=0;
     private boolean manual=false;
-    private boolean wantRest=false;
-    private boolean resting=false;
-    private boolean carrTop=false;
-    private boolean carrBot=false;
-    private boolean stBot=false;
-    private boolean stTop=false;
-    private boolean avoidNull=false;
 
     public Elevator() {
         front = new WPI_TalonSRX(5);
@@ -107,18 +97,18 @@ public class Elevator extends Subsystem {
 
         targetA=Convert.limit(ekBottom, ekHatch3, target);//physical limits
 
-        if(wantRest&&!resting){
+        if(getWantRest()&&!getIsResting()){
             targetA=-200;
         }
 
-        if(isTarget(ekCargoOut)&&isTarget((int)target, ekCargoOut)){
+        if(isTarget(ekCargoOut) && isTarget((int)target, ekCargoOut)){
             Robot.intake.setBackdriving(true);
         }
         else{
             Robot.intake.setBackdriving(false);
         }
 
-        if(!manual) eMotionPID(targetA, (resting? 0:ekAntiGrav));
+        if(!manual) eMotionPID(targetA, (getIsResting()? 0:ekAntiGrav));
 
         putNetwork();
     }
@@ -127,24 +117,15 @@ public class Elevator extends Subsystem {
     // here. Call these from Commands.
 
     private void checkState(){//state changes
-        pos = front.getSelectedSensorPosition();
-        armDeg = Robot.arm.getDeg();
-        resting=(carrBot&&stBot);
-        carrTop=!carriageTop.get();
-        carrBot=!carriageBot.get();
-        stTop=!stageTop.get();
-        stBot=!stageBot.get();
-        avoidNull=(Robot.arm.getWantOver() && !carrTop);
-        wantRest=(pos<ekHatch1-(3000) && target<=pos+ekAllowable);
     }
+
     private void putNetwork(){
-        Network.put("Carriage Top", carrTop);
-        Network.put("Carriage Bot", carrBot);
-        Network.put("Stage Top", stTop);
-        Network.put("Stage Bot", stBot);
-        Network.put("Elev Pos", pos);
-        Network.put("Elev Target", target);
-        Network.put("Elev TargetA", targetA);
+        Network.put("Carriage Top", getCarrTop());
+        Network.put("Carriage Bot", getCarrBot());
+        Network.put("Stage Top", getStageTop());
+        Network.put("Stage Bot", getStageBot());
+        Network.put("Elev Pos", getPos());
+        Network.put("Elev Target", targetA);
         Network.put("Elev Power", front.getMotorOutputPercent());
     }
 
@@ -162,33 +143,36 @@ public class Elevator extends Subsystem {
     }
     
     public boolean isTarget(){//finish commands if the position meets target
+        return (getPos()<=target+ekAllowable && getPos()>=target-ekAllowable);
+    }
+    public boolean isTarget(int target){
+        return (getPos()<=target+ekAllowable && getPos()>=target-ekAllowable);
+    }
+    public boolean isTarget(int pos, int target){
         return (pos<=target+ekAllowable && pos>=target-ekAllowable);
-    }
-    public boolean isTarget(int t){
-        return (pos<=t+ekAllowable && pos>=t-ekAllowable);
-    }
-    public boolean isTarget(int p, int t){
-        return (p<=t+ekAllowable && p>=t-ekAllowable);
     }
 
     //interaction
     public int getPos(){
-        return pos;
+        return front.getSelectedSensorPosition();
     }
     public boolean getIsResting(){
-        return resting;
+        return getCarrBot()&&getStageBot();
+    }
+    public boolean getWantRest(){
+        return (getPos()<=3*ekAllowable && target<=getPos()+ekAllowable);
     }
     public boolean getCarrTop(){
-        return carrTop;
+        return !carriageTop.get();
     }
     public boolean getCarrBot(){
-        return carrBot;
+        return !carriageBot.get();
     }
     public boolean getStageTop(){
-        return stTop;
+        return !stageTop.get();
     }
     public boolean getStageBot(){
-        return stBot;
+        return !stageBot.get();
     }
 
     public void setTarget(int t){
@@ -199,7 +183,7 @@ public class Elevator extends Subsystem {
         manual=b;
     }
     public void setElev(double x){
-		front.set(ControlMode.PercentOutput, x, DemandType.ArbitraryFeedForward, (resting? 0:0.05));
+		front.set(ControlMode.PercentOutput, x, DemandType.ArbitraryFeedForward, (getIsResting()? 0:ekAntiGrav));
     }
 }
 
