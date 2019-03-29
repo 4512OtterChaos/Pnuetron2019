@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 public class ArmManual extends Command {
 
-    private double coefficient = 0.15;
+    private double coefficient = 0.175;
     private boolean moved = false;
     public ArmManual() {
         requires(Robot.arm);
@@ -28,7 +28,7 @@ public class ArmManual extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        double forward = 0.175*Robot.oi.coDriver.getRightY();
+        double forward = coefficient*Robot.oi.coDriver.getRightY();
         if(forward!=0){
             Robot.arm.setIsManual(true);
             Robot.arm.setWrist(forward);

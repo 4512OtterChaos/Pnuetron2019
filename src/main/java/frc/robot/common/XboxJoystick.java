@@ -1,9 +1,21 @@
 package frc.robot.common;
 
 import edu.wpi.first.wpilibj.Joystick;
-import frc.robot.*;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class XboxJoystick extends Joystick {
+	public enum Axes{
+		LEFT_Y(1),
+		LEFT_X(0),
+		RIGHT_Y(5),
+		RIGHT_X(4),
+		LEFT_TRIGGER(3),
+		RIGHT_TRIGGER(2);
+		int kAxis;
+		Axes(int axis) {
+			kAxis=axis;
+		}
+	}
     //these button fields represent the raw buttons on the controller
     public XboxButton xButton = new XboxButton(this, 3);
 	public XboxButton yButton = new XboxButton(this, 4);
@@ -26,21 +38,34 @@ public class XboxJoystick extends Joystick {
     }
     
     public double getLeftX(){
-		return this.getRawAxis(0);
+		return this.getRawAxis(Axes.LEFT_X.kAxis);
 	}
 	public double getLeftY(){
-		return -this.getRawAxis(1);
+		return -this.getRawAxis(Axes.LEFT_Y.kAxis);
 	}
 	public double getRightX(){
-		return this.getRawAxis(4);
+		return this.getRawAxis(Axes.RIGHT_X.kAxis);
 	}
 	public double getRightY(){
-		return -this.getRawAxis(5);
+		return -this.getRawAxis(Axes.RIGHT_Y.kAxis);
     }
     public double getLeftTrigger(){
-        return this.getRawAxis(3);
+        return this.getRawAxis(Axes.LEFT_TRIGGER.kAxis);
     }
     public double getRightTrigger(){
-        return this.getRawAxis(2);
-    }
+        return this.getRawAxis(Axes.RIGHT_TRIGGER.kAxis);
+	}
+	
+	public boolean getDpadUp(){
+		return this.getPOV() == 0;
+	}
+	public boolean getDpadRight(){
+		return this.getPOV() == 90;
+	}
+	public boolean getDpadDown(){
+		return this.getPOV() == 180;
+	}
+	public boolean getDpadLeft(){
+		return this.getPOV() == 270;
+	}
 }

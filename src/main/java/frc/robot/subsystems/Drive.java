@@ -45,6 +45,16 @@ public class Drive extends Subsystem {
     private double forward = 0;
     private double turn = 0;
 
+    /*
+    public ChassisState solveForwardKinematics(final WheelState wheel_motion) {
+        ChassisState chassis_motion = new ChassisState();
+        chassis_motion.linear = wheel_radius_ * (wheel_motion.right + wheel_motion.left) / 2.0;
+        chassis_motion.angular = wheel_radius_ * (wheel_motion.right - wheel_motion.left) / (2.0 *
+                effective_wheelbase_radius_);
+        return chassis_motion;
+    }
+    */
+
     public Drive() {
         frontRight = new WPI_TalonSRX(1);
         
