@@ -19,10 +19,7 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import frc.robot.Config;
-import frc.robot.Convert;
-import frc.robot.Network;
-import frc.robot.PIDConstants;
+import frc.robot.common.*;
 import frc.robot.Robot;
 import frc.robot.subsystems.elevatorCommands.*;
 
@@ -72,7 +69,7 @@ public class Elevator extends Subsystem {
         Config.configAllStart(back);
 
         back.follow(front);
-        front.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, PIDConstants.kIdx, Config.kTimeout);
+        front.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, MConstants.kIdx, Config.kTimeout);
         front.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
         Config.configSensor(front);
         front.setInverted(true);
@@ -82,7 +79,7 @@ public class Elevator extends Subsystem {
         Config.configAccel(ekAccel, front);
         front.configMotionSCurveStrength(4, Config.kTimeout);
         Config.configClosed(front, ekP, ekI, ekD, ekF, ekPeak, ekRamp);
-        front.config_IntegralZone(PIDConstants.kIdx, ekAllowable, Config.kTimeout);
+        front.config_IntegralZone(MConstants.kIdx, ekAllowable, Config.kTimeout);
     }
 
     @Override

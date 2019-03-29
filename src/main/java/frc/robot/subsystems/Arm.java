@@ -18,10 +18,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import frc.robot.Config;
-import frc.robot.Convert;
-import frc.robot.Network;
-import frc.robot.PIDConstants;
+import frc.robot.common.*;
 import frc.robot.Robot;
 import frc.robot.subsystems.armCommands.*;
 
@@ -66,7 +63,7 @@ public class Arm extends Subsystem {
 
         Config.configAllStart(wrist);
 
-        wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, PIDConstants.kIdx, Config.kTimeout);
+        wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, MConstants.kIdx, Config.kTimeout);
         wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
         Config.configSensor(wrist, startPos);
         wrist.setInverted(false);
@@ -75,7 +72,7 @@ public class Arm extends Subsystem {
         Config.configAccel(akAccel, wrist);
         wrist.configMotionSCurveStrength(6, Config.kTimeout);
         Config.configClosed(wrist, akP, akI, akD, akF, akPeak, akRamp);
-        wrist.config_IntegralZone(PIDConstants.kIdx, akAllowable, Config.kTimeout);
+        wrist.config_IntegralZone(MConstants.kIdx, akAllowable, Config.kTimeout);
     }
 
     @Override

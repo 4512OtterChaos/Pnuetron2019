@@ -1,10 +1,9 @@
-package frc.robot;
+package frc.robot.common;
 
 import edu.wpi.first.networktables.*;
 
 public class Limelight{
     private NetworkTable table;
-    private String mKey;
     private double tx;
     private double ty;
     private double ta;
@@ -22,9 +21,6 @@ public class Limelight{
         this.ty = table.getEntry("ty").getDouble(0.0);
         this.ta = table.getEntry("ta").getDouble(0.0);
         this.tv = table.getEntry("tv").getDouble(0.0);
-    }
-    public void update(String key){
-        this.table = NetworkTableInstance.getDefault().getTable(key);
     }
 
     public void toggleLight(){

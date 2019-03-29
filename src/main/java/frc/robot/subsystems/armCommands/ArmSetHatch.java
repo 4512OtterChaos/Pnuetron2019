@@ -12,7 +12,7 @@
 package frc.robot.subsystems.armCommands;
 import edu.wpi.first.wpilibj.command.Command;
 
-import frc.robot.Convert;
+import frc.robot.common.*;
 
 import frc.robot.Robot;
 public class ArmSetHatch extends Command {

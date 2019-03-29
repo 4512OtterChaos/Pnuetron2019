@@ -15,8 +15,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import frc.robot.Config;
-import frc.robot.Network;
+import frc.robot.common.*;
 import frc.robot.subsystems.intakeCommands.*;
 
 import edu.wpi.first.wpilibj.command.Subsystem;

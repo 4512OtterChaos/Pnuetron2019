@@ -12,7 +12,7 @@
 package frc.robot.subsystems;
 
 
-import frc.robot.Limelight;
+import frc.robot.common.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -47,9 +47,6 @@ public class Chassis extends Subsystem {
 
     @Override
     public void periodic() {
-        // Put code here to be run every loop
-        frontLime.update(frontLimeKey);
-        backLime.update(backLimeKey);
     }
 
     // Put methods for controlling this subsystem

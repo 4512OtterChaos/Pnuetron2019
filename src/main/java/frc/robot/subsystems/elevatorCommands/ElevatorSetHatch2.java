@@ -12,7 +12,7 @@
 package frc.robot.subsystems.elevatorCommands;
 import edu.wpi.first.wpilibj.command.Command;
 
-import frc.robot.Network;
+import frc.robot.common.*;
 import frc.robot.Robot;
 public class ElevatorSetHatch2 extends Command {
     private int loops=0;

@@ -17,10 +17,7 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import frc.robot.Config;
-import frc.robot.Convert;
-import frc.robot.Network;
-import frc.robot.PIDConstants;
+import frc.robot.common.*;
 import frc.robot.subsystems.driveCommands.*;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -65,12 +62,12 @@ public class Drive extends Subsystem {
         //config behavior
         backRight.follow(frontRight);
         backLeft.follow(frontLeft);
-        frontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, PIDConstants.kIdx, Config.kTimeout);
+        frontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, MConstants.kIdx, Config.kTimeout);
         frontRight.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
         frontRight.setInverted(true);
         backRight.setInverted(InvertType.FollowMaster);
         frontRight.setSensorPhase(true);
-        frontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, PIDConstants.kIdx, Config.kTimeout);
+        frontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, MConstants.kIdx, Config.kTimeout);
         frontLeft.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
         frontLeft.setInverted(false);
         backLeft.setInverted(InvertType.FollowMaster);

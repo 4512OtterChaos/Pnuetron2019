@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.common;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
@@ -34,16 +34,16 @@ public class Config{
         motor.configOpenloopRamp(ramp, kTimeout);
     }
     public static void configSensor(BaseMotorController motor){
-        motor.setSelectedSensorPosition(0, PIDConstants.kIdx, kTimeout);
+        motor.setSelectedSensorPosition(0, MConstants.kIdx, kTimeout);
     }
     public static void configSensor(BaseMotorController motor, int pos){
-        motor.setSelectedSensorPosition(pos, PIDConstants.kIdx, kTimeout);
+        motor.setSelectedSensorPosition(pos, MConstants.kIdx, kTimeout);
     }
     public static void configPID(TalonSRX motor, double p, double i, double d, double f){
-		motor.config_kP(PIDConstants.kIdx, p, kTimeout);
-		motor.config_kI(PIDConstants.kIdx, i, kTimeout);
-		motor.config_kD(PIDConstants.kIdx, d, kTimeout);
-		motor.config_kF(PIDConstants.kIdx, f, kTimeout);
+		motor.config_kP(MConstants.kIdx, p, kTimeout);
+		motor.config_kI(MConstants.kIdx, i, kTimeout);
+		motor.config_kD(MConstants.kIdx, d, kTimeout);
+		motor.config_kF(MConstants.kIdx, f, kTimeout);
     }
     public static void configCruise(int uPer100ms, BaseMotorController motor){
 		motor.configMotionCruiseVelocity(uPer100ms, kTimeout);
@@ -53,8 +53,8 @@ public class Config{
     }
     public static void configClosed(TalonSRX motor, double p, double i, double d, double f, double peak, double ramp){
 		motor.configClosedloopRamp(ramp);
-		motor.configClosedLoopPeakOutput(PIDConstants.kIdx, peak);
-		motor.configAllowableClosedloopError(PIDConstants.kIdx, PIDConstants.kAllowableClosed, kTimeout);
+		motor.configClosedLoopPeakOutput(MConstants.kIdx, peak);
+		motor.configAllowableClosedloopError(MConstants.kIdx, MConstants.kAllowableClosed, kTimeout);
 		configPID(motor, p, i, d, f);
 	}
 }
