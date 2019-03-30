@@ -10,6 +10,13 @@ package frc.robot;
 import frc.robot.common.MConstants;
 
 public class RobotMap {
+    //elevator
+    public static final int ELEV_BOTTOM = 0;
+    public static final int ELEV_SUPPLY = 4800;
+    public static final int ELEV_HATCH1 = 5100;
+    public static final int ELEV_CARGO = 6000;
+    public static final int ELEV_HATCH2 = 24600;
+    public static final int ELEV_HATCH3 = 47200;
     //drivebase
     public static final double WHEEL_DIAMETER = 8;//inches
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*Math.PI;

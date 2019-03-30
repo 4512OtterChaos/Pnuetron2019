@@ -20,13 +20,16 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.common.*;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 import frc.robot.subsystems.armCommands.*;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Arm extends Subsystem {
 
     public WPI_TalonSRX wrist;
+
+    public DigitalInput hatchButton = new DigitalInput(4);
 
     private final int startPos = 280;
     private double target = startPos;
@@ -54,9 +57,14 @@ public class Arm extends Subsystem {
     public final int akHatchOutB = akMinB;
     //state
     private boolean manual=false;
+    private boolean armHasItem = false;
     private boolean armHadItem = false;
     private boolean armGotItem = false;
     private boolean armLostItem = false;
+    private boolean button = false;
+    private boolean lastButton = false;
+    private boolean buttonPressed = false;
+    private boolean buttonReleased = false;
 
     public Arm() {
         wrist = new WPI_TalonSRX(7);
@@ -90,7 +98,7 @@ public class Arm extends Subsystem {
         targetA=target;
 
         targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? Convert.getCounts(7):akMinF), targetA);
-        targetA=Math.min(((Robot.elevator.getPos()<=Robot.elevator.ekSupply-500)? startPos:akMaxF), targetA);
+        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_SUPPLY-500)? startPos:akMaxF), targetA);
         targetA=Convert.limit(akMinB, akMaxF, targetA);
 
         double ff = calcGrav();//feed forward
@@ -109,9 +117,17 @@ public class Arm extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
     private void checkState(){//state changes
-        armGotItem=getHasItem()&&!armHadItem;
-        armLostItem=!getHasItem()&&armHadItem;
-        armHadItem=getHasItem();
+        armHasItem=getHasItem();
+        armGotItem=armHasItem&&!armHadItem;
+        armLostItem=!armHasItem&&armHadItem;
+        armHadItem=armHasItem;
+
+        button=hatchButton.get();
+        buttonPressed=button&&!lastButton;
+        buttonReleased=!button&&lastButton;
+        lastButton=button;
+
+        
 
         if(armGotItem){
             Config.configCruise(akCruiseItem, wrist);

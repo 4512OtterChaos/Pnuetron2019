@@ -21,6 +21,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.common.*;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 import frc.robot.subsystems.elevatorCommands.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -45,19 +46,10 @@ public class Elevator extends Subsystem {
     private double ekRamp = 0.13;
     private final int ekAllowable=400;
     private int ekCruise = 3600;
-    //private double ekAccelTime = 0.8;//seconds
     private int ekAccel = 3900;//encoder counts per 100 ms per second
     //behavior
     public final double ekAntiGrav = 0.06;
-    public final int ekBottom=0;
-    public final int ekSupply=4850;
-    public final int ekHatch1=5100;
-    //public final int ekLowOver=6000;
-    public final int ekCargoOut=7000;
-    public final int ekHatch2=24500;
-    public final int ekHatch3=47100;
-    //public final int ekCargoIn=28200;
-    //public final int ekCargoOut=40000;
+
     private boolean manual=false;
 
     public Elevator() {
@@ -77,7 +69,7 @@ public class Elevator extends Subsystem {
         front.setSensorPhase(true);
         Config.configCruise(ekCruise, front);
         Config.configAccel(ekAccel, front);
-        front.configMotionSCurveStrength(4, Config.kTimeout);
+        front.configMotionSCurveStrength(6, Config.kTimeout);
         Config.configClosed(front, ekP, ekI, ekD, ekF, ekPeak, ekRamp);
         front.config_IntegralZone(MConstants.kIdx, ekAllowable, Config.kTimeout);
     }
@@ -94,14 +86,14 @@ public class Elevator extends Subsystem {
         // Put code here to be run every loop
         checkState();
 
-        targetA=Convert.limit(ekBottom, ekHatch3, target);//physical limits
+        targetA=Convert.limit(RobotMap.ELEV_BOTTOM, RobotMap.ELEV_HATCH3, target);//physical limits
 
         if(getWantRest()){
             targetA=0;
             if(!getIsResting()) targetA=-200;
         }
 
-        if(isTarget(ekCargoOut) && isTarget((int)target, ekCargoOut)){
+        if(isTarget(RobotMap.ELEV_CARGO) && isTarget((int)target, RobotMap.ELEV_CARGO)){
             Robot.intake.setBackdriving(true);
         }
         else{
