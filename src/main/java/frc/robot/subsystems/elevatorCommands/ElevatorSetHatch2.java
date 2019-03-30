@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import frc.robot.common.*;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 public class ElevatorSetHatch2 extends Command {
     private int loops=0;
 
@@ -29,7 +30,7 @@ public class ElevatorSetHatch2 extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.elevator.setTarget(Robot.elevator.ekHatch2);
+        Robot.elevator.setTarget(RobotMap.ELEV_HATCH2);
         loops++;
     }
 

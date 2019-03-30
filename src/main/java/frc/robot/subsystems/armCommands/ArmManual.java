@@ -28,8 +28,8 @@ public class ArmManual extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        double forward = coefficient*Robot.oi.coDriver.getRightY();
-        if(forward!=0){
+        double forward = coefficient*Robot.oi.operator.getRightY();
+        if(forward!=0 && Robot.oi.operator.leftBumper.getPressed()){
             Robot.arm.setIsManual(true);
             Robot.arm.setWrist(forward);
             moved=true;

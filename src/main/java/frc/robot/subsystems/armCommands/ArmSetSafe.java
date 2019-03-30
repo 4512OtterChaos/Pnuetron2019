@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import frc.robot.common.*;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 public class ArmSetSafe extends Command {
     private int loops=0;
 
@@ -36,8 +37,8 @@ public class ArmSetSafe extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        if((Robot.elevator.isTarget(Robot.elevator.ekHatch2)||
-            Robot.elevator.isTarget(Robot.elevator.ekHatch3))&&
+        if((Robot.elevator.isTarget(RobotMap.ELEV_HATCH2)||
+            Robot.elevator.isTarget(RobotMap.ELEV_HATCH3))&&
             loops>10){
 
             return true;

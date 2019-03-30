@@ -9,16 +9,18 @@
 // it from being updated in the future.
 
 
-package frc.robot.subsystems.elevatorCommands;
+package frc.robot.subsystems.armCommands;
 import edu.wpi.first.wpilibj.command.Command;
+
+import frc.robot.common.*;
+
 import frc.robot.Robot;
-import frc.robot.RobotMap;
-public class ElevatorSetHatch3 extends Command {
+public class ArmSet extends Command {
 
-    private int loops=0;
-
-    public ElevatorSetHatch3() {
-        requires(Robot.elevator);
+    private int target;
+    public ArmSet(int target) {
+        requires(Robot.arm);
+        this.target = target;
     }
 
     // Called just before this Command runs the first time
@@ -29,15 +31,13 @@ public class ElevatorSetHatch3 extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.elevator.setTarget(RobotMap.ELEV_HATCH3);
-        loops++;
+        Robot.arm.setTarget(target);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        if(loops>=50) return true;
-        return Robot.elevator.isTarget();
+        return Robot.arm.isTarget();
     }
 
     // Called once after isFinished returns true

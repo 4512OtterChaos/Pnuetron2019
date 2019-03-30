@@ -28,8 +28,8 @@ public class ElevatorManual extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        double forward = 0.3*Robot.oi.coDriver.getLeftY();
-        if(forward!=0){
+        double forward = 0.3*Robot.oi.operator.getLeftY();
+        if(forward!=0 && Robot.oi.operator.leftBumper.getPressed()){
             Robot.elevator.setIsManual(true);
             Robot.elevator.setElev(forward);
             moved=true;

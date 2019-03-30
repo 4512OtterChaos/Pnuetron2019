@@ -11,26 +11,29 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import frc.robot.subsystems.*;
-import frc.robot.common.*;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.robot.common.Config;
+import frc.robot.common.Network;
+import frc.robot.control.OI;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Chassis;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Flipper;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Manipulator;
 
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
  * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.properties file in 
- * the project.
+ * creating this project, you must also update the build.properties file in the
+ * project.
  */
 public class Robot extends TimedRobot {
 

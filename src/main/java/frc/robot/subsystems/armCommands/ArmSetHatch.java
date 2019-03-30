@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.common.*;
 
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 public class ArmSetHatch extends Command {
 
     public ArmSetHatch() {
@@ -30,7 +31,7 @@ public class ArmSetHatch extends Command {
     @Override
     protected void execute() {
         int hatch = Robot.arm.akHatchOutF;
-        int counts = (Robot.elevator.isTarget(Robot.elevator.ekHatch1)? hatch+Convert.getCounts(9):hatch);
+        int counts = (Robot.elevator.isTarget(RobotMap.ELEV_HATCH1)? hatch+Convert.getCounts(9):hatch);
         Robot.arm.setTarget(counts);
     }
 

@@ -9,7 +9,7 @@
 // it from being updated in the future.
 
 
-package frc.robot;
+package frc.robot.control;
 
 import frc.robot.subsystems.liftgroupCommands.*;
 import frc.robot.subsystems.intakeCommands.*;
@@ -53,44 +53,16 @@ public class OI {
 
 
     public XboxJoystick driver;
-    public XboxJoystick coDriver;
+    public XboxJoystick operator;
 
     public OI() {
 
         //read class file for info
         driver = new XboxJoystick(0);
-        coDriver = new XboxJoystick(1);
+        operator = new XboxJoystick(1);
         
-        //Interface buttons with commands to control robot
-
-        //Drive
-        driver.leftBumper.whileActive(new DriveShiftDown());
-        driver.rightBumper.whileActive(new DriveShiftUp());
-        driver.rightTrigger.whileActive(new DriveVroom());//full mast
-        driver.leftTrigger.whileActive(new DriveVision());//target with ll
-        
-        //Manipulator
-        coDriver.aButton.whenActive(new OpenClaw(), coDriver.leftBumper, true);//manipulator
-        coDriver.bButton.whenActive(new CloseClaw(), coDriver.leftBumper, true);//bumper disables buttons
-        coDriver.yButton.whenActive(new OpenPusher(), coDriver.leftBumper, true);
-        coDriver.yButton.whenInactive(new ClosePusher(), coDriver.leftBumper, true);
-        
-        //Lift
-        coDriver.aButton.whenActive(new LiftSetStart(), coDriver.leftBumper, false);//lift
-        coDriver.bButton.whenActive(new LiftSetHatch1(), coDriver.leftBumper, false);//bumper enables buttons
-        coDriver.xButton.whenActive(new LiftSetHatch2(), coDriver.leftBumper, false);
-        coDriver.yButton.whenActive(new LiftSetHatch3(), coDriver.leftBumper, false);
-        coDriver.leftStickButton.whenActive(new LiftSetCargo(), coDriver.leftBumper, false);
-
-        //Intake
-        driver.aButton.whileActive(new IntakeIn());
-        driver.bButton.whileActive(new IntakeOut());
-        coDriver.xButton.whenActive(new IntakeBackdrive(), coDriver.leftBumper, true);
-
-        //Flipper
-        driver.xButton.whenActive(new FlipIntakeUp());
-        driver.yButton.whenActive(new FlipIntakeDown());
-
+        DriverConfig driveConfig = new DriverConfig(driver);
+        OperatorConfig operateConfig = new OperatorConfig(operator);
     }
 }
 

@@ -3,20 +3,15 @@ package frc.robot.common;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 
-public class XboxJoystick extends Joystick {
-	public enum Axes{
-		LEFT_Y(1),
-		LEFT_X(0),
-		RIGHT_Y(5),
-		RIGHT_X(4),
-		LEFT_TRIGGER(3),
-		RIGHT_TRIGGER(2);
-		int kAxis;
-		Axes(int axis) {
-			kAxis=axis;
-		}
-	}
-    //these button fields represent the raw buttons on the controller
+public class XboxJoystick extends XboxController {
+
+	private final int LEFT_X_AXIS = 0;
+	private final int LEFT_Y_AXIS = 1;
+	private final int RIGHT_TRIGGER_AXIS = 2;
+	private final int LEFT_TRIGGER_AXIS = 3;
+	private final int RIGHT_X_AXIS = 4;
+	private final int RIGHT_Y_AXIS = 5;
+	//these button fields represent the raw buttons on the controller
     public XboxButton xButton = new XboxButton(this, 3);
 	public XboxButton yButton = new XboxButton(this, 4);
 	public XboxButton aButton = new XboxButton(this, 1);
@@ -27,33 +22,31 @@ public class XboxJoystick extends Joystick {
 	public XboxButton selectButton = new XboxButton(this, 7);
 	public XboxButton leftStickButton = new XboxButton(this, 9);
 	public XboxButton rightStickButton = new XboxButton(this, 10);
-	public XboxButton leftTrigger = new XboxButton(this, 3);
-	public XboxButton rightTrigger = new XboxButton(this, 2);
+	public XboxButton leftTrigger = new XboxButton(this, 3, true);
+	public XboxButton rightTrigger = new XboxButton(this, 2, true);
 	
 	//XboxController does not have command functionality, so we imitate it as a Joystick.
     public XboxJoystick(final int port){
 		super(port);
-		leftTrigger.setAxis(true);//these buttons activate on trigger presses
-		rightTrigger.setAxis(true);
     }
     
     public double getLeftX(){
-		return this.getRawAxis(Axes.LEFT_X.kAxis);
+		return this.getRawAxis(LEFT_X_AXIS);
 	}
 	public double getLeftY(){
-		return -this.getRawAxis(Axes.LEFT_Y.kAxis);
+		return -this.getRawAxis(LEFT_Y_AXIS);
 	}
 	public double getRightX(){
-		return this.getRawAxis(Axes.RIGHT_X.kAxis);
+		return this.getRawAxis(RIGHT_X_AXIS);
 	}
 	public double getRightY(){
-		return -this.getRawAxis(Axes.RIGHT_Y.kAxis);
+		return -this.getRawAxis(RIGHT_Y_AXIS);
     }
     public double getLeftTrigger(){
-        return this.getRawAxis(Axes.LEFT_TRIGGER.kAxis);
+        return this.getRawAxis(LEFT_TRIGGER_AXIS);
     }
     public double getRightTrigger(){
-        return this.getRawAxis(Axes.RIGHT_TRIGGER.kAxis);
+        return this.getRawAxis(RIGHT_TRIGGER_AXIS);
 	}
 	
 	public boolean getDpadUp(){
@@ -67,5 +60,10 @@ public class XboxJoystick extends Joystick {
 	}
 	public boolean getDpadLeft(){
 		return this.getPOV() == 270;
+	}
+
+	public void setRumble(double x){
+		this.setRumble(RumbleType.kLeftRumble, x);
+		this.setRumble(RumbleType.kRightRumble, x);
 	}
 }

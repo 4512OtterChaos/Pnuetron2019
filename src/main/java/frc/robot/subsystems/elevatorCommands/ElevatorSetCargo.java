@@ -12,6 +12,7 @@
 package frc.robot.subsystems.elevatorCommands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 public class ElevatorSetCargo extends Command {
 
     public ElevatorSetCargo() {
@@ -26,7 +27,7 @@ public class ElevatorSetCargo extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.elevator.setTarget(Robot.elevator.ekCargoOut);
+        Robot.elevator.setTarget(RobotMap.ELEV_CARGO);
     }
 
     // Make this return true when this Command no longer needs to run execute()

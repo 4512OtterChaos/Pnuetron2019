@@ -13,12 +13,12 @@ package frc.robot.subsystems.elevatorCommands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-public class ElevatorSetHatch3 extends Command {
+public class ElevatorSet extends Command {
 
-    private int loops=0;
-
-    public ElevatorSetHatch3() {
+    private int target;
+    public ElevatorSet(int target) {
         requires(Robot.elevator);
+        this.target=target;
     }
 
     // Called just before this Command runs the first time
@@ -29,14 +29,12 @@ public class ElevatorSetHatch3 extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.elevator.setTarget(RobotMap.ELEV_HATCH3);
-        loops++;
+        Robot.elevator.setTarget(target);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        if(loops>=50) return true;
         return Robot.elevator.isTarget();
     }
 
