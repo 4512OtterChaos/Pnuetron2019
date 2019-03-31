@@ -22,7 +22,9 @@ import frc.robot.common.*;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.armCommands.*;
+import frc.robot.subsystems.manipulatorCommands.*;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Arm extends Subsystem {
@@ -32,30 +34,24 @@ public class Arm extends Subsystem {
     public DigitalInput hatchButton = new DigitalInput(4);
 
     private final int startPos = 280;
-    private double target = startPos;
-    private double targetA = target;//adjusted target
+    private int target = startPos;
+    private int targetA = target;//adjusted target
     private double akP = 2.2;
     private double akI = 0;//0.01
     private double akD = 50;
     private double akF = 1023.0/210.0;
     private double akPeak = 1;
     private double akRamp = 0.08;
-    private final int akAllowable = 40;
     private int akCruise = 130;
     private int akCruiseItem = 110;
     private int akAccel = 260;
     private int akAccelItem = 210;
     //behavior constants
-    private final double akAntiArm = 0.08;//percent with unburdened arm
+    private final double akRestingForce = 0.05;//forward pressure while resting
+    private final double akAntiArm = 0.08;//percent with unburdened arm(counter gravity)
     private final double akAntiItem = 0.13;//percent with burdened arm
-    private double akAntiGrav = akAntiArm;//How much PercentOutput is required for the motor to stall while horizontal
-    public final int akMinB = Convert.getCounts(-85);//0 degrees straight up, positive forward
-    public final int akMaxB = Convert.getCounts(-75);
-    public final int akMinF = Convert.getCounts(23);
-    public final int akMaxF = Convert.getCounts(120);
-    public int akHatchOutF = Convert.getCounts(80);
-    public final int akHatchOutB = akMinB;
     //state
+    private int pos = startPos;
     private boolean manual=false;
     private boolean armHasItem = false;
     private boolean armHadItem = false;
@@ -80,7 +76,7 @@ public class Arm extends Subsystem {
         Config.configAccel(akAccel, wrist);
         wrist.configMotionSCurveStrength(6, Config.kTimeout);
         Config.configClosed(wrist, akP, akI, akD, akF, akPeak, akRamp);
-        wrist.config_IntegralZone(MConstants.kIdx, akAllowable, Config.kTimeout);
+        wrist.config_IntegralZone(MConstants.kIdx, RobotMap.ARM_ERROR, Config.kTimeout);
     }
 
     @Override
@@ -94,40 +90,6 @@ public class Arm extends Subsystem {
     public void periodic() {
         // Put code here to be run every loop
         checkState();
-        
-        targetA=target;
-
-        targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? Convert.getCounts(7):akMinF), targetA);
-        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_SUPPLY-500)? startPos:akMaxF), targetA);
-        targetA=Convert.limit(akMinB, akMaxF, targetA);
-
-        double ff = calcGrav();//feed forward
-
-        boolean liftResting = Robot.elevator.getIsResting();
-        if(liftResting){
-            targetA=startPos;//set to resting angle
-            ff=0.06;//forward pressure on arm while down
-        }
-
-        if(!manual) aMotionPID(targetA, ff);
-
-        putNetwork();
-    }
-
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-    private void checkState(){//state changes
-        armHasItem=getHasItem();
-        armGotItem=armHasItem&&!armHadItem;
-        armLostItem=!armHasItem&&armHadItem;
-        armHadItem=armHasItem;
-
-        button=hatchButton.get();
-        buttonPressed=button&&!lastButton;
-        buttonReleased=!button&&lastButton;
-        lastButton=button;
-
-        
 
         if(armGotItem){
             Config.configCruise(akCruiseItem, wrist);
@@ -137,15 +99,64 @@ public class Arm extends Subsystem {
             Config.configCruise(akCruise, wrist);
             Config.configAccel(akAccel, wrist);
         }
+
+        if(buttonPressed){
+            if(!armHasItem){
+                Scheduler.getInstance().add(new OpenClaw());
+            }
+            else{
+                Scheduler.getInstance().add(new PlaceHatch());
+            }
+        }
         
-        akAntiGrav=(getHasItem())? akAntiItem:akAntiArm;
+        targetA=target;
+
+        //intake compensate
+        targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? Convert.getCounts(7):RobotMap.ARM_CLOSE_FORWARD), targetA);
+        //avoid pegs
+        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_SUPPLY+RobotMap.ELEV_ERROR)? RobotMap.ARM_HATCH_OUT:RobotMap.ARM_FAR_FORWARD), targetA);
+        //avoid pid pressure
+        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_SUPPLY-RobotMap.ELEV_ERROR)? startPos:RobotMap.ARM_FAR_FORWARD), targetA);
+        //dont break the chain
+        targetA=Convert.limit(RobotMap.ARM_FAR_BACKWARD, RobotMap.ARM_FAR_FORWARD, targetA);
+
+        double ff = calcGrav();//feed forward
+
+        boolean liftResting = Robot.elevator.getIsResting();
+        boolean armResting = 
+            (isTarget(target, RobotMap.ARM_HATCH_IN) && (isTarget(RobotMap.ARM_HATCH_IN)))
+            && Robot.elevator.getPos()<=RobotMap.ELEV_SUPPLY+RobotMap.ELEV_ERROR;
         
-        //feed
+        if(liftResting){
+            targetA=startPos;//set to resting angle
+            ff=akRestingForce;//forward pressure on arm while down
+        }
+
+        if(liftResting||armResting) setWrist(akRestingForce);
+        else if(!manual) aMotionPID(targetA, ff);
+
+        putNetwork();
+    }
+
+    // Put methods for controlling this subsystem
+    // here. Call these from Commands.
+    private void checkState(){//state changes
+        pos=getPos();
+
+        armHasItem=getHasItem();
+        armGotItem=armHasItem&&!armHadItem;
+        armLostItem=!armHasItem&&armHadItem;
+        armHadItem=armHasItem;
+
+        button=hatchButton.get();
+        buttonPressed=button&&!lastButton;
+        buttonReleased=!button&&lastButton;
+        lastButton=button;      
     }
     private void putNetwork(){
         Network.put("Arm Target", target);
         Network.put("Arm TargetA", targetA);
-        Network.put("Arm Pos", getPos());
+        Network.put("Arm Pos", pos);
         Network.put("Arm Deg", getDeg());
         Network.put("Arm Native", Convert.getNative(wrist));
         Network.put("Arm Power", wrist.getMotorOutputPercent());
@@ -160,17 +171,20 @@ public class Arm extends Subsystem {
 
     private double calcGrav(){//resist gravity
         double gravity = -Math.sin(Math.toRadians(getDeg()));//0 degrees is straight up, so gravity is a sin curve
-        double counterForce = (gravity*akAntiGrav);//multiply by the output percent for holding stable while 90 degrees
+        double counterForce = (gravity*((getHasItem())? akAntiItem:akAntiArm));//multiply by the output percent for holding stable while 90 degrees
         counterForce = Convert.limit(counterForce);
         return counterForce;
     }
     
     //interaction
     public boolean isTarget(){
-        return (getPos()<=target+akAllowable && getPos()>=target-akAllowable);
+        return (pos<=target+RobotMap.ARM_ERROR && pos>=target-RobotMap.ARM_ERROR);
     }
     public boolean isTarget(int t){
-        return (getPos()<=t+akAllowable && getPos()>=t-akAllowable);
+        return (pos<=t+RobotMap.ARM_ERROR && pos>=t-RobotMap.ARM_ERROR);
+    }
+    public boolean isTarget(int pos, int target){
+        return (pos<=target+RobotMap.ARM_ERROR && pos>=target-RobotMap.ARM_ERROR);
     }
     
     public int getPos(){
@@ -178,6 +192,9 @@ public class Arm extends Subsystem {
     }
     public double getDeg(){
         return Convert.getDegrees(getPos());
+    }
+    public int getTarget(){
+        return target;
     }
     public boolean getHasItem(){
         return Robot.manipulator.getIsOpen();

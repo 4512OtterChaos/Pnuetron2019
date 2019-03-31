@@ -2,22 +2,20 @@ package frc.robot.control;
 
 import frc.robot.common.XboxButton;
 import frc.robot.common.XboxJoystick;
-import frc.robot.subsystems.flipperCommands.FlipIntake;
+import frc.robot.subsystems.driveCommands.*;
+import frc.robot.subsystems.flipperCommands.*;
 import frc.robot.subsystems.intakeCommands.*;
 import frc.robot.subsystems.liftgroupCommands.*;
 import frc.robot.subsystems.manipulatorCommands.*;
 
-public class SoloConfig extends ControllerConfig{
-
-    private XboxJoystick controller;
-
-    private XboxButton[] liftRequires = {controller.leftBumper};//control lift when pressing these
-
+public class SoloConfig{
+    
     public SoloConfig(XboxJoystick controller){
-        super(controller);
-    }
-
-    protected void assign(){
+        XboxButton[] liftRequires = {controller.rightBumper};//control lift when pressing these
+        //drive
+        controller.leftBumper.whileActive(new DriveShiftNeutral());
+        controller.leftTrigger.whileActive(new DriveVroom());
+        controller.rightTrigger.whileActive(new DriveVision());
         //Manipulator
         controller.aButton.whenActive(new OpenClaw(), liftRequires, true);
         controller.bButton.whenActive(new CloseClaw(), liftRequires, true);

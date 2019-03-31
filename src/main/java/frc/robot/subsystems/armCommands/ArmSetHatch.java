@@ -30,9 +30,8 @@ public class ArmSetHatch extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        int hatch = Robot.arm.akHatchOutF;
-        int counts = (Robot.elevator.isTarget(RobotMap.ELEV_HATCH1)? hatch+Convert.getCounts(9):hatch);
-        Robot.arm.setTarget(counts);
+        int hatch = RobotMap.ARM_HATCH_OUT;
+        Robot.arm.setTarget(hatch);
     }
 
     // Make this return true when this Command no longer needs to run execute()

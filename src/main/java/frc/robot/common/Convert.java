@@ -78,6 +78,16 @@ public class Convert {
     public static double limit(double low, double high, double value){
         return Math.max(low,Math.min(high,value));
 	}
+	/**
+	 * 
+	 * @param low Minimum value
+	 * @param high Maximum value
+	 * @param value Actual value
+	 * @return Constrained value
+	 */
+    public static int limit(int low, int high, int value){
+        return Math.max(low,Math.min(high,value));
+	}
 	
 	/**
 	 * 

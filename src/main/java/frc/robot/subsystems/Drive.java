@@ -39,8 +39,8 @@ public class Drive extends Subsystem {
     //state
     private final double dkMaxRPM = 400;
     private double dkSpeedNeutral = 0.45;
-    private double dkSpeedShift = 0.3;
-    private double dkSpeed = dkSpeedNeutral;
+    private double dkSpeedLow = 0.2;
+    private double dkSpeed = dkSpeedLow;
     private double targetRPM = dkMaxRPM*dkSpeed;
     private double forward = 0;
     private double turn = 0;
@@ -178,24 +178,11 @@ public class Drive extends Subsystem {
         return dkSpeed;
     }
 
-    /**
-     * @return Operating percentage shifted up on the drivebase(0-1).
-     */
-    public double shiftUp(){
-        return dkSpeedNeutral+dkSpeedShift;
+    public void shiftNeutral(){
+        shiftSet(dkSpeedNeutral);
     }
-    /**
-     * @return Operating percentage shifted down on the drivebase(0-1).
-     */
-    public double shiftDown(){
-        return dkSpeedNeutral-dkSpeedShift;
-    }
-    /**
-     * 
-     * @return Neutral operating percentage on the drivebase(0-1).
-     */
-    public double shiftNeutral(){
-        return dkSpeedNeutral;
+    public void shiftLow(){
+        shiftSet(dkSpeedLow);
     }
     /**
      * Manually sets percentage speed

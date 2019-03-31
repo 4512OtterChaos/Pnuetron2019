@@ -16,15 +16,15 @@ import frc.robot.Robot;
 /**
  *
  */
-public class DriveShiftDown extends Command {
+public class DriveShiftNeutral extends Command {
 
-    public DriveShiftDown() {
+    public DriveShiftNeutral() {
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        Robot.drive.shiftSet(Robot.drive.shiftDown());
+        Robot.drive.shiftNeutral();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -41,7 +41,7 @@ public class DriveShiftDown extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.drive.shiftSet(Robot.drive.shiftNeutral());
+        Robot.drive.shiftLow();
     }
 
     // Called when another command which requires one or more of the same

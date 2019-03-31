@@ -16,8 +16,11 @@ import frc.robot.common.*;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 public class ArmSetSafe extends Command {
-    private int loops=0;
 
+    private int startPos;
+    private boolean unsafe = false;
+    private boolean high = false;
+    private double time = 0.6;
     public ArmSetSafe() {
         requires(Robot.arm);
     }
@@ -25,25 +28,27 @@ public class ArmSetSafe extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        int curr = Robot.elevator.getPos();
+        int cutoff = RobotMap.ELEV_SUPPLY+RobotMap.ELEV_ERROR;
+        int safehigh = RobotMap.ELEV_HATCH2;
+        high = curr>cutoff;
+        time = Convert.interpolate(0.6, 0.05, (curr-cutoff)/(double)(safehigh-cutoff));
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.arm.setTarget((Robot.intake.getBackdriving()&&!Robot.arm.getHasItem()? Convert.getCounts(7):Robot.arm.akMinF));
-        loops++;
+        Robot.arm.setTarget(RobotMap.ARM_CLOSE_FORWARD);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        if((Robot.elevator.isTarget(RobotMap.ELEV_HATCH2)||
-            Robot.elevator.isTarget(RobotMap.ELEV_HATCH3))&&
-            loops>10){
+        
+        
+        if(high && timeSinceInitialized()>=time) return true;
 
-            return true;
-        }
-        return Robot.arm.isTarget();
+        return Robot.arm.isTarget(RobotMap.ARM_CLOSE_FORWARD);
     }
 
     // Called once after isFinished returns true

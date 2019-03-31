@@ -61,8 +61,8 @@ public class OI {
         driver = new XboxJoystick(0);
         operator = new XboxJoystick(1);
         
-        DriverConfig driveConfig = new DriverConfig(driver);
-        OperatorConfig operateConfig = new OperatorConfig(operator);
+        new DriverConfig(driver);
+        new OperatorConfig(operator);
     }
 }
 

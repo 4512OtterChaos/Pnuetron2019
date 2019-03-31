@@ -36,15 +36,14 @@ public class Elevator extends Subsystem {
     public DigitalInput carriageBot = new DigitalInput(3);
 
     //pid
-    private double target=0;
-    private double targetA=target;
+    private int target=0;
+    private int targetA=target;
     private double ekP = 0.65;
     private double ekI = 0;//0.005
     private double ekD = 35;
     private double ekF = 1023.0/5000.0;
     private double ekPeak = 0.9;
     private double ekRamp = 0.13;
-    private final int ekAllowable=400;
     private int ekCruise = 3600;
     private int ekAccel = 3900;//encoder counts per 100 ms per second
     //behavior
@@ -71,7 +70,7 @@ public class Elevator extends Subsystem {
         Config.configAccel(ekAccel, front);
         front.configMotionSCurveStrength(6, Config.kTimeout);
         Config.configClosed(front, ekP, ekI, ekD, ekF, ekPeak, ekRamp);
-        front.config_IntegralZone(MConstants.kIdx, ekAllowable, Config.kTimeout);
+        front.config_IntegralZone(MConstants.kIdx, RobotMap.ELEV_ERROR, Config.kTimeout);
     }
 
     @Override
@@ -89,8 +88,8 @@ public class Elevator extends Subsystem {
         targetA=Convert.limit(RobotMap.ELEV_BOTTOM, RobotMap.ELEV_HATCH3, target);//physical limits
 
         if(getWantRest()){
-            targetA=0;
-            if(!getIsResting()) targetA=-200;
+            targetA=RobotMap.ELEV_BOTTOM;
+            if(!getIsResting()) targetA=RobotMap.ELEV_BOTTOM-RobotMap.ELEV_ERROR;
         }
 
         if(isTarget(RobotMap.ELEV_CARGO) && isTarget((int)target, RobotMap.ELEV_CARGO)){
@@ -100,7 +99,8 @@ public class Elevator extends Subsystem {
             Robot.intake.setBackdriving(false);
         }
 
-        if(!manual) eMotionPID(targetA, (getIsResting()? 0:ekAntiGrav));
+        if(getIsResting()) setElev(0);
+        else if(!manual) eMotionPID(targetA, ekAntiGrav);
 
         putNetwork();
     }
@@ -127,21 +127,15 @@ public class Elevator extends Subsystem {
 	private void eMotionPID(double pos, double feed){
 		front.set(ControlMode.MotionMagic, pos, DemandType.ArbitraryFeedForward, feed);
 	}
-	private void ePosPID(double pos){
-		front.set(ControlMode.Position, pos);
-	}
-	private void ePosPID(double pos, double feed){
-		front.set(ControlMode.Position, pos, DemandType.ArbitraryFeedForward, feed);
-    }
     
     public boolean isTarget(){//finish commands if the position meets target
-        return (getPos()<=target+ekAllowable && getPos()>=target-ekAllowable);
+        return (getPos()<=target+RobotMap.ELEV_ERROR && getPos()>=target-RobotMap.ELEV_ERROR);
     }
     public boolean isTarget(int target){
-        return (getPos()<=target+ekAllowable && getPos()>=target-ekAllowable);
+        return (getPos()<=target+RobotMap.ELEV_ERROR && getPos()>=target-RobotMap.ELEV_ERROR);
     }
     public boolean isTarget(int pos, int target){
-        return (pos<=target+ekAllowable && pos>=target-ekAllowable);
+        return (pos<=target+RobotMap.ELEV_ERROR && pos>=target-RobotMap.ELEV_ERROR);
     }
 
     //interaction
@@ -149,10 +143,14 @@ public class Elevator extends Subsystem {
         return front.getSelectedSensorPosition();
     }
     public boolean getIsResting(){
-        return getCarrBot()&&getStageBot();
+        return 
+            ((getCarrBot()&&getStageBot())||
+            isTarget(RobotMap.ELEV_BOTTOM-RobotMap.ELEV_ERROR+70))&&
+            isTarget(target, RobotMap.ELEV_BOTTOM);
     }
     public boolean getWantRest(){
-        return (getPos()<=3*ekAllowable && target<=getPos()+ekAllowable);
+        int cutoff = RobotMap.ELEV_SUPPLY-2*RobotMap.ELEV_ERROR;
+        return (getPos()<=cutoff && target<=getPos()+RobotMap.ELEV_ERROR);
     }
     public boolean getCarrTop(){
         return !carriageTop.get();

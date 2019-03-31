@@ -6,17 +6,10 @@ import frc.robot.subsystems.intakeCommands.*;
 import frc.robot.subsystems.liftgroupCommands.*;
 import frc.robot.subsystems.manipulatorCommands.*;
 
-public class OperatorConfig extends ControllerConfig{
-
-    private XboxJoystick controller;
-
-    private XboxButton[] liftRequires = {controller.leftBumper};//control lift when pressing these
+public class OperatorConfig{
 
     public OperatorConfig(XboxJoystick controller){
-        super(controller);
-    }
-
-    protected void assign(){
+        XboxButton[] liftRequires = {controller.leftBumper};//control lift when pressing these
         //Manipulator
         controller.aButton.whenActive(new OpenClaw(), liftRequires, true);
         controller.bButton.whenActive(new CloseClaw(), liftRequires, true);
