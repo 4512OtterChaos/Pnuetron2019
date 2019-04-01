@@ -61,7 +61,7 @@ public class Elevator extends Subsystem {
 
         back.follow(front);
         front.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, MConstants.kIdx, Config.kTimeout);
-        front.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
+        front.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         Config.configSensor(front);
         front.setInverted(true);
         back.setInverted(InvertType.FollowMaster);

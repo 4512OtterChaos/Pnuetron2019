@@ -1,13 +1,12 @@
 package frc.robot.control;
 
-import frc.robot.common.XboxJoystick;
 import frc.robot.subsystems.driveCommands.*;
 import frc.robot.subsystems.flipperCommands.*;
 import frc.robot.subsystems.intakeCommands.*;
 
-class DriverConfig{
+class DriverConfig extends ControllerConfig{
 
-    public DriverConfig(XboxJoystick controller){
+    public void assign(XboxJoystick controller){
         //drive
         controller.leftBumper.whileActive(new DriveShiftNeutral());
         controller.leftTrigger.whileActive(new DriveVroom());

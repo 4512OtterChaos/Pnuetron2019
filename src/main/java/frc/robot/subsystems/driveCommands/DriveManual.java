@@ -26,10 +26,13 @@ public class DriveManual extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        double forward = Robot.oi.driver.getLeftY();
-        double turn = Robot.oi.driver.getRightX();
+        double forward = Robot.oi.driverXbox.getLeftY();
+        double turn = 0.75*Robot.oi.driverXbox.getRightX();
+        if(!Robot.getDualControl()&&!Robot.oi.solo.getPassable(true)){
+           forward=turn=0; 
+        }
         Robot.drive.setForward(forward);
-        Robot.drive.setTurn(turn*0.75);
+        Robot.drive.setTurn(turn);
     }
 
     // Make this return true when this Command no longer needs to run execute()

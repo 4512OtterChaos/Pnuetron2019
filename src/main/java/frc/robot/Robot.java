@@ -16,10 +16,15 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.common.Config;
 import frc.robot.common.Network;
+import frc.robot.control.ControllerConfig;
 import frc.robot.control.OI;
+import frc.robot.control.controlCommands.RumbleEvent;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.Drive;
@@ -47,6 +52,16 @@ public class Robot extends TimedRobot {
     public static Flipper flipper;
     public static Chassis chassis;
 
+    public static final String dualConfig = "dual";
+    public static final String soloConfig = "solo";
+    private static String controlConfig = dualConfig;
+    private static SendableChooser<String> controlChooser = new SendableChooser<>();
+
+    private static double gTime = -1;
+
+    public Robot(){
+        super(0.02);
+    }
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -66,10 +81,14 @@ public class Robot extends TimedRobot {
         // constructed yet. Thus, their requires() statements may grab null
         // pointers. Bad news. Don't move it.
         oi = new OI();
+
+        controlChooser.setDefaultOption("Dual", dualConfig);
+        controlChooser.addOption("Solo", soloConfig);
+        LiveWindow.add(controlChooser);
     }
     @Override
     public void robotPeriodic() {
-        double gTime = Timer.getMatchTime();
+        gTime = Timer.getMatchTime();
         Network.put("Game Time", gTime);
     }
 
@@ -113,6 +132,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
+        if(gTime==10.0) Scheduler.getInstance().add(new RumbleEvent(0.5));
+        if(gTime==5.0) Scheduler.getInstance().add(new RumbleEvent(1));
     }
 
     @Override
@@ -127,7 +148,16 @@ public class Robot extends TimedRobot {
         arm.setWrist(0);
         elevator.setElev(0);
         intake.setBackdriving(false);
-        intake.setIntake(0);       
+        intake.setIntake(0);
+        
+        controlConfig = controlChooser.getSelected();
+        if(controlConfig.equals(dualConfig)){
+            oi.driver.assign(oi.driverXbox);
+            oi.operator.assign(oi.operatorXbox);
+        }
+        else if(controlConfig.equals(soloConfig)){
+            oi.solo.assign(oi.driverXbox);
+        }
     }
 
     /**
@@ -137,4 +167,6 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         Scheduler.getInstance().run();//run scheduled commands from OI
     }
+
+    public static boolean getDualControl(){return controlConfig.equals(dualConfig);}
 }

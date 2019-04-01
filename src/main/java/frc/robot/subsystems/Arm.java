@@ -68,7 +68,7 @@ public class Arm extends Subsystem {
         Config.configAllStart(wrist);
 
         wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, MConstants.kIdx, Config.kTimeout);
-        wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
+        wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         Config.configSensor(wrist, startPos);
         wrist.setInverted(false);
         wrist.setSensorPhase(false);

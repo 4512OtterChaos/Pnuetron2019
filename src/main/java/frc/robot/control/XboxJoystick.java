@@ -1,9 +1,11 @@
-package frc.robot.common;
+package frc.robot.control;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class XboxJoystick extends XboxController {
+
+	private final double deadband = 0.13;
 
 	private final int LEFT_X_AXIS = 0;
 	private final int LEFT_Y_AXIS = 1;
@@ -28,19 +30,23 @@ public class XboxJoystick extends XboxController {
 	//XboxController does not have command functionality, so we imitate it as a Joystick.
     public XboxJoystick(final int port){
 		super(port);
-    }
+	}
+	
+	private double deadband(double x){
+		return Math.abs(x)<=deadband? 0:x;
+	}
     
     public double getLeftX(){
-		return this.getRawAxis(LEFT_X_AXIS);
+		return deadband(this.getRawAxis(LEFT_X_AXIS));
 	}
 	public double getLeftY(){
-		return -this.getRawAxis(LEFT_Y_AXIS);
+		return deadband(-this.getRawAxis(LEFT_Y_AXIS));
 	}
 	public double getRightX(){
-		return this.getRawAxis(RIGHT_X_AXIS);
+		return deadband(this.getRawAxis(RIGHT_X_AXIS));
 	}
 	public double getRightY(){
-		return -this.getRawAxis(RIGHT_Y_AXIS);
+		return deadband(-this.getRawAxis(RIGHT_Y_AXIS));
     }
     public double getLeftTrigger(){
         return this.getRawAxis(LEFT_TRIGGER_AXIS);

@@ -52,17 +52,20 @@ public class OI {
     // button.whenReleased(new ExampleCommand());
 
 
-    public XboxJoystick driver;
-    public XboxJoystick operator;
+    public XboxJoystick driverXbox;
+    public XboxJoystick operatorXbox;
+    public ControllerConfig driver;//driver layout
+    public ControllerConfig operator;//operator layout
+    public ControllerConfig solo;//combined layout
 
     public OI() {
-
         //read class file for info
-        driver = new XboxJoystick(0);
-        operator = new XboxJoystick(1);
-        
-        new DriverConfig(driver);
-        new OperatorConfig(operator);
+        driverXbox = new XboxJoystick(0);
+        operatorXbox = new XboxJoystick(1);
+        //controller layout options
+        driver = new DriverConfig();
+        operator = new OperatorConfig();
+        solo = new SoloConfig();
     }
 }
 

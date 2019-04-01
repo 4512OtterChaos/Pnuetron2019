@@ -73,12 +73,12 @@ public class Drive extends Subsystem {
         backRight.follow(frontRight);
         backLeft.follow(frontLeft);
         frontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, MConstants.kIdx, Config.kTimeout);
-        frontRight.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
+        frontRight.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         frontRight.setInverted(true);
         backRight.setInverted(InvertType.FollowMaster);
         frontRight.setSensorPhase(true);
         frontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, MConstants.kIdx, Config.kTimeout);
-        frontLeft.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, Config.kTimeout);
+        frontLeft.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         frontLeft.setInverted(false);
         backLeft.setInverted(InvertType.FollowMaster);
         frontLeft.setSensorPhase(true);

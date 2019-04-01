@@ -10,6 +10,8 @@
 
 
 package frc.robot.subsystems.driveCommands;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -42,8 +44,8 @@ public class DriveVision extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        double forward = Robot.oi.driver.getLeftY();
-        double turn = Robot.oi.driver.getRightX();
+        double forward = Robot.oi.driverXbox.getLeftY();
+        double turn = 0.75*Robot.oi.driverXbox.getRightX();
         if(lime.getTv()==1){
             double limeTurn = lime.getTx();
             if(!(Math.abs(limeTurn)<=dead)){
