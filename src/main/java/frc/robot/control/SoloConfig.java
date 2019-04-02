@@ -11,7 +11,7 @@ public class SoloConfig extends ControllerConfig{
     public void assign(XboxJoystick controller){
         conditions = new XboxButton[]{controller.rightBumper};//control lift when pressing these
         //drive
-        controller.leftBumper.whileActive(new DriveShiftNeutral());
+        controller.leftBumper.whileActive(new DriveShiftAlternate());
         controller.leftTrigger.whileActive(new DriveVroom());
         controller.rightTrigger.whileActive(new DriveVision());
         //Manipulator

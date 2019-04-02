@@ -9,8 +9,8 @@ public class XboxJoystick extends XboxController {
 
 	private final int LEFT_X_AXIS = 0;
 	private final int LEFT_Y_AXIS = 1;
-	private final int RIGHT_TRIGGER_AXIS = 2;
-	private final int LEFT_TRIGGER_AXIS = 3;
+	private final int RIGHT_TRIGGER_AXIS = 3;
+	private final int LEFT_TRIGGER_AXIS = 2;
 	private final int RIGHT_X_AXIS = 4;
 	private final int RIGHT_Y_AXIS = 5;
 	//these button fields represent the raw buttons on the controller

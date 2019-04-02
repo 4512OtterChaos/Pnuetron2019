@@ -11,14 +11,6 @@
 
 package frc.robot.control;
 
-import frc.robot.subsystems.liftgroupCommands.*;
-import frc.robot.subsystems.intakeCommands.*;
-import frc.robot.subsystems.manipulatorCommands.*;
-import frc.robot.subsystems.flipperCommands.*;
-import frc.robot.subsystems.driveCommands.*;
-import frc.robot.common.*;
-
-
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
@@ -60,12 +52,25 @@ public class OI {
 
     public OI() {
         //read class file for info
-        driverXbox = new XboxJoystick(0);
-        operatorXbox = new XboxJoystick(1);
+        setDual(true);
         //controller layout options
         driver = new DriverConfig();
         operator = new OperatorConfig();
         solo = new SoloConfig();
+    }
+
+    public void setDual(boolean dual){
+        if(dual){
+            driverXbox = new XboxJoystick(0);
+            operatorXbox = new XboxJoystick(1);
+            driver.assign(driverXbox);
+            operator.assign(operatorXbox);
+        }
+        else{
+            driverXbox = new XboxJoystick(0);
+            operatorXbox = new XboxJoystick(0);
+            solo.assign(driverXbox);
+        }
     }
 }
 

@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import frc.robot.RobotMap;
+
 public class Config{
 
     public static final int kTimeout = 30;
@@ -11,8 +13,8 @@ public class Config{
     public static void configAllStart(BaseMotorController motor){   
         configFactory(motor);
         configNeutral(NeutralMode.Brake, motor);
-        configPeak(MConstants.kPeak, motor);
-        configNominal(MConstants.kNominal, motor);
+        configPeak(RobotMap.MOTOR_PEAK, motor);
+        configNominal(RobotMap.MOTOR_NOMINAL, motor);
         configSensor(motor);
     }
 
@@ -34,16 +36,16 @@ public class Config{
         motor.configOpenloopRamp(ramp, kTimeout);
     }
     public static void configSensor(BaseMotorController motor){
-        motor.setSelectedSensorPosition(0, MConstants.kIdx, kTimeout);
+        motor.setSelectedSensorPosition(0, RobotMap.P_IDX, kTimeout);
     }
     public static void configSensor(BaseMotorController motor, int pos){
-        motor.setSelectedSensorPosition(pos, MConstants.kIdx, kTimeout);
+        motor.setSelectedSensorPosition(pos, RobotMap.P_IDX, kTimeout);
     }
     public static void configPID(TalonSRX motor, double p, double i, double d, double f){
-		motor.config_kP(MConstants.kIdx, p, kTimeout);
-		motor.config_kI(MConstants.kIdx, i, kTimeout);
-		motor.config_kD(MConstants.kIdx, d, kTimeout);
-		motor.config_kF(MConstants.kIdx, f, kTimeout);
+		motor.config_kP(RobotMap.P_IDX, p, kTimeout);
+		motor.config_kI(RobotMap.P_IDX, i, kTimeout);
+		motor.config_kD(RobotMap.P_IDX, d, kTimeout);
+		motor.config_kF(RobotMap.P_IDX, f, kTimeout);
     }
     public static void configCruise(int uPer100ms, BaseMotorController motor){
 		motor.configMotionCruiseVelocity(uPer100ms, kTimeout);
@@ -53,8 +55,8 @@ public class Config{
     }
     public static void configClosed(TalonSRX motor, double p, double i, double d, double f, double peak, double ramp){
 		motor.configClosedloopRamp(ramp);
-		motor.configClosedLoopPeakOutput(MConstants.kIdx, peak);
-		motor.configAllowableClosedloopError(MConstants.kIdx, MConstants.kAllowableClosed, kTimeout);
+		motor.configClosedLoopPeakOutput(RobotMap.P_IDX, peak);
+		motor.configAllowableClosedloopError(RobotMap.P_IDX, RobotMap.P_ALLOWABLE_CLOSED, kTimeout);
 		configPID(motor, p, i, d, f);
 	}
 }

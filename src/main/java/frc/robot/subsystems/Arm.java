@@ -67,7 +67,7 @@ public class Arm extends Subsystem {
 
         Config.configAllStart(wrist);
 
-        wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, MConstants.kIdx, Config.kTimeout);
+        wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, RobotMap.P_IDX, Config.kTimeout);
         wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         Config.configSensor(wrist, startPos);
         wrist.setInverted(false);
@@ -76,7 +76,7 @@ public class Arm extends Subsystem {
         Config.configAccel(akAccel, wrist);
         wrist.configMotionSCurveStrength(6, Config.kTimeout);
         Config.configClosed(wrist, akP, akI, akD, akF, akPeak, akRamp);
-        wrist.config_IntegralZone(MConstants.kIdx, RobotMap.ARM_ERROR, Config.kTimeout);
+        wrist.config_IntegralZone(RobotMap.P_IDX, RobotMap.ARM_ERROR, Config.kTimeout);
     }
 
     @Override

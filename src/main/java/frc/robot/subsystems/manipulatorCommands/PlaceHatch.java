@@ -34,7 +34,7 @@ public class PlaceHatch extends CommandGroup {
     addSequential(new CloseClaw());
     addSequential(new WaitCommand(0.05));
     addSequential(new OpenPusher());
-    addSequential(new WaitCommand(0.4));
+    addSequential(new WaitCommand(2));
     addSequential(new ClosePusher());
   }
 }

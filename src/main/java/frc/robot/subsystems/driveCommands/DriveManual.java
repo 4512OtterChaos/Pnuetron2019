@@ -12,6 +12,7 @@
 package frc.robot.subsystems.driveCommands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.common.Convert;
 public class DriveManual extends Command {
 
     public DriveManual() {
@@ -26,8 +27,10 @@ public class DriveManual extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        double percentage = (1+Robot.drive.dkSpeedLow)-Robot.drive.getDriveSpeed();
+        double coefficient = Convert.interpolate(0.6, 0.9, percentage);
         double forward = Robot.oi.driverXbox.getLeftY();
-        double turn = 0.75*Robot.oi.driverXbox.getRightX();
+        double turn = coefficient*Robot.oi.driverXbox.getRightX();
         if(!Robot.getDualControl()&&!Robot.oi.solo.getPassable(true)){
            forward=turn=0; 
         }

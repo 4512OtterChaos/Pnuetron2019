@@ -152,11 +152,10 @@ public class Robot extends TimedRobot {
         
         controlConfig = controlChooser.getSelected();
         if(controlConfig.equals(dualConfig)){
-            oi.driver.assign(oi.driverXbox);
-            oi.operator.assign(oi.operatorXbox);
+            oi.setDual(true);
         }
         else if(controlConfig.equals(soloConfig)){
-            oi.solo.assign(oi.driverXbox);
+            oi.setDual(false);
         }
     }
 

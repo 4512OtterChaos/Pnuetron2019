@@ -60,7 +60,7 @@ public class Elevator extends Subsystem {
         Config.configAllStart(back);
 
         back.follow(front);
-        front.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, MConstants.kIdx, Config.kTimeout);
+        front.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, RobotMap.P_IDX, Config.kTimeout);
         front.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         Config.configSensor(front);
         front.setInverted(true);
@@ -70,7 +70,7 @@ public class Elevator extends Subsystem {
         Config.configAccel(ekAccel, front);
         front.configMotionSCurveStrength(6, Config.kTimeout);
         Config.configClosed(front, ekP, ekI, ekD, ekF, ekPeak, ekRamp);
-        front.config_IntegralZone(MConstants.kIdx, RobotMap.ELEV_ERROR, Config.kTimeout);
+        front.config_IntegralZone(RobotMap.P_IDX, RobotMap.ELEV_ERROR, Config.kTimeout);
     }
 
     @Override

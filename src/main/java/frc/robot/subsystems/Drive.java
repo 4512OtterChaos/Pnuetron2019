@@ -17,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import frc.robot.RobotMap;
 import frc.robot.common.*;
 import frc.robot.subsystems.driveCommands.*;
 
@@ -38,9 +39,11 @@ public class Drive extends Subsystem {
     private double dkRamp = 0.175;
     //state
     private final double dkMaxRPM = 400;
-    private double dkSpeedNeutral = 0.45;
-    private double dkSpeedLow = 0.2;
-    private double dkSpeed = dkSpeedLow;
+    public final double dkSpeedNeutral = 0.45;
+    public final double dkSpeedLow = 0.2;
+    private double dkSpeedShift = dkSpeedNeutral;
+    private double dkSpeedDefault = dkSpeedLow;
+    private double dkSpeed = dkSpeedDefault;
     private double targetRPM = dkMaxRPM*dkSpeed;
     private double forward = 0;
     private double turn = 0;
@@ -72,12 +75,12 @@ public class Drive extends Subsystem {
         //config behavior
         backRight.follow(frontRight);
         backLeft.follow(frontLeft);
-        frontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, MConstants.kIdx, Config.kTimeout);
+        frontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, RobotMap.P_IDX, Config.kTimeout);
         frontRight.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         frontRight.setInverted(true);
         backRight.setInverted(InvertType.FollowMaster);
         frontRight.setSensorPhase(true);
-        frontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, MConstants.kIdx, Config.kTimeout);
+        frontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, RobotMap.P_IDX, Config.kTimeout);
         frontLeft.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         frontLeft.setInverted(false);
         backLeft.setInverted(InvertType.FollowMaster);
@@ -178,11 +181,11 @@ public class Drive extends Subsystem {
         return dkSpeed;
     }
 
-    public void shiftNeutral(){
-        shiftSet(dkSpeedNeutral);
+    public void shiftAlternate(){
+        shiftSet(dkSpeedShift);
     }
-    public void shiftLow(){
-        shiftSet(dkSpeedLow);
+    public void shiftDefault(){
+        shiftSet(dkSpeedDefault);
     }
     /**
      * Manually sets percentage speed
@@ -190,6 +193,13 @@ public class Drive extends Subsystem {
      */
     public void shiftSet(double speed){
         dkSpeed=Convert.limit(0,1,speed);
+    }
+
+    public void setDefaultSpeed(double speed){
+        dkSpeedDefault=speed;
+    }
+    public void setAlternateSpeed(double speed){
+        dkSpeedShift=speed;
     }
     
     /**

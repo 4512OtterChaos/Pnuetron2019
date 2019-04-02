@@ -3,6 +3,8 @@ package frc.robot.common;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import frc.robot.RobotMap;
+
 public class Convert {
 
 	/**
@@ -44,7 +46,7 @@ public class Convert {
 	 * @return Degrees 
 	 */
 	public static double getDegrees(double counts){
-		double percent = counts/MConstants.kRotCounts;
+		double percent = counts/RobotMap.COUNTS_PER_ROTATION;
 		return percent*360;
 	}
 	/**
@@ -62,7 +64,7 @@ public class Convert {
 	 */
 	public static int getCounts(double degree){
 		double percent = degree/360.0;
-		return (int)(percent*MConstants.kRotCounts);
+		return (int)(percent*RobotMap.COUNTS_PER_ROTATION);
 	}
 
 	public static double limit(double value){
