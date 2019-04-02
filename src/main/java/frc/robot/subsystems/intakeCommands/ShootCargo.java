@@ -5,21 +5,17 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.subsystems.driveCommands;
+package frc.robot.subsystems.intakeCommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.WaitCommand;
-import frc.robot.Robot;
-import frc.robot.control.controlCommands.ControllerRumble;
-import frc.robot.subsystems.liftgroupCommands.LiftSetHatchIn;
-import frc.robot.subsystems.manipulatorCommands.*;
+import frc.robot.subsystems.armCommands.ArmSetSafe;
 
-public class DriveCycle extends CommandGroup {
+public class ShootCargo extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public DriveCycle() {
+  public ShootCargo() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -36,20 +32,8 @@ public class DriveCycle extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    addParallel(new ControllerRumble(0.15));
-    addParallel(new ConditionalCommand(new LiftSetHatchIn()){
-      @Override
-      protected boolean condition(){
-        return !Robot.arm.getHasItem();
-      }
-    });
-    addSequential(new VisionAlign());
-    addSequential(new ConditionalCommand(new PlaceHatch(), new TakeHatch()){
-      @Override
-      protected boolean condition(){
-        return Robot.arm.getHasItem();
-      }
-    });
-    addParallel(new ControllerRumble(0));
+    addSequential(new IntakeOut());
+    addSequential(new WaitCommand(0.1));
+    addSequential(new ArmSetSafe());
   }
 }

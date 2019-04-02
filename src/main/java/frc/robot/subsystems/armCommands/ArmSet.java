@@ -10,11 +10,10 @@
 
 
 package frc.robot.subsystems.armCommands;
+
 import edu.wpi.first.wpilibj.command.Command;
-
-import frc.robot.common.*;
-
 import frc.robot.Robot;
+
 public class ArmSet extends Command {
 
     private int target;

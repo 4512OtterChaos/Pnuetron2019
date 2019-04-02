@@ -9,74 +9,42 @@
 // it from being updated in the future.
 
 
-package frc.robot.subsystems.driveCommands;
+package frc.robot.subsystems.armCommands;
 
-import edu.wpi.first.wpilibj.command.PIDCommand;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.common.Limelight;
-public class VisionTurnTarget extends PIDCommand {
+import frc.robot.RobotMap;
+public class ArmSetHatchOut extends Command {
 
-    private Limelight lime;
-
-    private static final double
-        P = 0.010,
-        I = 0.0,
-        D = 0.005;
-
-    private final double dead = 0.8;//angle of negligence
-    private final double minimum = 0.05;
-
-    public VisionTurnTarget() {
-        super("VisionTurnTarget", P, I, D, Robot.drive);
-        setSetpoint(0);
-        getPIDController().setAbsoluteTolerance(dead);
+    public ArmSetHatchOut() {
+        requires(Robot.arm);
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        lime = Robot.chassis.frontLime;
-        Robot.drive.shiftSet(1);
-        lime.lightOn();
-
-        super.initialize();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-    }
-
-    @Override
-    protected void usePIDOutput(double output){
-        if(lime.getTx()>0) output+=minimum;
-        else output-=minimum;
-        Robot.drive.setTurn(output);
+        Robot.arm.setTarget(RobotMap.ARM_HATCH_OUT);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return getPIDController().onTarget();
+        return Robot.arm.isTarget();
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.drive.setDrive(0,0);
-        Robot.drive.shiftDefault();
-        lime.lightOff();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
-        end();
-    }
-
-    @Override
-    protected double returnPIDInput(){
-        return lime.getTx();
     }
 }

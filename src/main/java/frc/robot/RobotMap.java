@@ -17,12 +17,12 @@ public class RobotMap {
     public static final int MOTOR_NOMINAL = 0;
 
     //---------- Encoder Positions
+    public static final int COUNTS_PER_ROTATION = 4096;
     //drive
     public static final int GYRO_COUNTS_PER_ROTATION = 8192;//actual units per rotation on the gyro
     public static final int GYRO_TURN_UNITS_PER_ROTATION = 3600;//used for scaling gyro units(10 units per degree)
     public static final double GYRO_SCALED_UNIT_RATIO = GYRO_TURN_UNITS_PER_ROTATION/(double)GYRO_COUNTS_PER_ROTATION;
     //elevator
-    public static final int COUNTS_PER_ROTATION = 4096;
     public static final int ELEV_ERROR = 400;//allowable error for logic
     public static final int ELEV_BOTTOM = 0;
     public static final int ELEV_SUPPLY = 4800;

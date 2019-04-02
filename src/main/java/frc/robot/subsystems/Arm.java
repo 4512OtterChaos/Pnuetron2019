@@ -22,6 +22,7 @@ import frc.robot.common.*;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.armCommands.*;
+import frc.robot.subsystems.liftgroupCommands.LiftSetCargo;
 import frc.robot.subsystems.manipulatorCommands.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -47,20 +48,33 @@ public class Arm extends Subsystem {
     private int akAccel = 260;
     private int akAccelItem = 210;
     //behavior constants
-    private final double akRestingForce = 0.05;//forward pressure while resting
-    private final double akAntiArm = 0.08;//percent with unburdened arm(counter gravity)
-    private final double akAntiItem = 0.13;//percent with burdened arm
+    public final double akRestingForce = 0.05;//forward pressure while resting
+    public final double akAntiArm = 0.08;//percent with unburdened arm(counter gravity)
+    public final double akAntiItem = 0.13;//percent with burdened arm
     //state
     private int pos = startPos;
+
     private boolean manual=false;
+
     private boolean armHasItem = false;
     private boolean armHadItem = false;
     private boolean armGotItem = false;
     private boolean armLostItem = false;
+
     private boolean button = false;
     private boolean lastButton = false;
     private boolean buttonPressed = false;
     private boolean buttonReleased = false;
+
+    private boolean liftResting = true;
+    private boolean liftWasResting = false;
+    private boolean liftBecameResting = true;
+    private boolean liftBecameUnresting = false;
+
+    private boolean intakeBackdriving = false;
+    private boolean intakeWasBackdriving = false;
+    private boolean intakeBecameBackdriving = false;
+    private boolean intakeBecameUnbackdriving = false;
 
     public Arm() {
         wrist = new WPI_TalonSRX(7);
@@ -104,7 +118,7 @@ public class Arm extends Subsystem {
             Config.configAccel(akAccel, wrist);
         }
 
-        if(buttonPressed && !Robot.oi.driverXbox.rightTrigger.get()){
+        if(buttonPressed && !Robot.oi.driverXbox.rightTrigger.get()){//if manual control, react to button
             if(!armHasItem){
                 Scheduler.getInstance().add(new OpenClaw());
             }
@@ -112,6 +126,8 @@ public class Arm extends Subsystem {
                 Scheduler.getInstance().add(new PlaceHatch());
             }
         }
+
+        if(intakeBecameBackdriving) Scheduler.getInstance().add(new LiftSetCargo());
         
         targetA=target;
 
@@ -126,17 +142,11 @@ public class Arm extends Subsystem {
 
         double ff = calcGrav();//feed forward
 
-        boolean liftResting = Robot.elevator.getIsResting();
-        boolean armResting = 
-            (isTarget(target, RobotMap.ARM_HATCH_IN) && (isTarget(RobotMap.ARM_HATCH_IN)))
-            && Robot.elevator.getPos()<=RobotMap.ELEV_SUPPLY+RobotMap.ELEV_ERROR;
         
-        if(liftResting){
-            targetA=startPos;//set to resting angle
-            ff=akRestingForce;//forward pressure on arm while down
-        }
 
-        if(liftResting||armResting) setWrist(akRestingForce);
+        //if(liftResting) setWrist(akRestingForce);
+        if(liftBecameResting) Scheduler.getInstance().add(new ArmManual(akRestingForce));
+        else if(liftBecameUnresting) Scheduler.getInstance().add(new ArmManual(0));
         else if(!manual) aMotionPID(targetA, ff);
 
         putNetwork();
@@ -156,6 +166,16 @@ public class Arm extends Subsystem {
         buttonPressed=button&&!lastButton;
         buttonReleased=!button&&lastButton;
         lastButton=button;      
+
+        liftResting = Robot.elevator.getIsResting();
+        liftBecameResting = liftResting && !liftWasResting;
+        liftBecameUnresting = !liftResting && liftWasResting;
+        liftWasResting=liftResting;
+
+        intakeBackdriving = Robot.intake.getBackdriving();
+        intakeBecameBackdriving = intakeBackdriving && !intakeWasBackdriving;
+        intakeBecameUnbackdriving = !intakeBackdriving && intakeWasBackdriving;
+        intakeWasBackdriving = intakeBackdriving;
     }
     private void putNetwork(){
         Network.put("Arm Target", target);

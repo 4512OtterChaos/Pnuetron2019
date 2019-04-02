@@ -13,9 +13,9 @@ import frc.robot.Robot;
 /**
  * Add your docs here.
  */
-public class IntakeBackdrive extends InstantCommand {
+public class IntakeBackdriveOn extends InstantCommand {
 
-  public IntakeBackdrive() {
+  public IntakeBackdriveOn() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -23,7 +23,7 @@ public class IntakeBackdrive extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    Robot.intake.setBackdriving(!Robot.intake.getBackdriving());
+    Robot.intake.setBackdriving(true);
   }
 
 }

@@ -24,7 +24,7 @@ public class CloseClaw extends InstantCommand {
     @Override
     protected void initialize() {
         Robot.manipulator.setClaw(false);
-        Scheduler.getInstance().add(new RumbleEvent(Robot.oi.operatorXbox, 0.5, 0.2));
+        Scheduler.getInstance().add(new RumbleEvent(Robot.oi.operatorXbox, 0.3, 0.15));
     }
 
 }

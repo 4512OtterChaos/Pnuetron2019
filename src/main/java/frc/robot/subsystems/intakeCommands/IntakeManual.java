@@ -10,8 +10,8 @@
 
 
 package frc.robot.subsystems.intakeCommands;
+
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import frc.robot.Robot;
 public class IntakeManual extends Command {
 

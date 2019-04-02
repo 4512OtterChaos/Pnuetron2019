@@ -12,11 +12,8 @@
 package frc.robot.subsystems.liftgroupCommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-
-import frc.robot.Robot;
-import frc.robot.subsystems.*;
 import frc.robot.subsystems.armCommands.*;
-import frc.robot.subsystems.elevatorCommands.*;
+import frc.robot.subsystems.elevatorCommands.ElevatorSetCargo;
 public class LiftSetCargo extends CommandGroup {
 
     public LiftSetCargo() {
@@ -36,7 +33,8 @@ public class LiftSetCargo extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-        addParallel(new ArmSetSafe());
-        addSequential(new ElevatorSetCargo());
+        addSequential(new ArmSetSafe());
+        //addSequential(new ElevatorSetCargo());
+        addParallel(new ArmManual(-0.1));
     } 
 }

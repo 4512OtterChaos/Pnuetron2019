@@ -49,6 +49,8 @@ public class Elevator extends Subsystem {
     //behavior
     public final double ekAntiGrav = 0.06;
 
+    private boolean isSupply = false;
+
     private boolean manual=false;
 
     public Elevator() {
@@ -91,17 +93,21 @@ public class Elevator extends Subsystem {
 
         targetA=Convert.limit(RobotMap.ELEV_BOTTOM, RobotMap.ELEV_HATCH3, target);//physical limits
 
+        if(Robot.arm.getPos()<RobotMap.ARM_CLOSE_FORWARD-2*RobotMap.ARM_ERROR) targetA=Math.min(getPos(), target);
+
         if(getWantRest()){
             targetA=RobotMap.ELEV_BOTTOM;
             if(!getIsResting()) targetA=RobotMap.ELEV_BOTTOM-RobotMap.ELEV_ERROR;
         }
 
+        /*
         if(isTarget(RobotMap.ELEV_CARGO) && isTarget((int)target, RobotMap.ELEV_CARGO)){
             Robot.intake.setBackdriving(true);
         }
         else{
             Robot.intake.setBackdriving(false);
         }
+        */
 
         if(getIsResting()) setElev(0);
         else if(!manual) eMotionPID(targetA, ekAntiGrav);
@@ -167,6 +173,14 @@ public class Elevator extends Subsystem {
     }
     public boolean getStageBot(){
         return !stageBot.get();
+    }
+
+    public boolean getIsSupply(){
+        return isSupply;
+    }
+
+    public void setIsSupply(boolean is){
+        isSupply=is;
     }
 
     public void setTarget(int t){

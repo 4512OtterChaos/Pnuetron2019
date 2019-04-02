@@ -1,6 +1,5 @@
 package frc.robot.control;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class XboxJoystick extends XboxController {
@@ -68,6 +67,9 @@ public class XboxJoystick extends XboxController {
 		return this.getPOV() == 270;
 	}
 
+	public double getRumble(){
+		return this.getRumble();
+	}
 	public void setRumble(double x){
 		this.setRumble(RumbleType.kLeftRumble, x);
 		this.setRumble(RumbleType.kRightRumble, x);

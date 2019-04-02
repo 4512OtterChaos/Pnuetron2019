@@ -15,8 +15,6 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 public class ElevatorSetHatch3 extends Command {
 
-    private int loops=0;
-
     public ElevatorSetHatch3() {
         requires(Robot.elevator);
     }
@@ -30,13 +28,11 @@ public class ElevatorSetHatch3 extends Command {
     @Override
     protected void execute() {
         Robot.elevator.setTarget(RobotMap.ELEV_HATCH3);
-        loops++;
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        if(loops>=50) return true;
         return Robot.elevator.isTarget();
     }
 

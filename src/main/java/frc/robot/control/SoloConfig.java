@@ -24,8 +24,10 @@ public class SoloConfig extends ControllerConfig{
         controller.bButton.whenActive(new LiftSetHatch1(), conditions, false);
         controller.xButton.whenActive(new LiftSetHatch2(), conditions, false);
         controller.yButton.whenActive(new LiftSetHatch3(), conditions, false);
-        controller.leftStickButton.whenActive(new LiftSetCargo(), conditions, false);
         //intake
-        controller.xButton.whenActive(new FlipIntake(), conditions, true);
+        controller.xButton.whenActive(new IntakeBackdrive(), conditions, true);
+        controller.rightStickButton.whenActive(new ShootCargo(), conditions, false);
+        //flipper
+        controller.rightStickButton.whenActive(new FlipIntake(), conditions, true);
     }
 }

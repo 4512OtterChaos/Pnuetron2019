@@ -22,6 +22,7 @@ public class ElevatorSetHatch1 extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        Robot.elevator.setIsSupply(false);
     }
 
     // Called repeatedly when this Command is scheduled to run

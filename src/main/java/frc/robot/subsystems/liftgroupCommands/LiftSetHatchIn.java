@@ -16,11 +16,14 @@ import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.subsystems.armCommands.ArmManual;
+import frc.robot.subsystems.armCommands.ArmSetHatchIn;
 import frc.robot.subsystems.armCommands.ArmSetHatchOut;
-import frc.robot.subsystems.elevatorCommands.ElevatorSetHatch3;
-public class LiftSetHatch3 extends CommandGroup {
+import frc.robot.subsystems.armCommands.ArmSetSafe;
+import frc.robot.subsystems.elevatorCommands.ElevatorSetHatchIn;
+public class LiftSetHatchIn extends CommandGroup {
 
-    public LiftSetHatch3() {
+    public LiftSetHatchIn() {
         // Add Commands here:
         // e.g. addSequential(new Command1());
         //      addSequential(new Command2());
@@ -37,13 +40,20 @@ public class LiftSetHatch3 extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-        addParallel(new ElevatorSetHatch3());
-        addSequential(new ConditionalCommand(new WaitCommand(0.75), new WaitCommand(0.2)){
+        addParallel(new ConditionalCommand(new ArmSetHatchOut()){
             @Override
             protected boolean condition() {
-                return Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR;
+                return Robot.arm.getPos()>RobotMap.ARM_CLOSE_FORWARD+RobotMap.ARM_ERROR;
             }
         });
-        addSequential(new ArmSetHatchOut());
+        addSequential(new ConditionalCommand(new WaitCommand(0.3)){
+            @Override
+            protected boolean condition() {
+                return Robot.arm.getPos()>RobotMap.ARM_CLOSE_FORWARD+RobotMap.ARM_ERROR;
+            }
+        });
+        addSequential(new ElevatorSetHatchIn());
+        addSequential(new ArmSetHatchIn());
+        addSequential(new ArmManual(Robot.arm.akRestingForce)); 
     } 
 }

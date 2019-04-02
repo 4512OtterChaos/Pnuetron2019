@@ -12,12 +12,11 @@
 package frc.robot.subsystems.liftgroupCommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-
-import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.subsystems.*;
-import frc.robot.subsystems.armCommands.*;
-import frc.robot.subsystems.elevatorCommands.*;
+import frc.robot.subsystems.armCommands.ArmSet;
+import frc.robot.subsystems.armCommands.ArmSetSafe;
+import frc.robot.subsystems.elevatorCommands.ElevatorSet;
+
 public class LiftSet extends CommandGroup {
 
     public LiftSet(int elevTarget, int armTarget) {

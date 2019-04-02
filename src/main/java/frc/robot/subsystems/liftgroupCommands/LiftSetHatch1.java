@@ -12,11 +12,14 @@
 package frc.robot.subsystems.liftgroupCommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.Robot;
-import frc.robot.subsystems.*;
-import frc.robot.subsystems.armCommands.*;
-import frc.robot.subsystems.elevatorCommands.*;
+import frc.robot.RobotMap;
+import frc.robot.subsystems.armCommands.ArmManual;
+import frc.robot.subsystems.armCommands.ArmSetHatchOut;
+import frc.robot.subsystems.armCommands.ArmSetSafe;
+import frc.robot.subsystems.elevatorCommands.ElevatorSetHatch1;
 public class LiftSetHatch1 extends CommandGroup {
 
     public LiftSetHatch1() {
@@ -36,8 +39,20 @@ public class LiftSetHatch1 extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-        addParallel(new ArmSetSafe());
+        addParallel(new ConditionalCommand(new ArmSetHatchOut()){
+            @Override
+            protected boolean condition() {
+                return Robot.arm.getPos()>RobotMap.ARM_CLOSE_FORWARD+RobotMap.ARM_ERROR;
+            }
+        });
+        addSequential(new ConditionalCommand(new WaitCommand(0.1)){
+            @Override
+            protected boolean condition() {
+                return Robot.arm.getPos()>RobotMap.ARM_CLOSE_FORWARD+RobotMap.ARM_ERROR;
+            }
+        });
         addSequential(new ElevatorSetHatch1());
-        addSequential(new ArmSetHatch()); 
+        addSequential(new ArmSetHatchOut());
+        addSequential(new ArmManual(Robot.arm.akRestingForce));
     } 
 }

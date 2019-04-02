@@ -16,14 +16,13 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.common.Config;
 import frc.robot.common.Network;
-import frc.robot.control.ControllerConfig;
 import frc.robot.control.OI;
+import frc.robot.control.controlCommands.DoubleRumbleEvent;
 import frc.robot.control.controlCommands.RumbleEvent;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Chassis;
@@ -132,8 +131,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
-        if(gTime==10.0) Scheduler.getInstance().add(new RumbleEvent(0.5));
-        if(gTime==5.0) Scheduler.getInstance().add(new RumbleEvent(1));
+        if(gTime==10.0) Scheduler.getInstance().add(new DoubleRumbleEvent(0.5));
+        if(gTime==5.0) Scheduler.getInstance().add(new DoubleRumbleEvent(1));
     }
 
     @Override
@@ -168,6 +167,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+        if(gTime==25.0) Scheduler.getInstance().add(new DoubleRumbleEvent(0.5));
+        if(gTime==12.0) Scheduler.getInstance().add(new DoubleRumbleEvent(1));
+
         Scheduler.getInstance().run();//run scheduled commands from OI
     }
 

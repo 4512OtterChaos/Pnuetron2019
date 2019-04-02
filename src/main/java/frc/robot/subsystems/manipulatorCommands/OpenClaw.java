@@ -24,7 +24,7 @@ public class OpenClaw extends InstantCommand {
     @Override
     protected void initialize() {
         Robot.manipulator.setClaw(true);
-        Scheduler.getInstance().add(new RumbleEvent(Robot.oi.operatorXbox, 1));
+        Scheduler.getInstance().add(new RumbleEvent(0.5, 0.3));
     }
 
 }

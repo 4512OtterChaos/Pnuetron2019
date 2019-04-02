@@ -10,17 +10,18 @@
 
 
 package frc.robot.subsystems.armCommands;
-import edu.wpi.first.wpilibj.command.Command;
 
-import frc.robot.common.*;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 public class ArmSetSafe extends Command {
 
+    /*
     private int startPos;
     private boolean unsafe = false;
     private boolean high = false;
     private double time = 0.6;
+    */
     public ArmSetSafe() {
         requires(Robot.arm);
     }
@@ -28,11 +29,13 @@ public class ArmSetSafe extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        /*
         int curr = Robot.elevator.getPos();
         int cutoff = RobotMap.ELEV_SUPPLY+RobotMap.ELEV_ERROR;
         int safehigh = RobotMap.ELEV_HATCH2;
         high = curr>cutoff;
         time = Convert.interpolate(0.6, 0.05, (curr-cutoff)/(double)(safehigh-cutoff));
+        */
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -44,10 +47,7 @@ public class ArmSetSafe extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        
-        
-        if(high && timeSinceInitialized()>=time) return true;
-
+        //if(high && timeSinceInitialized()>=time) return true;
         return Robot.arm.isTarget(RobotMap.ARM_CLOSE_FORWARD);
     }
 

@@ -12,29 +12,45 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.control.XboxJoystick;
 
-public class RumbleEvent extends CommandGroup {
+public class DoubleRumbleEvent extends CommandGroup {
 
   private double previousRumble;
-  public RumbleEvent(double rumble){
+  public DoubleRumbleEvent(double rumble){
     previousRumble=Robot.oi.driverXbox.getRumble();
     addSequential(new ControllerRumble(rumble));
-    addSequential(new WaitCommand(0.5));
+    addSequential(new WaitCommand(0.2));
+    addSequential(new ControllerRumble(previousRumble));
+    addSequential(new WaitCommand(0.2));
+    addSequential(new ControllerRumble(rumble));
+    addSequential(new WaitCommand(0.2));
     addSequential(new ControllerRumble(previousRumble));
   }
-  public RumbleEvent(double rumble, double time){
+  public DoubleRumbleEvent(double rumble, double time){
     previousRumble=Robot.oi.driverXbox.getRumble();
     addSequential(new ControllerRumble(rumble));
     addSequential(new WaitCommand(time));
     addSequential(new ControllerRumble(previousRumble));
+    addSequential(new WaitCommand(time));
+    addSequential(new ControllerRumble(rumble));
+    addSequential(new WaitCommand(time));
+    addSequential(new ControllerRumble(previousRumble));
   }
-  public RumbleEvent(XboxJoystick controller, double rumble){
+  public DoubleRumbleEvent(XboxJoystick controller, double rumble){
     previousRumble=controller.getRumble();
     addSequential(new ControllerRumble(controller, rumble));
-    addSequential(new WaitCommand(0.5));
+    addSequential(new WaitCommand(0.2));
+    addSequential(new ControllerRumble(controller, previousRumble));
+    addSequential(new WaitCommand(0.2));
+    addSequential(new ControllerRumble(controller, rumble));
+    addSequential(new WaitCommand(0.2));
     addSequential(new ControllerRumble(controller, previousRumble));
   }
-  public RumbleEvent(XboxJoystick controller, double rumble, double time){
+  public DoubleRumbleEvent(XboxJoystick controller, double rumble, double time){
     previousRumble=controller.getRumble();
+    addSequential(new ControllerRumble(controller, rumble));
+    addSequential(new WaitCommand(time));
+    addSequential(new ControllerRumble(controller, previousRumble));
+    addSequential(new WaitCommand(time));
     addSequential(new ControllerRumble(controller, rumble));
     addSequential(new WaitCommand(time));
     addSequential(new ControllerRumble(controller, previousRumble));
