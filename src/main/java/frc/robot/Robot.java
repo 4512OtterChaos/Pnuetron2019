@@ -153,9 +153,13 @@ public class Robot extends TimedRobot {
         controlConfig = controlChooser.getSelected();
         if(controlConfig.equals(dualConfig)){
             oi.setDual(true);
+            drive.setDefaultSpeed(drive.dkSpeedLow);
+            drive.setAlternateSpeed(drive.dkSpeedNeutral);
         }
         else if(controlConfig.equals(soloConfig)){
             oi.setDual(false);
+            drive.setAlternateSpeed(drive.dkSpeedLow);
+            drive.setDefaultSpeed(drive.dkSpeedNeutral);
         }
     }
 

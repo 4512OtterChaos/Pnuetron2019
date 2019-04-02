@@ -13,7 +13,7 @@ public class SoloConfig extends ControllerConfig{
         //drive
         controller.leftBumper.whileActive(new DriveShiftAlternate());
         controller.leftTrigger.whileActive(new DriveVroom());
-        controller.rightTrigger.whileActive(new DriveVision());
+        controller.rightTrigger.whenActive(new DriveCycle());
         //Manipulator
         controller.aButton.whenActive(new OpenClaw(), conditions, true);
         controller.bButton.whenActive(new CloseClaw(), conditions, true);

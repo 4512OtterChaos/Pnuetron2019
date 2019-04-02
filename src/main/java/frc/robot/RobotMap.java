@@ -17,6 +17,10 @@ public class RobotMap {
     public static final int MOTOR_NOMINAL = 0;
 
     //---------- Encoder Positions
+    //drive
+    public static final int GYRO_COUNTS_PER_ROTATION = 8192;//actual units per rotation on the gyro
+    public static final int GYRO_TURN_UNITS_PER_ROTATION = 3600;//used for scaling gyro units(10 units per degree)
+    public static final double GYRO_SCALED_UNIT_RATIO = GYRO_TURN_UNITS_PER_ROTATION/(double)GYRO_COUNTS_PER_ROTATION;
     //elevator
     public static final int COUNTS_PER_ROTATION = 4096;
     public static final int ELEV_ERROR = 400;//allowable error for logic
@@ -25,7 +29,7 @@ public class RobotMap {
     public static final int ELEV_HATCH1 = 5300;
     public static final int ELEV_CARGO = 6000;
     public static final int ELEV_HATCH2 = 24600;
-    public static final int ELEV_HATCH3 = 47100;
+    public static final int ELEV_HATCH3 = 47000;
 
     //arm
     public static final int ARM_ERROR = 40;

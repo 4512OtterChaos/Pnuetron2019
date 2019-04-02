@@ -63,6 +63,10 @@ public class Elevator extends Subsystem {
         front.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, RobotMap.P_IDX, Config.kTimeout);
         front.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         Config.configSensor(front);
+        front.configForwardSoftLimitEnable(true, Config.kTimeout);
+        front.configReverseSoftLimitEnable(true, Config.kTimeout);
+        front.configForwardSoftLimitThreshold(RobotMap.ELEV_HATCH3+20, Config.kTimeout);
+        front.configReverseSoftLimitThreshold(RobotMap.ELEV_BOTTOM-10, Config.kTimeout);
         front.setInverted(true);
         back.setInverted(InvertType.FollowMaster);
         front.setSensorPhase(true);

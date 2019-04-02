@@ -21,10 +21,8 @@ import frc.robot.RobotMap;
 public class DriveVision extends Command {
 
     private Limelight lime;
-    private double lastSpeed;
     private final double maxSpeed = 0.35;//fastest while tracking
-    private final double minSpeed = 0.15;//slowest while tracking
-    private final double safeDist = 6.5;//percent area when close
+    private final double safeArea = 6.5;//percent area when close
     private final double pow = (4/2.0);//curve motor response when close
     private final double dead = 2.5;//angle of negligence
 
@@ -36,7 +34,6 @@ public class DriveVision extends Command {
     @Override
     protected void initialize() {
         lime = Robot.chassis.frontLime;
-        lastSpeed=Robot.drive.getDriveSpeed();
         Robot.drive.shiftSet(maxSpeed);
         lime.lightOn();
     }
@@ -65,10 +62,10 @@ public class DriveVision extends Command {
             }
             
             //
-            double dist = (lime.getTa());
-            double limeForward = 1*((safeDist-dist)/safeDist);
+            double area = (lime.getTa());
+            double limeForward = 1*((safeArea-area)/safeArea);
             forward+=limeForward;
-            Network.put("Target Distance", dist);
+            Network.put("Target Distance", area);
         }
         else{
             Network.put("Target Distance", 0);
@@ -92,7 +89,7 @@ public class DriveVision extends Command {
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
-        Robot.drive.shiftSet(lastSpeed);
+        Robot.drive.shiftDefault();
         lime.lightOff();
     }
 }

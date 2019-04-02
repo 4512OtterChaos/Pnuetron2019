@@ -11,7 +11,9 @@
 
 package frc.robot.subsystems.manipulatorCommands;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.Robot;
+import frc.robot.control.controlCommands.RumbleEvent;
 public class CloseClaw extends InstantCommand {
 
     public CloseClaw() {
@@ -22,6 +24,7 @@ public class CloseClaw extends InstantCommand {
     @Override
     protected void initialize() {
         Robot.manipulator.setClaw(false);
+        Scheduler.getInstance().add(new RumbleEvent(Robot.oi.operatorXbox, 0.5, 0.2));
     }
 
 }

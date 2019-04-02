@@ -70,6 +70,10 @@ public class Arm extends Subsystem {
         wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, RobotMap.P_IDX, Config.kTimeout);
         wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 30, Config.kTimeout);
         Config.configSensor(wrist, startPos);
+        wrist.configForwardSoftLimitEnable(true, Config.kTimeout);
+        wrist.configReverseSoftLimitEnable(true, Config.kTimeout);
+        wrist.configForwardSoftLimitThreshold(RobotMap.ARM_FAR_FORWARD+10, Config.kTimeout);
+        wrist.configReverseSoftLimitThreshold(-10, Config.kTimeout);
         wrist.setInverted(false);
         wrist.setSensorPhase(false);
         Config.configCruise(akCruise, wrist);
@@ -100,7 +104,7 @@ public class Arm extends Subsystem {
             Config.configAccel(akAccel, wrist);
         }
 
-        if(buttonPressed){
+        if(buttonPressed && !Robot.oi.driverXbox.rightTrigger.get()){
             if(!armHasItem){
                 Scheduler.getInstance().add(new OpenClaw());
             }
@@ -148,7 +152,7 @@ public class Arm extends Subsystem {
         armLostItem=!armHasItem&&armHadItem;
         armHadItem=armHasItem;
 
-        button=hatchButton.get();
+        button=getButton();
         buttonPressed=button&&!lastButton;
         buttonReleased=!button&&lastButton;
         lastButton=button;      
@@ -198,6 +202,15 @@ public class Arm extends Subsystem {
     }
     public boolean getHasItem(){
         return Robot.manipulator.getIsOpen();
+    }
+    public boolean getButton(){
+        return hatchButton.get();
+    }
+    public boolean getButtonPressed(){
+        return buttonPressed;
+    }
+    public boolean getButtonReleased(){
+        return buttonReleased;
     }
 
     public void setTarget(int t){

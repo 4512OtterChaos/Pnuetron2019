@@ -10,59 +10,59 @@
 
 
 package frc.robot.subsystems.driveCommands;
-import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
-import frc.robot.common.Convert;
-public class DriveManual extends Command {
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
-    private double givenForward = 0;
-    private double givenTurn = 0;
-    public DriveManual() {
-        this(0,0);
-    }
-    public DriveManual(double forward, double turn){
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+import frc.robot.common.*;
+import frc.robot.Robot;
+import frc.robot.RobotMap;
+public class VisionForwardTarget extends Command {
+
+    private Limelight lime;
+    private final double safeArea = 6.2;//percent area when close
+
+    public VisionForwardTarget() {
         requires(Robot.drive);
-        givenForward=forward;
-        givenTurn=turn;
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        lime = Robot.chassis.frontLime;
+        Robot.drive.shiftSet(1);
+        lime.lightOn();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        //joystick control
-        double percentage = (1+Robot.drive.dkSpeedLow)-Robot.drive.getDriveSpeed();
-        double coefficient = Convert.interpolate(0.6, 0.9, percentage);
-        double forward = Robot.oi.driverXbox.getLeftY();
-        double turn = coefficient*Robot.oi.driverXbox.getRightX();
-        if(!Robot.getDualControl()&&!Robot.oi.solo.getPassable(true)){
-           forward=turn=0; 
-        }
-        //possible auto control
-        if(givenForward!=0) Robot.drive.setForward(givenForward);
-        else Robot.drive.setForward(forward);
-        if(givenTurn!=0) Robot.drive.setTurn(givenTurn);
-        else Robot.drive.setTurn(turn);
+        double area = (lime.getTa());
+        double limeForward = 0.4*((safeArea-area)/safeArea);
+        Network.put("Target Distance", area);
+        if(lime.getTv()==1) Robot.drive.setForward(limeForward);
+        else Robot.drive.setForward(0);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return false;
+        return (lime.getTv()==1 && lime.getTa()>=safeArea) || Robot.arm.getButton();
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
+        Robot.drive.setDrive(0,0);
+        Robot.drive.shiftDefault();
+        lime.lightOff();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
+        end();
     }
 }

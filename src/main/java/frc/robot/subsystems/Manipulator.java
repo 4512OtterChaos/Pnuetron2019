@@ -25,10 +25,6 @@ public class Manipulator extends Subsystem {
     public DoubleSolenoid claw;
     public DoubleSolenoid pusher;
 
-    private boolean isOpen=false;
-    private boolean isPushing=false;
-
-
     public Manipulator() {
         claw = new DoubleSolenoid(0, 4, 5);
         addChild("Claw",claw);
@@ -54,22 +50,20 @@ public class Manipulator extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
     public boolean getIsOpen(){
-        return isOpen;
+        return claw.get()==Value.kReverse;
     }
     public boolean getIsPushing(){
-        return isPushing;
+        return pusher.get()==Value.kReverse;
     }
 
     public void setClaw(boolean extend){
         Value state = (extend)? Value.kReverse:Value.kForward;
         claw.set(state);
-        isOpen=extend;
     }
 
     public void setPusher(boolean extend){
         Value state = (extend)? Value.kReverse:Value.kForward;
         pusher.set(state);
-        isPushing=extend;
     }
 
 }

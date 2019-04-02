@@ -5,17 +5,18 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.subsystems.manipulatorCommands;
+package frc.robot.subsystems.driveCommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
-import frc.robot.subsystems.driveCommands.DriveManual;
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
+import frc.robot.Robot;
+import frc.robot.subsystems.manipulatorCommands.*;
 
-public class PlaceHatch extends CommandGroup {
+public class DriveCycle extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public PlaceHatch() {
+  public DriveCycle() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -32,13 +33,12 @@ public class PlaceHatch extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    addSequential(new CloseClaw());
-    addSequential(new WaitCommand(0.05));
-    addSequential(new OpenPusher());
-    addSequential(new WaitCommand(0.05));
-    addParallel(new DriveManual(-0.4, 0));
-    addSequential(new WaitCommand(0.4));
-    addParallel(new DriveManual(0,0));
-    addSequential(new ClosePusher());
+    addSequential(new VisionAlign());
+    addSequential(new ConditionalCommand(new PlaceHatch(), new TakeHatch()){
+      @Override
+      protected boolean condition(){
+        return Robot.arm.getHasItem();
+      }
+    });
   }
 }
