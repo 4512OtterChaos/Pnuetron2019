@@ -120,14 +120,14 @@ public class Arm extends Subsystem {
 
         if(buttonPressed && !Robot.oi.driverXbox.rightTrigger.get()){//if manual control, react to button
             if(!armHasItem){
-                Scheduler.getInstance().add(new OpenClaw());
+                new OpenClaw().start();
             }
             else{
-                Scheduler.getInstance().add(new PlaceHatch());
+                new PlaceHatch().start();
             }
         }
 
-        if(intakeBecameBackdriving) Scheduler.getInstance().add(new LiftSetCargo());
+        if(intakeBecameBackdriving) new LiftSetCargo().start();
         
         targetA=target;
 
@@ -145,8 +145,8 @@ public class Arm extends Subsystem {
         
 
         //if(liftResting) setWrist(akRestingForce);
-        if(liftBecameResting) Scheduler.getInstance().add(new ArmManual(akRestingForce));
-        else if(liftBecameUnresting) Scheduler.getInstance().add(new ArmManual(0));
+        if(liftBecameResting) new ArmManual(akRestingForce).start();
+        else if(liftBecameUnresting) new ArmManual(0).start();
         else if(!manual) aMotionPID(targetA, ff);
 
         putNetwork();

@@ -17,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.common.Config;
@@ -130,9 +131,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
+        if(gTime==10.0) new DoubleRumbleEvent(0.5).start();
+        if(gTime==5.0) new DoubleRumbleEvent(1).start();
+        
         Scheduler.getInstance().run();
-        if(gTime==10.0) Scheduler.getInstance().add(new DoubleRumbleEvent(0.5));
-        if(gTime==5.0) Scheduler.getInstance().add(new DoubleRumbleEvent(1));
     }
 
     @Override
@@ -167,8 +169,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        if(gTime==25.0) Scheduler.getInstance().add(new DoubleRumbleEvent(0.5));
-        if(gTime==12.0) Scheduler.getInstance().add(new DoubleRumbleEvent(1));
+        if(gTime==25.0) new DoubleRumbleEvent(0.5).start();
+        if(gTime==12.0) new DoubleRumbleEvent(1).start();
 
         Scheduler.getInstance().run();//run scheduled commands from OI
     }

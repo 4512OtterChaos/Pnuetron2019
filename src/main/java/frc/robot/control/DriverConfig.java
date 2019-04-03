@@ -11,6 +11,7 @@ class DriverConfig extends ControllerConfig{
         controller.leftBumper.whileActive(new DriveShiftAlternate());
         controller.leftTrigger.whileActive(new DriveVroom());
         controller.rightTrigger.whileActive(new DriveCycle());
+        controller.rightBumper.whileActive(new VisionAlign());
         //intake
         controller.aButton.whenActive(new IntakeBackdrive());
         controller.xButton.whenActive(new ShootCargo());
