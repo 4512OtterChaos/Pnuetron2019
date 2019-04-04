@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.common.Config;
 import frc.robot.common.Network;
 import frc.robot.control.OI;
@@ -81,9 +82,11 @@ public class Robot extends TimedRobot {
         // pointers. Bad news. Don't move it.
         oi = new OI();
 
+        oi.setDual(true);
+
         controlChooser.setDefaultOption("Dual", dualConfig);
         controlChooser.addOption("Solo", soloConfig);
-        LiveWindow.add(controlChooser);
+        SmartDashboard.putData(controlChooser);
     }
     @Override
     public void robotPeriodic() {
@@ -104,24 +107,18 @@ public class Robot extends TimedRobot {
         Config.configNeutral(NeutralMode.Coast, drive.backRight);
         Config.configNeutral(NeutralMode.Coast, drive.backLeft);
         Config.configNeutral(NeutralMode.Coast, arm.wrist);
+
+        chassis.frontLime.lightOff();
     }
 
     @Override
     public void disabledPeriodic() {
         Scheduler.getInstance().run();
-        chassis.frontLime.lightOff();
-        arm.setWrist(0);
-        elevator.setElev(0);
-        intake.setBackdriving(false);
-        intake.setIntake(0); 
-        arm.setTarget(arm.wrist.getSelectedSensorPosition());
-        elevator.setTarget(elevator.front.getSelectedSensorPosition());
-        arm.wrist.set(ControlMode.MotionMagic, arm.wrist.getSelectedSensorPosition());
-        elevator.front.set(ControlMode.MotionMagic, elevator.front.getSelectedSensorPosition());
     }
 
     @Override
     public void autonomousInit() {
+        arm.setButtonDisable(true);
         teleopInit();//less auto, more tele
     }
 
@@ -131,12 +128,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
-        if(gTime==10.0) Scheduler.getInstance().add(new DoubleRumbleEvent(0.5));
-        if(gTime==5.0) Scheduler.getInstance().add(new DoubleRumbleEvent(1));
     }
 
     @Override
     public void teleopInit() {
+        arm.setButtonDisable(false);
         Config.configNeutral(NeutralMode.Brake, elevator.front);//make robot less moveable
         Config.configNeutral(NeutralMode.Brake, elevator.back);
         Config.configNeutral(NeutralMode.Brake, drive.frontRight);
@@ -144,6 +140,12 @@ public class Robot extends TimedRobot {
         Config.configNeutral(NeutralMode.Brake, drive.backRight);
         Config.configNeutral(NeutralMode.Brake, drive.backLeft);
         Config.configNeutral(NeutralMode.Brake, arm.wrist); 
+
+        arm.setTarget(arm.wrist.getSelectedSensorPosition());
+        elevator.setTarget(elevator.front.getSelectedSensorPosition());
+        arm.wrist.set(ControlMode.MotionMagic, arm.wrist.getSelectedSensorPosition());
+        elevator.front.set(ControlMode.MotionMagic, elevator.front.getSelectedSensorPosition());
+
         arm.setWrist(0);
         elevator.setElev(0);
         intake.setBackdriving(false);
@@ -167,9 +169,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        if(gTime==25.0) Scheduler.getInstance().add(new DoubleRumbleEvent(0.5));
-        if(gTime==12.0) Scheduler.getInstance().add(new DoubleRumbleEvent(1));
-
         Scheduler.getInstance().run();//run scheduled commands from OI
     }
 

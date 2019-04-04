@@ -36,7 +36,7 @@ public class LiftSet extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-        if(elevTarget<=RobotMap.ELEV_SUPPLY+RobotMap.ELEV_ERROR) addSequential(new ArmSetSafe());
+        if(elevTarget<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR) addSequential(new ArmSetSafe());
         addSequential(new ElevatorSet(elevTarget));
         addParallel(new ArmSet(armTarget));
         

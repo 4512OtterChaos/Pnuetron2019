@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.control.controlCommands.ControllerRumble;
-import frc.robot.subsystems.liftgroupCommands.LiftSetHatchIn;
+import frc.robot.subsystems.liftgroupCommands.LiftSetHatch1;
 import frc.robot.subsystems.manipulatorCommands.*;
 
 public class DriveCycle extends CommandGroup {
@@ -37,7 +37,7 @@ public class DriveCycle extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
     addParallel(new ControllerRumble(0.15));
-    addParallel(new ConditionalCommand(new LiftSetHatchIn()){
+    addParallel(new ConditionalCommand(new LiftSetHatch1()){
       @Override
       protected boolean condition(){
         return !Robot.arm.getHasItem();

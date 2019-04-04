@@ -13,6 +13,7 @@ package frc.robot.subsystems.manipulatorCommands;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.Robot;
+import frc.robot.control.controlCommands.DoubleRumbleEvent;
 import frc.robot.control.controlCommands.RumbleEvent;
 public class OpenClaw extends InstantCommand {
 
@@ -24,7 +25,7 @@ public class OpenClaw extends InstantCommand {
     @Override
     protected void initialize() {
         Robot.manipulator.setClaw(true);
-        Scheduler.getInstance().add(new RumbleEvent(0.5, 0.3));
+        new RumbleEvent(0.3, 0.3).start();
     }
 
 }

@@ -51,9 +51,7 @@ public class OI {
     public ControllerConfig solo;//combined layout
 
     public OI() {
-        //read class file for info
-        setDual(true);
-        //controller layout options
+        //read class file for info        //controller layout options
         driver = new DriverConfig();
         operator = new OperatorConfig();
         solo = new SoloConfig();

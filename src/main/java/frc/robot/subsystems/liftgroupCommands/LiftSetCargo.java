@@ -35,6 +35,6 @@ public class LiftSetCargo extends CommandGroup {
         // arm.
         addSequential(new ArmSetSafe());
         //addSequential(new ElevatorSetCargo());
-        addParallel(new ArmManual(-0.1));
+        addParallel(new ArmForce(-0.1));
     } 
 }

@@ -20,16 +20,16 @@ public class VisionAlign extends PIDCommand {
     private Limelight lime;
 
     private static final double
-        P = 0.010,
+        P = 1.0,
         I = 0.0,
-        D = 0.005;
+        D = 0.0;
 
-    private final double dead = 1.5;//angle of negligence
+    private final double dead = 2;//angle of negligence
     private final double minimum = 0.05;
-    private final double safeArea = 6.2;//percent area when close
+    private final double safeArea = 6.5;//percent area when close
 
     public VisionAlign() {
-        super("VisionTurnTarget", P, I, D, Robot.drive);
+        super("VisionTurnTarget", P, I, D);
         setSetpoint(0);
         getPIDController().setAbsoluteTolerance(dead);
     }
@@ -49,7 +49,8 @@ public class VisionAlign extends PIDCommand {
     protected void execute() {
         //forward
         double area = (lime.getTa());
-        double limeForward = 0.4*((safeArea-area)/safeArea);
+        //double limeForward = 0.35*((safeArea-area)/safeArea);
+        double limeForward=0;
         Network.put("Target Distance", area);
         if(lime.getTv()==1) Robot.drive.setForward(limeForward);
         else Robot.drive.setForward(0);
@@ -60,13 +61,14 @@ public class VisionAlign extends PIDCommand {
         //turn
         if(lime.getTx()>=0) output+=minimum;
         else output-=minimum;
+        output=(Math.abs(output)<0.04)? 0:output;
         Robot.drive.setTurn(output);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return (getPIDController().onTarget() && (lime.getTv()==1 && lime.getTa()>=safeArea)) || Robot.arm.getButton();
+        return (lime.getTv()==1 && lime.getTa()>=safeArea) || Robot.arm.getButton();
     }
 
     // Called once after isFinished returns true

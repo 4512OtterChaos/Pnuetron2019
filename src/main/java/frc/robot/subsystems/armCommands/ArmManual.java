@@ -14,15 +14,10 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 public class ArmManual extends Command {
 
-    private double givenForward;
     private double coefficient = 0.175;
     private boolean moved = false;
-    public ArmManual() {
-        this(0);
-    }
-    public ArmManual(double forward){
+    public ArmManual(){
         requires(Robot.arm);
-        givenForward=forward;
     }
 
     // Called just before this Command runs the first time
@@ -35,10 +30,8 @@ public class ArmManual extends Command {
     protected void execute() {
         double forward = coefficient*Robot.oi.operatorXbox.getRightY();
         boolean pass = (Robot.getDualControl())? Robot.oi.operator.getPassable(false):Robot.oi.solo.getPassable(false);
-        if((forward!=0 && pass) || givenForward!=0){
+        if((forward!=0 && pass)){
             Robot.arm.setIsManual(true);
-            if(givenForward==0) Robot.arm.setWrist(forward);
-            else Robot.arm.setWrist(givenForward);
             moved=true;
         }
         else{

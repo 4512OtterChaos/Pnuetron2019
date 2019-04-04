@@ -25,6 +25,7 @@ import frc.robot.subsystems.armCommands.*;
 import frc.robot.subsystems.liftgroupCommands.LiftSetCargo;
 import frc.robot.subsystems.manipulatorCommands.*;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -43,14 +44,15 @@ public class Arm extends Subsystem {
     private double akF = 1023.0/210.0;
     private double akPeak = 1;
     private double akRamp = 0.08;
-    private int akCruise = 130;
-    private int akCruiseItem = 110;
-    private int akAccel = 260;
-    private int akAccelItem = 210;
+    private int akCruise = 140;
+    private int akCruiseItem = 120;
+    private int akAccel = 270;
+    private int akAccelItem = 220;
     //behavior constants
     public final double akRestingForce = 0.05;//forward pressure while resting
     public final double akAntiArm = 0.08;//percent with unburdened arm(counter gravity)
     public final double akAntiItem = 0.13;//percent with burdened arm
+    private double manualForce = 0;
     //state
     private int pos = startPos;
 
@@ -61,10 +63,13 @@ public class Arm extends Subsystem {
     private boolean armGotItem = false;
     private boolean armLostItem = false;
 
+    private double lastTime=0;
+
     private boolean button = false;
     private boolean lastButton = false;
     private boolean buttonPressed = false;
     private boolean buttonReleased = false;
+    private boolean buttonDisable = true;
 
     private boolean liftResting = true;
     private boolean liftWasResting = false;
@@ -118,25 +123,28 @@ public class Arm extends Subsystem {
             Config.configAccel(akAccel, wrist);
         }
 
-        if(buttonPressed && !Robot.oi.driverXbox.rightTrigger.get()){//if manual control, react to button
+        if(!buttonDisable && buttonPressed && !Robot.oi.driverXbox.rightTrigger.get() && Timer.getFPGATimestamp()-lastTime>=3){//if manual control, react to button
             if(!armHasItem){
+                lastTime=Timer.getFPGATimestamp();
                 Scheduler.getInstance().add(new OpenClaw());
             }
             else{
+                lastTime=Timer.getFPGATimestamp();
                 Scheduler.getInstance().add(new PlaceHatch());
             }
         }
 
         if(intakeBecameBackdriving) Scheduler.getInstance().add(new LiftSetCargo());
+        else if(manualForce!=0 && intakeBecameUnbackdriving) setManualForce(0);
         
         targetA=target;
 
         //intake compensate
         targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? Convert.getCounts(7):RobotMap.ARM_CLOSE_FORWARD), targetA);
         //avoid pegs
-        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_SUPPLY+RobotMap.ELEV_ERROR)? RobotMap.ARM_HATCH_OUT:RobotMap.ARM_FAR_FORWARD), targetA);
+        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR)? RobotMap.ARM_HATCH_OUT:RobotMap.ARM_FAR_FORWARD), targetA);
         //avoid pid pressure
-        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_SUPPLY-RobotMap.ELEV_ERROR)? startPos:RobotMap.ARM_FAR_FORWARD), targetA);
+        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1-RobotMap.ELEV_ERROR)? startPos:RobotMap.ARM_FAR_FORWARD), targetA);
         //dont break the chain
         targetA=Convert.limit(RobotMap.ARM_FAR_BACKWARD, RobotMap.ARM_FAR_FORWARD, targetA);
 
@@ -145,9 +153,12 @@ public class Arm extends Subsystem {
         
 
         //if(liftResting) setWrist(akRestingForce);
-        if(liftBecameResting) Scheduler.getInstance().add(new ArmManual(akRestingForce));
-        else if(liftBecameUnresting) Scheduler.getInstance().add(new ArmManual(0));
-        else if(!manual) aMotionPID(targetA, ff);
+        if(liftBecameResting) manualForce=akRestingForce;
+        else if(liftBecameUnresting) manualForce=0;
+        if(!manual){
+            if(manualForce==0) aMotionPID(targetA, ff);
+            else setWrist(manualForce);
+        }
 
         putNetwork();
     }
@@ -178,6 +189,7 @@ public class Arm extends Subsystem {
         intakeWasBackdriving = intakeBackdriving;
     }
     private void putNetwork(){
+        Network.put("Arm Button", button);
         Network.put("Arm Target", target);
         Network.put("Arm TargetA", targetA);
         Network.put("Arm Pos", pos);
@@ -198,6 +210,9 @@ public class Arm extends Subsystem {
         double counterForce = (gravity*((getHasItem())? akAntiItem:akAntiArm));//multiply by the output percent for holding stable while 90 degrees
         counterForce = Convert.limit(counterForce);
         return counterForce;
+    }
+    public void setManualForce(double x){
+        manualForce=x;
     }
     
     //interaction
@@ -224,7 +239,7 @@ public class Arm extends Subsystem {
         return Robot.manipulator.getIsOpen();
     }
     public boolean getButton(){
-        return hatchButton.get();
+        return !hatchButton.get();
     }
     public boolean getButtonPressed(){
         return buttonPressed;
@@ -238,6 +253,9 @@ public class Arm extends Subsystem {
     }
     public void setIsManual(boolean b){
         manual=b;
+    }
+    public void setButtonDisable(boolean disabled){
+        buttonDisable=disabled;
     }
     public void setWrist(double x){
 		wrist.set(ControlMode.PercentOutput, x, DemandType.ArbitraryFeedForward, calcGrav());

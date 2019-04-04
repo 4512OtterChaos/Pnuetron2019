@@ -23,8 +23,8 @@ public class XboxJoystick extends XboxController {
 	public XboxButton selectButton = new XboxButton(this, 7);
 	public XboxButton leftStickButton = new XboxButton(this, 9);
 	public XboxButton rightStickButton = new XboxButton(this, 10);
-	public XboxButton leftTrigger = new XboxButton(this, 3, true);
-	public XboxButton rightTrigger = new XboxButton(this, 2, true);
+	public XboxButton leftTrigger = new XboxButton(this, LEFT_TRIGGER_AXIS, true);
+	public XboxButton rightTrigger = new XboxButton(this, RIGHT_TRIGGER_AXIS, true);
 	
 	//XboxController does not have command functionality, so we imitate it as a Joystick.
     public XboxJoystick(final int port){

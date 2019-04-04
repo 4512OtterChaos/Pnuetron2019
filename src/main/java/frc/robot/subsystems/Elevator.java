@@ -38,13 +38,13 @@ public class Elevator extends Subsystem {
     //pid
     private int target=0;
     private int targetA=target;
-    private double ekP = 0.65;
+    private double ekP = 0.7;
     private double ekI = 0;//0.005
     private double ekD = 35;
     private double ekF = 1023.0/5000.0;
     private double ekPeak = 0.9;
     private double ekRamp = 0.13;
-    private int ekCruise = 3600;
+    private int ekCruise = 3650;
     private int ekAccel = 3900;//encoder counts per 100 ms per second
     //behavior
     public final double ekAntiGrav = 0.06;
@@ -159,7 +159,7 @@ public class Elevator extends Subsystem {
             isTarget(target, RobotMap.ELEV_BOTTOM);
     }
     public boolean getWantRest(){
-        int cutoff = RobotMap.ELEV_SUPPLY-2*RobotMap.ELEV_ERROR;
+        int cutoff = RobotMap.ELEV_HATCH1-2*RobotMap.ELEV_ERROR;
         return (getPos()<=cutoff && target<=getPos()+RobotMap.ELEV_ERROR);
     }
     public boolean getCarrTop(){

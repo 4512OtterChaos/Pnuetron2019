@@ -25,7 +25,6 @@ public class DriveVision extends Command {
     private final double dead = 2.5;//angle of negligence
 
     public DriveVision() {
-        requires(Robot.drive);
     }
 
     // Called just before this Command runs the first time
@@ -49,12 +48,12 @@ public class DriveVision extends Command {
                 if(limeTurn<0){
                     limeTurn = -1*Math.pow(Math.abs(limeTurn), pow);
                     limeTurn = Convert.limit(limeTurn);
-                    limeTurn = 0.88*limeTurn-0.12;
+                    limeTurn = 0.88*limeTurn-0.09;
                 }
                 else{
                     limeTurn = 1*Math.pow(Math.abs(limeTurn), pow);
                     limeTurn = Convert.limit(limeTurn);
-                    limeTurn = 0.88*limeTurn+0.12; 
+                    limeTurn = 0.88*limeTurn+0.09; 
                 }
                 turn += limeTurn;
             }
