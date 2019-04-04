@@ -67,8 +67,8 @@ public class Elevator extends Subsystem {
         Config.configSensor(front);
         front.configForwardSoftLimitEnable(true, Config.kTimeout);
         front.configReverseSoftLimitEnable(true, Config.kTimeout);
-        front.configForwardSoftLimitThreshold(RobotMap.ELEV_HATCH3+20, Config.kTimeout);
-        front.configReverseSoftLimitThreshold(RobotMap.ELEV_BOTTOM-10, Config.kTimeout);
+        front.configForwardSoftLimitThreshold(RobotMap.ELEV_HATCH3+30, Config.kTimeout);
+        front.configReverseSoftLimitThreshold(RobotMap.ELEV_BOTTOM-15, Config.kTimeout);
         front.setInverted(true);
         back.setInverted(InvertType.FollowMaster);
         front.setSensorPhase(true);
