@@ -26,7 +26,7 @@ public class Intake extends Subsystem {
     public WPI_VictorSPX left;
 
     private boolean isBackdriving = false;//hold cargo
-    private final double backdrive = -0.45;
+    private final double backdrive = -0.25;
     private double targetPercent = 0;
 
     public Intake() {
@@ -82,9 +82,12 @@ public class Intake extends Subsystem {
     }
 
     public void setIntake(double x){
-		x*=(x<0)? 0.4:1;
-		right.set(ControlMode.PercentOutput, x);
-		left.set(ControlMode.PercentOutput, (x)+((x!=0)? ((x<0)? -0.15:0.15):0));
+        double xA=0;
+        if(x!=0){
+            xA = Math.copySign(0.15, x);
+        }
+		right.set(ControlMode.PercentOutput, x + xA);
+		left.set(ControlMode.PercentOutput, x);
 	}
 }
 

@@ -36,8 +36,8 @@ public class PlaceHatch extends CommandGroup {
     addSequential(new WaitCommand(0.05));
     addSequential(new OpenPusher());
     addSequential(new WaitCommand(0.05));
-    addParallel(new DriveManual(-0.45, 0));
-    addSequential(new WaitCommand(0.5));
+    addParallel(new DriveManual(-0.5, 0));
+    addSequential(new WaitCommand(0.4));
     addParallel(new DriveManual(0,0));
     addSequential(new ClosePusher());
   }

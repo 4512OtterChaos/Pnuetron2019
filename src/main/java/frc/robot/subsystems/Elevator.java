@@ -39,7 +39,7 @@ public class Elevator extends Subsystem {
     private int target=0;
     private int targetA=target;
     private double ekP = 0.7;
-    private double ekI = 0;//0.005
+    private double ekI = 0.002;//0.005
     private double ekD = 35;
     private double ekF = 1023.0/5000.0;
     private double ekPeak = 0.9;
@@ -76,7 +76,7 @@ public class Elevator extends Subsystem {
         Config.configAccel(ekAccel, front);
         front.configMotionSCurveStrength(6, Config.kTimeout);
         Config.configClosed(front, ekP, ekI, ekD, ekF, ekPeak, ekRamp);
-        front.config_IntegralZone(RobotMap.P_IDX, RobotMap.ELEV_ERROR, Config.kTimeout);
+        front.config_IntegralZone(RobotMap.P_IDX, RobotMap.ELEV_ERROR/2, Config.kTimeout);
     }
 
     @Override
