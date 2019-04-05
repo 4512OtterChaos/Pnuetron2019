@@ -19,6 +19,7 @@ public class ArmForce extends Command {
         this(Robot.arm.akRestingForce);
     }
     public ArmForce(double forward){
+        requires(Robot.arm);
         force=forward;
     }
 

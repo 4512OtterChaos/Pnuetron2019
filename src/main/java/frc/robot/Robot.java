@@ -82,13 +82,11 @@ public class Robot extends TimedRobot {
         // pointers. Bad news. Don't move it.
         oi = new OI();
 
-        oi.setDual(false);
+        //oi.setDual(false);
         drive.setDefaultSpeed(drive.dkSpeedLow);
         drive.setAlternateSpeed(drive.dkSpeedNeutral);
-        /*
-        drive.setAlternateSpeed(drive.dkSpeedLow);
-        drive.setDefaultSpeed(drive.dkSpeedNeutral);
-        */
+        //drive.setAlternateSpeed(drive.dkSpeedLow);
+        //drive.setDefaultSpeed(drive.dkSpeedNeutral);
 
         controlChooser.setDefaultOption("Dual", dualConfig);
         controlChooser.addOption("Solo", soloConfig);
@@ -157,7 +155,6 @@ public class Robot extends TimedRobot {
         intake.setIntake(0);
         manipulator.setPusher(false);
         
-        /*
         controlConfig = controlChooser.getSelected();
         if(controlConfig.equals(dualConfig)){
             oi.setDual(true);
@@ -169,7 +166,6 @@ public class Robot extends TimedRobot {
             drive.setAlternateSpeed(drive.dkSpeedLow);
             drive.setDefaultSpeed(drive.dkSpeedNeutral);
         }
-        */
     }
 
     /**

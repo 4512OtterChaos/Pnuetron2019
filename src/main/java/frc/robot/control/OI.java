@@ -56,6 +56,8 @@ public class OI {
         driver = new DriverConfig();
         operator = new OperatorConfig();
         solo = new SoloConfig();
+        driverXbox = new XboxJoystick(0);
+        operatorXbox = new XboxJoystick(1);
     }
 
     public void setDual(boolean _dual){
