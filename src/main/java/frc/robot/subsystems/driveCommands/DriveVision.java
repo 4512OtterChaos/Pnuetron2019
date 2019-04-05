@@ -23,9 +23,9 @@ public class DriveVision extends Command {
     private Limelight lime;
     private final double maxSpeed = 0.35;//fastest while tracking
     private final double safeArea = 7.5;//percent area when close
-    private final double pow = (3/2.0);//curve motor response when close
+    private final double pow = (3.5/2.0);//curve motor response when close
     private final double coefficient = 0.4;
-    private final double minimum = 0.06;
+    private final double minimum = 0.08;
     private final double dead = 2.5;//angle of negligence
 
     public DriveVision() {
@@ -67,10 +67,6 @@ public class DriveVision extends Command {
             double area = (lime.getTa());
             double limeForward = 0.9*((safeArea-area)/safeArea);
             forward+=limeForward;
-            Network.put("Target Distance", area);
-        }
-        else{
-            Network.put("Target Distance", 0);
         }
         Robot.drive.setForward(forward);
         Robot.drive.setTurn(turn);

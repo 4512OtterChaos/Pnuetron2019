@@ -128,7 +128,6 @@ public class Elevator extends Subsystem {
         Network.put("Stage Bot", getStageBot());
         Network.put("Elev Pos", getPos());
         Network.put("Elev Target", targetA);
-        Network.put("Elev Power", front.getMotorOutputPercent());
     }
 
     private void eMotionPID(double pos){

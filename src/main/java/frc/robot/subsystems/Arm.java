@@ -190,7 +190,7 @@ public class Arm extends Subsystem {
         intakeWasBackdriving = intakeBackdriving;
     }
     private void putNetwork(){
-        Network.put("Arm Button", button);
+        //Network.put("Arm Button", button);
         Network.put("Arm Target", target);
         Network.put("Arm TargetA", targetA);
         Network.put("Arm Pos", pos);
