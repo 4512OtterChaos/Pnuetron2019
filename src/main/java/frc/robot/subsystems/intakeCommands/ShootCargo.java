@@ -9,6 +9,7 @@ package frc.robot.subsystems.intakeCommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
+import frc.robot.Robot;
 import frc.robot.subsystems.armCommands.ArmSetSafe;
 
 public class ShootCargo extends CommandGroup {
@@ -33,9 +34,18 @@ public class ShootCargo extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
     addSequential(new IntakeOut());
-    addSequential(new WaitCommand(0.2));
+    addParallel(new ArmSetSafe());
+    addSequential(new WaitCommand(0.4));
     addSequential(new IntakeBackdriveOff());
     addSequential(new IntakeZero());
-    addSequential(new ArmSetSafe());
+  }
+
+  public void end(){
+    Robot.intake.setBackdriving(false);
+    new IntakeZero().start();
+    Robot.intake.setIntake(0);
+  }
+  public void interrupted(){
+    end();
   }
 }

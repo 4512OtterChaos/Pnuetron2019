@@ -124,19 +124,19 @@ public class Arm extends Subsystem {
         }
 
         //if auto cycling disable when trigger pressed
-        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=3){//if manual control, react to button
+        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=1.5){//if manual control, react to button
             if(!armHasItem){
-                lastTime=Timer.getFPGATimestamp();
                 Scheduler.getInstance().add(new OpenClaw());
             }
             else{
-                lastTime=Timer.getFPGATimestamp();
                 Scheduler.getInstance().add(new PlaceHatch());
             }
         }
 
-        if(intakeBackdriving) Scheduler.getInstance().add(new LiftSetCargo());
-        else if(manualForce!=0 && intakeBecameUnbackdriving) new ArmForce();
+        /*
+        if(intakeBecameBackdriving) Scheduler.getInstance().add(new LiftSetCargo());
+        else if(manualForce!=0 && intakeBecameUnbackdriving) new ArmForce(0).start();
+        */
         
         targetA=target;
 
@@ -196,7 +196,7 @@ public class Arm extends Subsystem {
         Network.put("Arm Pos", pos);
         Network.put("Arm Deg", getDeg());
         Network.put("Arm Native", Convert.getNative(wrist));
-        Network.put("Arm Power", wrist.getMotorOutputPercent());
+        Network.put("Arm Power", manualForce);
     }
     
     private void aMotionPID(double pos){
@@ -257,6 +257,9 @@ public class Arm extends Subsystem {
     }
     public void setIsManual(boolean b){
         manual=b;
+    }
+    public void setLastButtonTime(){
+        lastTime=Timer.getFPGATimestamp();
     }
     public void setButtonDisable(boolean disabled){
         buttonDisable=disabled;

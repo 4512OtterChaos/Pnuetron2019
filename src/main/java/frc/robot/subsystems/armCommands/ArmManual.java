@@ -29,7 +29,7 @@ public class ArmManual extends Command {
     @Override
     protected void execute() {
         double forward = coefficient*Robot.oi.operatorXbox.getRightY();
-        boolean pass = (Robot.getDualControl())? Robot.oi.operator.getPassable(false):Robot.oi.solo.getPassable(false);
+        boolean pass = (Robot.oi.getDual())? Robot.oi.operator.getPassable(false):Robot.oi.solo.getPassable(false);
         if((forward!=0 && pass)){
             Robot.arm.setIsManual(true);
             moved=true;

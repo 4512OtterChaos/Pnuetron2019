@@ -19,7 +19,6 @@ public class ArmForce extends Command {
         this(Robot.arm.akRestingForce);
     }
     public ArmForce(double forward){
-        requires(Robot.arm);
         force=forward;
     }
 
@@ -31,20 +30,20 @@ public class ArmForce extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.arm.setIsManual(false);
+        Robot.arm.setIsManual(true);
         Robot.arm.setManualForce(force);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.arm.setManualForce(0);
+        if(force==0) Robot.arm.setIsManual(false);
     }
 
     // Called when another command which requires one or more of the same
