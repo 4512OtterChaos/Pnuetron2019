@@ -30,7 +30,6 @@ public class ArmForce extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.arm.setIsManual(true);
         Robot.arm.setManualForce(force);
     }
 
@@ -43,7 +42,6 @@ public class ArmForce extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        if(force==0) Robot.arm.setIsManual(false);
     }
 
     // Called when another command which requires one or more of the same
