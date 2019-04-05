@@ -49,7 +49,7 @@ public class Arm extends Subsystem {
     private int akAccel = 270;
     private int akAccelItem = 220;
     //behavior constants
-    public final double akRestingForce = 0.05;//forward pressure while resting
+    public final double akRestingForce = 0.07;//forward pressure while resting
     public final double akAntiArm = 0.08;//percent with unburdened arm(counter gravity)
     public final double akAntiItem = 0.13;//percent with burdened arm
     private double manualForce = 0;

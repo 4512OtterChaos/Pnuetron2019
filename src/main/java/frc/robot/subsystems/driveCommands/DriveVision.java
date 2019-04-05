@@ -24,8 +24,8 @@ public class DriveVision extends Command {
     private final double maxSpeed = 0.35;//fastest while tracking
     private final double safeArea = 7.5;//percent area when close
     private final double pow = (3/2.0);//curve motor response when close
-    private final double coefficient = 0.6;
-    private final double minimum = 0.07;
+    private final double coefficient = 0.4;
+    private final double minimum = 0.06;
     private final double dead = 2.5;//angle of negligence
 
     public DriveVision() {
@@ -38,7 +38,7 @@ public class DriveVision extends Command {
         Robot.drive.shiftSet(maxSpeed);
         lime.lightOn();
         if(!Robot.arm.getHasItem()){
-            new LiftSetHatch1().start();
+            //new LiftSetHatch1().start();
         }
     }
 
