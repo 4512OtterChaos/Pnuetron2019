@@ -13,15 +13,19 @@ package frc.robot.subsystems.driveCommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 import frc.robot.common.Convert;
 import frc.robot.common.Limelight;
 import frc.robot.common.Network;
+import frc.robot.subsystems.liftgroupCommands.LiftSetHatch1;
 public class DriveVision extends Command {
 
     private Limelight lime;
     private final double maxSpeed = 0.35;//fastest while tracking
     private final double safeArea = 7.5;//percent area when close
-    private final double pow = (4.5/2.0);//curve motor response when close
+    private final double pow = (3/2.0);//curve motor response when close
+    private final double coefficient = 0.6;
+    private final double minimum = 0.07;
     private final double dead = 2.5;//angle of negligence
 
     public DriveVision() {
@@ -33,34 +37,35 @@ public class DriveVision extends Command {
         lime = Robot.chassis.frontLime;
         Robot.drive.shiftSet(maxSpeed);
         lime.lightOn();
+        if(!Robot.arm.getHasItem()){
+            new LiftSetHatch1().start();
+        }
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
         double forward = Robot.oi.driverXbox.getLeftY();
-        double turn = 0.75*Robot.oi.driverXbox.getRightX();
+        double turn = 0.6*Robot.oi.driverXbox.getRightX();
         if(lime.getTv()==1){
             double limeTurn = lime.getTx();
             if(!(Math.abs(limeTurn)<=dead)){
-                limeTurn /= (15.0);//degrees -> percentage fov
-                limeTurn = ((limeTurn<0)? -1:1)*Math.pow(Math.abs(limeTurn), pow);
+                limeTurn /= (RobotMap.FRONTLIME_FOV_WIDTH/2.0);//degrees -> percentage fov
+                limeTurn = ((limeTurn<0)? -coefficient:coefficient)*Math.pow(Math.abs(limeTurn), pow);
                 if(limeTurn<0){
-                    limeTurn = -1*Math.pow(Math.abs(limeTurn), pow);
                     limeTurn = Convert.limit(limeTurn);
-                    limeTurn = 0.88*limeTurn-0.07;
+                    limeTurn = limeTurn-minimum;
                 }
                 else{
-                    limeTurn = 1*Math.pow(Math.abs(limeTurn), pow);
                     limeTurn = Convert.limit(limeTurn);
-                    limeTurn = 0.88*limeTurn+0.07; 
+                    limeTurn = limeTurn+minimum; 
                 }
                 turn += limeTurn;
             }
             
             //
             double area = (lime.getTa());
-            double limeForward = 1*((safeArea-area)/safeArea);
+            double limeForward = 0.9*((safeArea-area)/safeArea);
             forward+=limeForward;
             Network.put("Target Distance", area);
         }
@@ -74,19 +79,20 @@ public class DriveVision extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return false;
+        return Robot.arm.getButton();
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
+        Robot.drive.shiftDefault();
+        lime.lightOff();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
-        Robot.drive.shiftDefault();
-        lime.lightOff();
+        end();
     }
 }

@@ -25,7 +25,7 @@ public class RobotMap {
     //elevator
     public static final int ELEV_ERROR = 400;//allowable error for logic
     public static final int ELEV_BOTTOM = 0;
-    public static final int ELEV_HATCH1 = 4600;
+    public static final int ELEV_HATCH1 = 4550;
     public static final int ELEV_CARGO = 6000;
     public static final int ELEV_HATCH2 = 24600;
     public static final int ELEV_HATCH3 = 47100;
