@@ -18,6 +18,7 @@ public class IntakeBackdriveOff extends InstantCommand {
   public IntakeBackdriveOff() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    requires(Robot.intake);
   }
 
   // Called once when the command executes

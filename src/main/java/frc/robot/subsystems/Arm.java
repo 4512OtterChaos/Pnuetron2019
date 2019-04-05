@@ -123,7 +123,8 @@ public class Arm extends Subsystem {
             Config.configAccel(akAccel, wrist);
         }
 
-        if(!buttonDisable && buttonPressed && !Robot.oi.driverXbox.rightTrigger.get() && Timer.getFPGATimestamp()-lastTime>=3){//if manual control, react to button
+        //if auto cycling disable when trigger pressed
+        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=3){//if manual control, react to button
             if(!armHasItem){
                 lastTime=Timer.getFPGATimestamp();
                 Scheduler.getInstance().add(new OpenClaw());
@@ -134,8 +135,8 @@ public class Arm extends Subsystem {
             }
         }
 
-        if(intakeBecameBackdriving) Scheduler.getInstance().add(new LiftSetCargo());
-        else if(manualForce!=0 && intakeBecameUnbackdriving) setManualForce(0);
+        if(intakeBackdriving) Scheduler.getInstance().add(new LiftSetCargo());
+        else if(manualForce!=0 && intakeBecameUnbackdriving) new ArmForce();
         
         targetA=target;
 
@@ -246,6 +247,9 @@ public class Arm extends Subsystem {
     }
     public boolean getButtonReleased(){
         return buttonReleased;
+    }
+    public boolean getButtonDisabled(){
+        return buttonDisable;
     }
 
     public void setTarget(int t){

@@ -18,6 +18,7 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.armCommands.ArmSetHatchOut;
 import frc.robot.subsystems.elevatorCommands.ElevatorSetHatch3;
+import frc.robot.subsystems.manipulatorCommands.ClosePusher;
 public class LiftSetHatch3 extends CommandGroup {
 
     public LiftSetHatch3() {
@@ -38,6 +39,7 @@ public class LiftSetHatch3 extends CommandGroup {
         // a CommandGroup containing them would require both the chassis and the
         // arm.
         addParallel(new ElevatorSetHatch3());
+        addParallel(new ClosePusher());
         addSequential(new ConditionalCommand(new WaitCommand(0.75), new WaitCommand(0.2)){
             @Override
             protected boolean condition() {

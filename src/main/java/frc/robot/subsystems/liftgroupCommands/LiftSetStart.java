@@ -18,6 +18,7 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.armCommands.ArmSetSafe;
 import frc.robot.subsystems.elevatorCommands.ElevatorSetStart;
+import frc.robot.subsystems.manipulatorCommands.ClosePusher;
 public class LiftSetStart extends CommandGroup {
 
     public LiftSetStart() {
@@ -38,6 +39,7 @@ public class LiftSetStart extends CommandGroup {
         // a CommandGroup containing them would require both the chassis and the
         // arm.
         addParallel(new ArmSetSafe());
+        addParallel(new ClosePusher());
         addSequential(new ConditionalCommand(new WaitCommand(0.75), new WaitCommand(0.1)){
             @Override
             protected boolean condition() {

@@ -20,8 +20,8 @@ public class DriveVision extends Command {
 
     private Limelight lime;
     private final double maxSpeed = 0.35;//fastest while tracking
-    private final double safeArea = 6.5;//percent area when close
-    private final double pow = (4/2.0);//curve motor response when close
+    private final double safeArea = 7.5;//percent area when close
+    private final double pow = (4.5/2.0);//curve motor response when close
     private final double dead = 2.5;//angle of negligence
 
     public DriveVision() {
@@ -48,12 +48,12 @@ public class DriveVision extends Command {
                 if(limeTurn<0){
                     limeTurn = -1*Math.pow(Math.abs(limeTurn), pow);
                     limeTurn = Convert.limit(limeTurn);
-                    limeTurn = 0.88*limeTurn-0.09;
+                    limeTurn = 0.88*limeTurn-0.07;
                 }
                 else{
                     limeTurn = 1*Math.pow(Math.abs(limeTurn), pow);
                     limeTurn = Convert.limit(limeTurn);
-                    limeTurn = 0.88*limeTurn+0.09; 
+                    limeTurn = 0.88*limeTurn+0.07; 
                 }
                 turn += limeTurn;
             }

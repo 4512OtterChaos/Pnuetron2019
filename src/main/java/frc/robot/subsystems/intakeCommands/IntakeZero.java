@@ -13,15 +13,16 @@ package frc.robot.subsystems.intakeCommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-public class IntakeManual extends Command {
+public class IntakeZero extends Command {
 
-    public IntakeManual() {
+    public IntakeZero() {
         requires(Robot.intake);
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        Robot.intake.setTarget(0);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -35,7 +36,7 @@ public class IntakeManual extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     // Called once after isFinished returns true

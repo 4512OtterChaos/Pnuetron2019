@@ -33,7 +33,9 @@ public class ShootCargo extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
     addSequential(new IntakeOut());
-    addSequential(new WaitCommand(0.1));
+    addSequential(new WaitCommand(0.2));
+    addSequential(new IntakeBackdriveOff());
+    addSequential(new IntakeZero());
     addSequential(new ArmSetSafe());
   }
 }

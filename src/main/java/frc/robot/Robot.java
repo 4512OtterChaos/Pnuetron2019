@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
 
         controlChooser.setDefaultOption("Dual", dualConfig);
         controlChooser.addOption("Solo", soloConfig);
-        SmartDashboard.putData(controlChooser);
+        SmartDashboard.putData("Controller", controlChooser);
     }
     @Override
     public void robotPeriodic() {
@@ -118,7 +118,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        arm.setButtonDisable(true);
         teleopInit();//less auto, more tele
     }
 
@@ -128,11 +127,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
+        arm.setButtonDisable(true);
     }
 
     @Override
     public void teleopInit() {
-        arm.setButtonDisable(false);
         Config.configNeutral(NeutralMode.Brake, elevator.front);//make robot less moveable
         Config.configNeutral(NeutralMode.Brake, elevator.back);
         Config.configNeutral(NeutralMode.Brake, drive.frontRight);
@@ -150,6 +149,7 @@ public class Robot extends TimedRobot {
         elevator.setElev(0);
         intake.setBackdriving(false);
         intake.setIntake(0);
+        manipulator.setPusher(false);
         
         controlConfig = controlChooser.getSelected();
         if(controlConfig.equals(dualConfig)){
@@ -169,7 +169,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+        arm.setButtonDisable(false);
         Scheduler.getInstance().run();//run scheduled commands from OI
+        if(gTime==22) new DoubleRumbleEvent(0.7).start();;
+        if(gTime==12) new DoubleRumbleEvent(1).start();
     }
 
     public static boolean getDualControl(){return controlConfig.equals(dualConfig);}

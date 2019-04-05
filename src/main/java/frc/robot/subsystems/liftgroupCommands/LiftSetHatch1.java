@@ -21,6 +21,7 @@ import frc.robot.subsystems.armCommands.ArmManual;
 import frc.robot.subsystems.armCommands.ArmSetHatchOut;
 import frc.robot.subsystems.armCommands.ArmSetSafe;
 import frc.robot.subsystems.elevatorCommands.ElevatorSetHatch1;
+import frc.robot.subsystems.manipulatorCommands.ClosePusher;
 public class LiftSetHatch1 extends CommandGroup {
 
     public LiftSetHatch1() {
@@ -46,6 +47,7 @@ public class LiftSetHatch1 extends CommandGroup {
                 return Robot.arm.getPos()>RobotMap.ARM_CLOSE_FORWARD+RobotMap.ARM_ERROR;
             }
         });
+        addParallel(new ClosePusher());
         addSequential(new ConditionalCommand(new WaitCommand(0.15)){
             @Override
             protected boolean condition() {
