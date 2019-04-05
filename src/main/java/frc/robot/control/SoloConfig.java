@@ -29,5 +29,10 @@ public class SoloConfig extends ControllerConfig{
         controller.rightStickButton.whenActive(new ShootCargo(), conditions, false);
         //flipper
         controller.rightStickButton.whenActive(new FlipIntake(), conditions, true);
+
+        //
+        controller.leftStickButton.whenActive(new IntakeOut(), conditions, true);
+        controller.leftStickButton.whenActive(new IntakeIn(), conditions, false);
+        controller.leftStickButton.whenInactive(new IntakeZero());
     }
 }

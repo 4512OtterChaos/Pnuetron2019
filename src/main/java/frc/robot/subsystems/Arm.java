@@ -134,7 +134,7 @@ public class Arm extends Subsystem {
         }
 
         if(intakeBecameBackdriving) new ArmSet(RobotMap.ARM_CLOSE_BACKDRIVE).start();
-        else if(manualForce!=0 && intakeBecameUnbackdriving) new ArmSetSafe().start();;
+        else if(intakeBecameUnbackdriving) new ArmSetSafe().start();;
         
         targetA=target;
 
@@ -152,8 +152,10 @@ public class Arm extends Subsystem {
         
 
         //if(liftResting) setWrist(akRestingForce);
-        if(liftBecameResting) manualForce=akRestingForce;
-        else if(liftBecameUnresting) manualForce=0;
+        if(liftResting) manualForce=akRestingForce;
+        if(liftBecameUnresting || intakeBackdriving){
+            manualForce=0;
+        }
         if(!manual){
             if(manualForce==0) aMotionPID(targetA, ff);
             else setWrist(manualForce);

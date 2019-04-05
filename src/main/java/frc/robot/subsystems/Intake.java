@@ -26,7 +26,7 @@ public class Intake extends Subsystem {
     public WPI_VictorSPX left;
 
     private boolean isBackdriving = false;//hold cargo
-    private final double backdrive = -0.4;
+    private final double backdrive = -0.45;
     private double targetPercent = 0;
 
     public Intake() {
