@@ -38,7 +38,7 @@ public class RobotMap {
     public static final int ARM_CLOSE_BACKDRIVE = Convert.getCounts(11);
     public static final int ARM_CLOSE_BACKWARD = Convert.getCounts(-75);
     public static final int ARM_HATCH_OUT = Convert.getCounts(81);
-    public static final int ARM_HATCH_IN = Convert.getCounts(92);
+    public static final int ARM_HATCH_IN = Convert.getCounts(85);
     //----------
 
     //---------- Dimensions (inches)

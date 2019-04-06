@@ -134,14 +134,14 @@ public class Arm extends Subsystem {
         }
 
         if(intakeBecameBackdriving) new ArmSet(RobotMap.ARM_CLOSE_BACKDRIVE).start();
-        else if(intakeBecameUnbackdriving) new ArmSetSafe().start();;
+        else if(intakeBecameUnbackdriving) new ArmSetSafe().start();
         
         targetA=target;
 
         //intake compensate
         targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? RobotMap.ARM_CLOSE_BACKDRIVE:RobotMap.ARM_CLOSE_FORWARD), targetA);
         //avoid pegs
-        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR)? RobotMap.ARM_HATCH_OUT:RobotMap.ARM_FAR_FORWARD), targetA);
+        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR)? RobotMap.ARM_HATCH_IN:RobotMap.ARM_FAR_FORWARD), targetA);
         //avoid pid pressure
         targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1-RobotMap.ELEV_ERROR)? startPos:RobotMap.ARM_FAR_FORWARD), targetA);
         //dont break the chain
@@ -156,10 +156,12 @@ public class Arm extends Subsystem {
         if(liftBecameUnresting || intakeBackdriving){
             manualForce=0;
         }
+        /*
         if(!manual){
             if(manualForce==0) aMotionPID(targetA, ff);
             else setWrist(manualForce);
-        }
+        }*/
+        if(!manual) aMotionPID(targetA, ff);
 
         putNetwork();
     }
