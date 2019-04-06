@@ -18,6 +18,7 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.armCommands.ArmForce;
 import frc.robot.subsystems.armCommands.ArmManual;
+import frc.robot.subsystems.armCommands.ArmSetHatchIn;
 import frc.robot.subsystems.armCommands.ArmSetHatchOut;
 import frc.robot.subsystems.armCommands.ArmSetSafe;
 import frc.robot.subsystems.elevatorCommands.ElevatorSetHatch1;
@@ -55,7 +56,6 @@ public class LiftSetHatch1 extends CommandGroup {
             }
         });
         addSequential(new ElevatorSetHatch1());
-        addSequential(new ArmSetHatchOut());
-        addParallel(new ArmForce());
+        addSequential(new ArmSetHatchIn());
     } 
 }

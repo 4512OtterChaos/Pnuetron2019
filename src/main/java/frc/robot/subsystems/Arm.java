@@ -143,7 +143,7 @@ public class Arm extends Subsystem {
         //intake compensate
         targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? Convert.getCounts(7):RobotMap.ARM_CLOSE_FORWARD), targetA);
         //avoid pegs
-        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR)? RobotMap.ARM_HATCH_OUT:RobotMap.ARM_FAR_FORWARD), targetA);
+        targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR)? RobotMap.ARM_HATCH_IN:RobotMap.ARM_FAR_FORWARD), targetA);
         //avoid pid pressure
         targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1-RobotMap.ELEV_ERROR)? startPos:RobotMap.ARM_FAR_FORWARD), targetA);
         //dont break the chain
