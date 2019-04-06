@@ -39,7 +39,7 @@ public class Drive extends Subsystem {
     private double dkRamp = 0.175;
     //state
     private final double dkMaxRPM = 400;
-    public final double dkSpeedNeutral = 0.45;
+    public final double dkSpeedNeutral = 0.55;
     public final double dkSpeedLow = 0.2;
     private double dkSpeedShift = dkSpeedNeutral;
     private double dkSpeedDefault = dkSpeedLow;
