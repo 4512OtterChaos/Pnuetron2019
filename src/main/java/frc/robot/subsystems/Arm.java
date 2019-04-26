@@ -41,17 +41,17 @@ public class Arm extends Subsystem {
     private double akP = 2.2;
     private double akI = 0;//0.01
     private double akD = 50;
-    private double akF = 1023.0/210.0;
+    private double akF = 1023.0/200.0;
     private double akPeak = 1;
     private double akRamp = 0.08;
-    private int akCruise = 140;
-    private int akCruiseItem = 120;
-    private int akAccel = 270;
-    private int akAccelItem = 220;
+    private int akCruise = 150;
+    private int akCruiseItem = 150;
+    private int akAccel = 240;
+    private int akAccelItem = 240;
     //behavior constants
     public final double akRestingForce = 0.07;//forward pressure while resting
     public final double akAntiArm = 0.08;//percent with unburdened arm(counter gravity)
-    public final double akAntiItem = 0.13;//percent with burdened arm
+    public final double akAntiItem = 0.11;//percent with burdened arm
     private double manualForce = 0;
     //state
     private int pos = startPos;
@@ -97,7 +97,7 @@ public class Arm extends Subsystem {
         wrist.setSensorPhase(false);
         Config.configCruise(akCruise, wrist);
         Config.configAccel(akAccel, wrist);
-        wrist.configMotionSCurveStrength(6, Config.kTimeout);
+        wrist.configMotionSCurveStrength(8, Config.kTimeout);
         Config.configClosed(wrist, akP, akI, akD, akF, akPeak, akRamp);
         wrist.config_IntegralZone(RobotMap.P_IDX, RobotMap.ARM_ERROR, Config.kTimeout);
     }

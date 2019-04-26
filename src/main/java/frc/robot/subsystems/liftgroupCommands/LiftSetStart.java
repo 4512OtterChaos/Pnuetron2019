@@ -40,7 +40,7 @@ public class LiftSetStart extends CommandGroup {
         // arm.
         addParallel(new ArmSetSafe());
         addParallel(new ClosePusher());
-        addSequential(new ConditionalCommand(new WaitCommand(0.75), new WaitCommand(0.05)){
+        addSequential(new ConditionalCommand(new WaitCommand(0.8), new WaitCommand(0.05)){
             @Override
             protected boolean condition() {
                 return Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1+2*RobotMap.ELEV_ERROR;

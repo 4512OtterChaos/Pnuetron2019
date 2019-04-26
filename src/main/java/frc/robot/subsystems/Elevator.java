@@ -41,13 +41,13 @@ public class Elevator extends Subsystem {
     private double ekP = 0.7;
     private double ekI = 0.002;//0.005
     private double ekD = 35;
-    private double ekF = 1023.0/5000.0;
-    private double ekPeak = 0.9;
-    private double ekRamp = 0.13;
-    private int ekCruise = 3650;
-    private int ekAccel = 3900;//encoder counts per 100 ms per second
+    private double ekF = 1023.0/4900.0;
+    private double ekPeak = 1;
+    private double ekRamp = 0.1;
+    private int ekCruise = 4500;
+    private int ekAccel = 11500;//encoder counts per 100 ms per second
     //behavior
-    public final double ekAntiGrav = 0.06;
+    public final double ekAntiGrav = 0.08;
 
     private boolean isSupply = false;
 
@@ -74,7 +74,7 @@ public class Elevator extends Subsystem {
         front.setSensorPhase(true);
         Config.configCruise(ekCruise, front);
         Config.configAccel(ekAccel, front);
-        front.configMotionSCurveStrength(6, Config.kTimeout);
+        front.configMotionSCurveStrength(8, Config.kTimeout);
         Config.configClosed(front, ekP, ekI, ekD, ekF, ekPeak, ekRamp);
         front.config_IntegralZone(RobotMap.P_IDX, RobotMap.ELEV_ERROR/2, Config.kTimeout);
     }
@@ -128,6 +128,7 @@ public class Elevator extends Subsystem {
         Network.put("Stage Bot", getStageBot());
         Network.put("Elev Pos", getPos());
         Network.put("Elev Target", targetA);
+        Network.put("Elev Native", Convert.getNative(front));
     }
 
     private void eMotionPID(double pos){
