@@ -13,9 +13,9 @@ class DriverConfig extends ControllerConfig{
         controller.rightTrigger.whileActive(new DriveVision());
         controller.rightBumper.whileActive(new VisionAlign());
         //intake
-        controller.aButton.whenActive(new IntakeBackdrive());
-        controller.xButton.whenActive(new ShootCargo());
+        //controller.aButton.whenActive(new IntakeBackdrive());
+        //controller.xButton.whenActive(new ShootCargo());
         //flipper
-        controller.bButton.whenActive(new FlipIntake());
+        //controller.bButton.whenActive(new FlipIntake());
     }
 }
