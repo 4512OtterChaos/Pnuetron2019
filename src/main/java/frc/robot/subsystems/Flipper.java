@@ -14,12 +14,13 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.RobotMap;
 public class Flipper extends Subsystem {
 
     public DoubleSolenoid flipper;
 
     public Flipper() {
-        flipper = new DoubleSolenoid(0, 0, 1);
+        flipper = new DoubleSolenoid(0, RobotMap.FLIPPER_F, RobotMap.FLIPPER_R);
         addChild("Flipper",flipper);
 
         setFlipper(false);

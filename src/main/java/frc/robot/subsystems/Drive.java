@@ -59,13 +59,13 @@ public class Drive extends Subsystem {
     */
 
     public Drive() {
-        frontRight = new WPI_TalonSRX(1);
+        frontRight = new WPI_TalonSRX(RobotMap.DRIVE_F_RIGHT);
         
-        backRight = new WPI_TalonSRX(2);
+        backRight = new WPI_TalonSRX(RobotMap.DRIVE_B_RIGHT);
         
-        frontLeft = new WPI_TalonSRX(3);
+        frontLeft = new WPI_TalonSRX(RobotMap.DRIVE_F_LEFT);
         
-        backLeft = new WPI_TalonSRX(4);
+        backLeft = new WPI_TalonSRX(RobotMap.DRIVE_B_LEFT);
         
         //config basic things
         Config.configAllStart(frontRight);

@@ -30,10 +30,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Elevator extends Subsystem {
     public WPI_TalonSRX front;
     public WPI_TalonSRX back;
-    public DigitalInput stageTop = new DigitalInput(0);
-    public DigitalInput carriageTop = new DigitalInput(1);
-    public DigitalInput stageBot = new DigitalInput(2);
-    public DigitalInput carriageBot = new DigitalInput(3);
+    public DigitalInput stageTop = new DigitalInput(RobotMap.STAGETOP);
+    public DigitalInput carriageTop = new DigitalInput(RobotMap.CARRIAGETOP);
+    public DigitalInput stageBot = new DigitalInput(RobotMap.STAGEBOT);
+    public DigitalInput carriageBot = new DigitalInput(RobotMap.CARRIAGEBOT);
 
     //pid
     private int target=0;
@@ -54,9 +54,9 @@ public class Elevator extends Subsystem {
     private boolean manual=false;
 
     public Elevator() {
-        front = new WPI_TalonSRX(5);
+        front = new WPI_TalonSRX(RobotMap.ELEV_F);
         
-        back = new WPI_TalonSRX(6);
+        back = new WPI_TalonSRX(RobotMap.ELEV_B);
         
         Config.configAllStart(front);
         Config.configAllStart(back);

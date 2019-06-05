@@ -10,11 +10,34 @@ package frc.robot;
 import frc.robot.common.Convert;
 
 public class RobotMap {
-    //motor config
+    //---------- motor config
     public static final int P_IDX = 0;
     public static final int P_ALLOWABLE_CLOSED = 2;
     public static final int MOTOR_PEAK = 1;
     public static final int MOTOR_NOMINAL = 0;
+    //Motors
+    public static final int DRIVE_F_RIGHT = 1;//Front
+    public static final int DRIVE_B_RIGHT = 2;//Back
+    public static final int DRIVE_F_LEFT = 3;
+    public static final int DRIVE_B_LEFT = 4;
+    public static final int ELEV_F = 5;
+    public static final int ELEV_B = 6;
+    public static final int WRIST = 7;
+    public static final int INTAKE_R = 8;//Right
+    public static final int INTAKE_L = 9;//Left
+    //Solenoids
+    public static final int FLIPPER_F = 0;//Forward
+    public static final int FLIPPER_R = 1;//Reverse
+    public static final int CLAW_F = 4;
+    public static final int CLAW_R = 5;
+    public static final int PUSHER_F = 6;
+    public static final int PUSHER_R = 7;
+    //Buttons
+    public static final int STAGETOP = 0;
+    public static final int CARRIAGETOP = 1;
+    public static final int STAGEBOT = 2;
+    public static final int CARRIAGEBOT = 3;
+    public static final int HATCH = 4;
 
     //---------- Encoder Positions
     public static final int COUNTS_PER_ROTATION = 4096;

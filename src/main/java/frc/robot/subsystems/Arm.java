@@ -33,7 +33,7 @@ public class Arm extends Subsystem {
 
     public WPI_TalonSRX wrist;
 
-    public DigitalInput hatchButton = new DigitalInput(4);
+    public DigitalInput hatchButton = new DigitalInput(RobotMap.HATCH);
 
     private final int startPos = 280;
     private int target = startPos;
@@ -82,7 +82,7 @@ public class Arm extends Subsystem {
     private boolean intakeBecameUnbackdriving = false;
 
     public Arm() {
-        wrist = new WPI_TalonSRX(7);
+        wrist = new WPI_TalonSRX(RobotMap.WRIST);
 
         Config.configAllStart(wrist);
 

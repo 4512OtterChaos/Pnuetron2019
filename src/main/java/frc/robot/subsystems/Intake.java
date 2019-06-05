@@ -15,6 +15,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import frc.robot.RobotMap;
 import frc.robot.common.*;
 import frc.robot.subsystems.intakeCommands.*;
 
@@ -30,9 +31,9 @@ public class Intake extends Subsystem {
     private double targetPercent = 0;
 
     public Intake() {
-        right = new WPI_VictorSPX(8);
+        right = new WPI_VictorSPX(RobotMap.INTAKE_R);
         
-        left = new WPI_VictorSPX(9);
+        left = new WPI_VictorSPX(RobotMap.INTAKE_L);
         
         Config.configAllStart(right);
         Config.configAllStart(left);
