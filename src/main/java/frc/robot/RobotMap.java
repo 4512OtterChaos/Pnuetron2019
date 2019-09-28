@@ -66,7 +66,7 @@ public class RobotMap {
 
     //---------- Dimensions (inches)
     //drivebase
-    public static final double WHEEL_DIAMETER = 8;
+    public static final double WHEEL_DIAMETER = 6;
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*Math.PI;
     public static final double INCHES_PER_COUNT = WHEEL_CIRCUMFERENCE / COUNTS_PER_ROTATION;
     public static final double COUNTS_PER_100MS_TO_INCHES_PER_SEC = INCHES_PER_COUNT * 10;//100ms is 1/10th of 1 second

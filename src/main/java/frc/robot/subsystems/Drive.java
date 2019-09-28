@@ -124,8 +124,12 @@ public class Drive extends Subsystem {
      * @param turn Percentage turn
      */
     private void dVelPID(double forward, double turn){
-		double right = arcadeMath(forward, -turn);
-		double left = arcadeMath(forward, turn);
+		//double right = arcadeMath(forward, -turn);
+        //double left = arcadeMath(forward, turn);
+        double turnWeight = 1.2-(Math.abs(forward)*0.5);
+        turn*=turnWeight;
+        double right = Convert.limit(forward-turn);
+        double left = Convert.limit(forward+turn);
 		right = calc100ms(right, targetRPM);
 		left = calc100ms(left, targetRPM);
 		frontRight.set(ControlMode.Velocity, right);
