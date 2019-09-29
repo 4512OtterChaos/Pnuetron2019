@@ -126,10 +126,16 @@ public class Drive extends Subsystem {
     private void dVelPID(double forward, double turn){
 		//double right = arcadeMath(forward, -turn);
         //double left = arcadeMath(forward, turn);
-        double turnWeight = 1.2-(Math.abs(forward)*0.5);
+        
+        //if at first you dont succeed, add more math
+        double turnWeight = 1.2-(Math.abs(forward)*0.6);
         turn*=turnWeight;
-        double right = Convert.limit(forward-turn);
-        double left = Convert.limit(forward+turn);
+        forward*=dkSpeed;
+        turn=(turn+turn*dkSpeed)/2;
+        double gap = 0.8*Math.max((Math.abs(forward)+Math.abs(turn)-1),0);
+        gap = (forward>0)? -gap:gap;
+        double right = Convert.limit(forward-turn+gap);
+        double left = Convert.limit(forward+turn+gap);
 		right = calc100ms(right, targetRPM);
 		left = calc100ms(left, targetRPM);
 		frontRight.set(ControlMode.Velocity, right);
