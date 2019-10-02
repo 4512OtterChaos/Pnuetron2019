@@ -128,11 +128,11 @@ public class Drive extends Subsystem {
         //double left = arcadeMath(forward, turn);
         
         //if at first you dont succeed, add more math
-        double turnWeight = 1.2-(Math.abs(forward)*0.6);
+        double turnWeight = 1.2-(Math.abs(forward)*0.6);//turn less when more forward, more when still
         turn*=turnWeight;
         forward*=dkSpeed;
-        turn=(turn+turn*dkSpeed)/2;
-        double gap = 0.8*Math.max((Math.abs(forward)+Math.abs(turn)-1),0);
+        turn=(turn+turn*dkSpeed)/2;//more consistent turn speeds
+        double gap = 0.8*Math.max((Math.abs(forward)+Math.abs(turn)-1),0);//when peaking, turn more
         gap = (forward>0)? -gap:gap;
         double right = Convert.limit(forward-turn+gap);
         double left = Convert.limit(forward+turn+gap);
