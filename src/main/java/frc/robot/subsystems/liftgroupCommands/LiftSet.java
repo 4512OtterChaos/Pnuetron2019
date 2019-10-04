@@ -43,11 +43,9 @@ public class LiftSet extends CommandGroup {
         double safeTime = 0;
         double ePos = Robot.elevator.getPos();
         double aPos = Robot.arm.getPos();
-        double LOW = RobotMap.ELEV_HATCH1+2*RobotMap.ELEV_ERROR;
-        if(elevTarget<=LOW && ePos<=LOW){
-            addParallel(new ArmSetSafe()); 
-            safeTime = 0.8 - 0.80;
-            
+        if(elevTarget<=RobotMap.ELEV_HATCH1+2*RobotMap.ELEV_ERROR){
+            addParallel(new ArmSetSafe());
+            safeTime = 0.8 - 0.8;
         }
         addSequential(new WaitCommand(safeTime));
         addSequential(new ElevatorSet(elevTarget));
