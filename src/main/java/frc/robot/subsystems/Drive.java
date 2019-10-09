@@ -31,18 +31,18 @@ public class Drive extends Subsystem {
     public WPI_TalonSRX backLeft;
 
     //pid
-    private double dkP = 0.5;
+    private double dkP = 0.45;
     private double dkI = 0;
     private double dkD = 40;
     private double dkF = 1023/2600.0;
     private double dkPeak = 1;
     private double dkRamp = 0.175;
     //state
-    private final double dkMaxRPM = 400;
-    public final double dkSpeedNeutral = 0.45;
-    public final double dkSpeedLow = 0.2;
-    private double dkSpeedShift = dkSpeedNeutral;
-    private double dkSpeedDefault = dkSpeedLow;
+    private final double dkMaxRPM = 500;
+    public final double dkSpeedNeutral = 0.6;
+    public final double dkSpeedLow = 0.3;
+    private double dkSpeedShift = dkSpeedLow;
+    private double dkSpeedDefault = dkSpeedNeutral;
     private double dkSpeed = dkSpeedDefault;
     private double targetRPM = dkMaxRPM*dkSpeed;
     private double forward = 0;
@@ -128,12 +128,11 @@ public class Drive extends Subsystem {
         //double left = arcadeMath(forward, turn);
         
         //if at first you dont succeed, add more math
-        double turnWeight = 1.2-(Math.abs(forward)*0.6);//turn less when more forward, more when still
-        turn*=turnWeight;
-        forward*=dkSpeed;
-        turn=(turn+turn*dkSpeed)/2;//more consistent turn speeds
+        double turnWeight = 1.2-(Math.abs(forward)*0.3);//turn less when more forward, more when still
+        //turn*=turnWeight;
         double gap = 0.8*Math.max((Math.abs(forward)+Math.abs(turn)-1),0);//when peaking, turn more
         gap = (forward>0)? -gap:gap;
+        gap=0;
         double right = Convert.limit(forward-turn+gap);
         double left = Convert.limit(forward+turn+gap);
 		right = calc100ms(right, targetRPM);

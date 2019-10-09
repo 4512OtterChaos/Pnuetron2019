@@ -21,12 +21,12 @@ import frc.robot.subsystems.liftgroupCommands.LiftSetHatch1;
 public class DriveVision extends Command {
 
     private Limelight lime;
-    private final double maxSpeed = 0.35;//fastest while tracking
+    private final double maxSpeed = 0.4;//fastest while tracking
     private final double safeArea = 7.5;//percent area when close
     private final double pow = (3.5/2.0);//curve motor response when close
-    private final double coefficient = 0.4;
-    private final double minimum = 0.08;
-    private final double dead = 2.5;//angle of negligence
+    private final double coefficient = 0.45;
+    private final double minimum = 0.07;
+    private final double dead = 2.75;//angle of negligence
 
     public DriveVision() {
     }

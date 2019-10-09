@@ -50,8 +50,8 @@ public class RobotMap {
     public static final int ELEV_BOTTOM = 0;
     public static final int ELEV_HATCH1 = 4550;
     public static final int ELEV_CARGO = 6000;
-    public static final int ELEV_HATCH2 = 24600;
-    public static final int ELEV_HATCH3 = 47000;
+    public static final int ELEV_HATCH2 = 24700;
+    public static final int ELEV_HATCH3 = 47100;
 
     //arm
     public static final int ARM_ERROR = 40;
@@ -60,7 +60,7 @@ public class RobotMap {
     public static final int ARM_CLOSE_FORWARD = Convert.getCounts(23);
     public static final int ARM_CLOSE_BACKDRIVE = Convert.getCounts(11);
     public static final int ARM_CLOSE_BACKWARD = Convert.getCounts(-75);
-    public static final int ARM_HATCH_OUT = Convert.getCounts(78);
+    public static final int ARM_HATCH_OUT = Convert.getCounts(76);
     public static final int ARM_HATCH_IN = Convert.getCounts(88);
     //----------
 
