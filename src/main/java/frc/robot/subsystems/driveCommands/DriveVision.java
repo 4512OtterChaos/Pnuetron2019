@@ -21,7 +21,7 @@ import frc.robot.subsystems.liftgroupCommands.LiftSetHatch1;
 public class DriveVision extends Command {
 
     private Limelight lime;
-    private final double maxSpeed = 0.4;//fastest while tracking
+    private final double maxSpeed = 0.375;//fastest while tracking
     private final double safeArea = 7.5;//percent area when close
     private final double pow = (3.5/2.0);//curve motor response when close
     private final double coefficient = 0.45;
