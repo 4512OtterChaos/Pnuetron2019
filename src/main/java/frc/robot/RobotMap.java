@@ -50,7 +50,7 @@ public class RobotMap {
     public static final int ELEV_BOTTOM = 0;
     public static final int ELEV_HATCH1 = 4880;
     public static final int ELEV_CARGO = 6000;
-    public static final int ELEV_HATCH2 = 24600;
+    public static final int ELEV_HATCH2 = 24500;
     public static final int ELEV_HATCH3 = 47000;
 
     //arm

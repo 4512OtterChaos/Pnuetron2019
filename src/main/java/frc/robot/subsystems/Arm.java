@@ -124,7 +124,7 @@ public class Arm extends Subsystem {
         }
 
         //if auto cycling disable when trigger pressed
-        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=1.5){//if manual control, react to button
+        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=1.75){//if manual control, react to button
             if(!armHasItem){
                 Scheduler.getInstance().add(new OpenClaw());
             }

@@ -10,6 +10,7 @@ package frc.robot.subsystems.manipulatorCommands;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.subsystems.driveCommands.DriveManual;
+import frc.robot.subsystems.liftgroupCommands.LiftSetHatch1;
 import frc.robot.subsystems.liftgroupCommands.LiftSetStart;
 
 public class PlaceHatch extends CommandGroup {
@@ -37,10 +38,10 @@ public class PlaceHatch extends CommandGroup {
     addSequential(new WaitCommand(0.05));
     addSequential(new OpenPusher());
     addSequential(new WaitCommand(0.05));
-    addParallel(new DriveManual(-0.5, 0));
-    addSequential(new WaitCommand(0.3));
+    addParallel(new DriveManual(-0.6, 0));
+    addSequential(new WaitCommand(0.45));
     addParallel(new LiftSetStart());
-    addSequential(new WaitCommand(0.7));
+    addSequential(new WaitCommand(0.75));
     addParallel(new DriveManual(0,0));
     addSequential(new ClosePusher());
   }

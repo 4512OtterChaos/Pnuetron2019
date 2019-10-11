@@ -44,8 +44,8 @@ public class Elevator extends Subsystem {
     private double ekF = 1023.0/4900.0;
     private double ekPeak = 1;
     private double ekRamp = 0.1;
-    private int ekCruise = 4500;
-    private int ekAccel = 11500;//encoder counts per 100 ms per second
+    private int ekCruise = 4600;
+    private int ekAccel = 12000;//encoder counts per 100 ms per second
     //behavior
     public final double ekAntiGrav = 0.08;
 
