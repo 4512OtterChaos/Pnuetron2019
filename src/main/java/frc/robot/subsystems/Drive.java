@@ -41,8 +41,8 @@ public class Drive extends Subsystem {
     private final double dkMaxRPM = 500;
     public final double dkSpeedNeutral = 0.6;
     public final double dkSpeedLow = 0.3;
-    private double dkSpeedShift = dkSpeedLow;
-    private double dkSpeedDefault = dkSpeedNeutral;
+    private double dkSpeedShift = dkSpeedNeutral;
+    private double dkSpeedDefault = dkSpeedLow;
     private double dkSpeed = dkSpeedDefault;
     private double targetRPM = dkMaxRPM*dkSpeed;
     private double forward = 0;
