@@ -25,7 +25,7 @@ public class DriveVision extends Command {
     private final double safeArea = 7.6;//percent area when close
     private final double pow = (3.2/2.0);//curve motor response when close
     private final double coefficient = 0.45;
-    private final double minimum = 0.10;
+    private final double minimum = 0.13;
     private final double dead = 2.75;//angle of negligence
 
     public DriveVision() {

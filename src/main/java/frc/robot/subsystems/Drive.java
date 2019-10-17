@@ -128,7 +128,7 @@ public class Drive extends Subsystem {
         //double left = arcadeMath(forward, turn);
         
         //if at first you dont succeed, add more math
-        double turnWeight = 1.2-(Math.abs(forward)*0.3);//turn less when more forward, more when still
+        //double turnWeight = 1.2-(Math.abs(forward)*0.3);//turn less when more forward, more when still
         //turn*=turnWeight;
         double gap = 0.8*Math.max((Math.abs(forward)+Math.abs(turn)-1),0);//when peaking, turn more
         gap = (forward>0)? -gap:gap;
@@ -217,6 +217,7 @@ public class Drive extends Subsystem {
      */
     public void setForward(double _forward){
         forward=_forward;
+        Network.put("Given Forward", forward);
     }
     /**
      * Sets the target turn speed
@@ -224,6 +225,7 @@ public class Drive extends Subsystem {
      */
     public void setTurn(double _turn){
         turn=_turn;
+        Network.put("Given Turn", turn);
     }
 
     /**

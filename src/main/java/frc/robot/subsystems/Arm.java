@@ -44,10 +44,10 @@ public class Arm extends Subsystem {
     private double akF = 1023.0/200.0;
     private double akPeak = 1;
     private double akRamp = 0.08;
-    private int akCruise = 150;
-    private int akCruiseItem = 150;
-    private int akAccel = 240;
-    private int akAccelItem = 240;
+    private int akCruise = 160;
+    private int akCruiseItem = 160;
+    private int akAccel = 250;
+    private int akAccelItem = 250;
     //behavior constants
     public final double akRestingForce = 0.07;//forward pressure while resting
     public final double akAntiArm = 0.082;//percent with unburdened arm(counter gravity)
@@ -124,13 +124,14 @@ public class Arm extends Subsystem {
         }
 
         //if auto cycling disable when trigger pressed
-        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=1.75){//if manual control, react to button
+        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=1.55){//if manual control, react to button
             if(!armHasItem){
-                Scheduler.getInstance().add(new OpenClaw());
+                Scheduler.getInstance().add(new TakeHatch());
             }
             else{
                 Scheduler.getInstance().add(new PlaceHatch());
             }
+            setLastButtonTime();
         }
 
         if(intakeBecameBackdriving) new ArmSet(RobotMap.ARM_CLOSE_BACKDRIVE).start();

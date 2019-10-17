@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
     private static SendableChooser<String> controlChooser = new SendableChooser<>();
 
     private static double gTime = -1;
+    private static boolean rumble = true;
 
     public Robot(){
         super(0.02);
@@ -94,7 +95,7 @@ public class Robot extends TimedRobot {
     }
     @Override
     public void robotPeriodic() {
-        gTime = Timer.getMatchTime();
+        gTime = Math.round(Timer.getMatchTime());
         Network.put("Game Time", gTime);
     }
 
@@ -103,7 +104,7 @@ public class Robot extends TimedRobot {
      * You can use it to reset subsystems before shutting down.
      */
     @Override
-    public void disabledInit(){
+    public void disabledInit(){ 
         Config.configNeutral(NeutralMode.Coast, elevator.front);//make robot moveable
         Config.configNeutral(NeutralMode.Coast, elevator.back);
         Config.configNeutral(NeutralMode.Coast, drive.frontRight);
@@ -170,9 +171,16 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         arm.setButtonDisable(false);
+        if(gTime==22&&rumble){
+            new DoubleRumbleEvent(0.7).start();
+            rumble=false;
+        }
+        if(gTime==20&&!rumble) rumble=true;
+        if(gTime==12&&rumble){
+            new DoubleRumbleEvent(0.9).start();
+            rumble=false;
+        }
         Scheduler.getInstance().run();//run scheduled commands from OI
-        if(gTime==22) new DoubleRumbleEvent(0.7).start();;
-        if(gTime==12) new DoubleRumbleEvent(1).start();
     }
 
     public static boolean getDualControl(){return controlConfig.equals(dualConfig);}

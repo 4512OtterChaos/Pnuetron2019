@@ -33,9 +33,10 @@ public class TakeHatch extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
     addSequential(new OpenClaw());
-    addSequential(new WaitCommand(0.05));
-    addParallel(new DriveManual(-0.3, 0));
-    addSequential(new WaitCommand(0.4));
+    addSequential(new WaitCommand(0.2));
+    addParallel(new DriveManual(-0.6, 0));
+    addSequential(new WaitCommand(0.8));
     addParallel(new DriveManual(0,0));
+    end();
   }
 }

@@ -36,9 +36,7 @@ public class DriveManual extends Command {
     protected void execute() {
         //joystick control
         double percentage = (1+Robot.drive.dkSpeedLow)-Robot.drive.getDriveSpeed();
-        double coefficient = Convert.interpolate(0.4, 1, percentage);
-        if(Robot.drive.getDriveSpeed()==Robot.drive.dkSpeedLow) coefficient=1;
-        else coefficient=0.35;
+        double coefficient = Convert.interpolate(0.25, 0.8, percentage);
         double forward = Robot.oi.driverXbox.getLeftY();
         double turn = coefficient*Robot.oi.driverXbox.getRightX();
         if(!Robot.getDualControl()&&!Robot.oi.solo.getPassable(true)){
