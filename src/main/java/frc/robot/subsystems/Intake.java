@@ -15,6 +15,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import frc.robot.RobotMap;
 import frc.robot.common.*;
 import frc.robot.subsystems.intakeCommands.*;
 
@@ -26,13 +27,13 @@ public class Intake extends Subsystem {
     public WPI_VictorSPX left;
 
     private boolean isBackdriving = false;//hold cargo
-    private final double backdrive = -0.35;
+    private final double backdrive = -0.25;
     private double targetPercent = 0;
 
     public Intake() {
-        right = new WPI_VictorSPX(8);
+        right = new WPI_VictorSPX(RobotMap.INTAKE_R);
         
-        left = new WPI_VictorSPX(9);
+        left = new WPI_VictorSPX(RobotMap.INTAKE_L);
         
         Config.configAllStart(right);
         Config.configAllStart(left);
@@ -82,9 +83,12 @@ public class Intake extends Subsystem {
     }
 
     public void setIntake(double x){
-		x*=(x<0)? 0.4:1;
-		right.set(ControlMode.PercentOutput, x);
-		left.set(ControlMode.PercentOutput, (x)+((x!=0)? ((x<0)? -0.15:0.15):0));
+        double xA=0;
+        if(x!=0){
+            xA = Math.copySign(0.15, x);
+        }
+		right.set(ControlMode.PercentOutput, x + xA);
+		left.set(ControlMode.PercentOutput, x);
 	}
 }
 

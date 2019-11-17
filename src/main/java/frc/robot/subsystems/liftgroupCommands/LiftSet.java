@@ -12,10 +12,13 @@
 package frc.robot.subsystems.liftgroupCommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.armCommands.ArmSet;
 import frc.robot.subsystems.armCommands.ArmSetSafe;
 import frc.robot.subsystems.elevatorCommands.ElevatorSet;
+import frc.robot.subsystems.manipulatorCommands.ClosePusher;
 
 public class LiftSet extends CommandGroup {
 
@@ -36,7 +39,15 @@ public class LiftSet extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-        if(elevTarget<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR) addSequential(new ArmSetSafe());
+        addParallel(new ClosePusher());
+        double safeTime = 0;
+        double ePos = Robot.elevator.getPos();
+        double aPos = Robot.arm.getPos();
+        if(elevTarget<=RobotMap.ELEV_HATCH1+2*RobotMap.ELEV_ERROR){
+            addParallel(new ArmSetSafe());
+            safeTime = 0.8 - 0.8;
+        }
+        addSequential(new WaitCommand(safeTime));
         addSequential(new ElevatorSet(elevTarget));
         addParallel(new ArmSet(armTarget));
         

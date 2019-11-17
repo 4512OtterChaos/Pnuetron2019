@@ -30,10 +30,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Elevator extends Subsystem {
     public WPI_TalonSRX front;
     public WPI_TalonSRX back;
-    public DigitalInput stageTop = new DigitalInput(0);
-    public DigitalInput carriageTop = new DigitalInput(1);
-    public DigitalInput stageBot = new DigitalInput(2);
-    public DigitalInput carriageBot = new DigitalInput(3);
+    public DigitalInput stageTop = new DigitalInput(RobotMap.STAGETOP);
+    public DigitalInput carriageTop = new DigitalInput(RobotMap.CARRIAGETOP);
+    public DigitalInput stageBot = new DigitalInput(RobotMap.STAGEBOT);
+    public DigitalInput carriageBot = new DigitalInput(RobotMap.CARRIAGEBOT);
 
     //pid
     private int target=0;
@@ -41,22 +41,22 @@ public class Elevator extends Subsystem {
     private double ekP = 0.7;
     private double ekI = 0.002;//0.005
     private double ekD = 35;
-    private double ekF = 1023.0/5000.0;
-    private double ekPeak = 0.9;
-    private double ekRamp = 0.13;
-    private int ekCruise = 3650;
-    private int ekAccel = 3900;//encoder counts per 100 ms per second
+    private double ekF = 1023.0/4900.0;
+    private double ekPeak = 1;
+    private double ekRamp = 0.1;
+    private int ekCruise = 4750;
+    private int ekAccel = 12500;//encoder counts per 100 ms per second
     //behavior
-    public final double ekAntiGrav = 0.06;
+    public final double ekAntiGrav = 0.08;
 
     private boolean isSupply = false;
 
     private boolean manual=false;
 
     public Elevator() {
-        front = new WPI_TalonSRX(5);
+        front = new WPI_TalonSRX(RobotMap.ELEV_F);
         
-        back = new WPI_TalonSRX(6);
+        back = new WPI_TalonSRX(RobotMap.ELEV_B);
         
         Config.configAllStart(front);
         Config.configAllStart(back);
@@ -74,7 +74,7 @@ public class Elevator extends Subsystem {
         front.setSensorPhase(true);
         Config.configCruise(ekCruise, front);
         Config.configAccel(ekAccel, front);
-        front.configMotionSCurveStrength(6, Config.kTimeout);
+        front.configMotionSCurveStrength(8, Config.kTimeout);
         Config.configClosed(front, ekP, ekI, ekD, ekF, ekPeak, ekRamp);
         front.config_IntegralZone(RobotMap.P_IDX, RobotMap.ELEV_ERROR/2, Config.kTimeout);
     }
@@ -128,7 +128,7 @@ public class Elevator extends Subsystem {
         Network.put("Stage Bot", getStageBot());
         Network.put("Elev Pos", getPos());
         Network.put("Elev Target", targetA);
-        Network.put("Elev Power", front.getMotorOutputPercent());
+        Network.put("Elev Native", Convert.getNative(front));
     }
 
     private void eMotionPID(double pos){

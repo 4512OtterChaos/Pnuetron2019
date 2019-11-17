@@ -50,14 +50,18 @@ public class OI {
     public ControllerConfig operator;//operator layout
     public ControllerConfig solo;//combined layout
 
+    private boolean dual=false;
     public OI() {
         //read class file for info        //controller layout options
         driver = new DriverConfig();
         operator = new OperatorConfig();
         solo = new SoloConfig();
+        driverXbox = new XboxJoystick(0);
+        operatorXbox = new XboxJoystick(1);
     }
 
-    public void setDual(boolean dual){
+    public void setDual(boolean _dual){
+        dual=_dual;
         if(dual){
             driverXbox = new XboxJoystick(0);
             operatorXbox = new XboxJoystick(1);
@@ -70,5 +74,6 @@ public class OI {
             solo.assign(driverXbox);
         }
     }
+    public boolean getDual(){return dual;}
 }
 

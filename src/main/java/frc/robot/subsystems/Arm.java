@@ -33,7 +33,7 @@ public class Arm extends Subsystem {
 
     public WPI_TalonSRX wrist;
 
-    public DigitalInput hatchButton = new DigitalInput(4);
+    public DigitalInput hatchButton = new DigitalInput(RobotMap.HATCH);
 
     private final int startPos = 280;
     private int target = startPos;
@@ -41,17 +41,17 @@ public class Arm extends Subsystem {
     private double akP = 2.2;
     private double akI = 0;//0.01
     private double akD = 50;
-    private double akF = 1023.0/210.0;
+    private double akF = 1023.0/200.0;
     private double akPeak = 1;
     private double akRamp = 0.08;
-    private int akCruise = 140;
-    private int akCruiseItem = 120;
-    private int akAccel = 270;
-    private int akAccelItem = 220;
+    private int akCruise = 160;
+    private int akCruiseItem = 160;
+    private int akAccel = 250;
+    private int akAccelItem = 250;
     //behavior constants
-    public final double akRestingForce = 0.05;//forward pressure while resting
-    public final double akAntiArm = 0.08;//percent with unburdened arm(counter gravity)
-    public final double akAntiItem = 0.13;//percent with burdened arm
+    public final double akRestingForce = 0.07;//forward pressure while resting
+    public final double akAntiArm = 0.082;//percent with unburdened arm(counter gravity)
+    public final double akAntiItem = 0.115;//percent with burdened arm
     private double manualForce = 0;
     //state
     private int pos = startPos;
@@ -82,7 +82,7 @@ public class Arm extends Subsystem {
     private boolean intakeBecameUnbackdriving = false;
 
     public Arm() {
-        wrist = new WPI_TalonSRX(7);
+        wrist = new WPI_TalonSRX(RobotMap.WRIST);
 
         Config.configAllStart(wrist);
 
@@ -97,7 +97,7 @@ public class Arm extends Subsystem {
         wrist.setSensorPhase(false);
         Config.configCruise(akCruise, wrist);
         Config.configAccel(akAccel, wrist);
-        wrist.configMotionSCurveStrength(6, Config.kTimeout);
+        wrist.configMotionSCurveStrength(8, Config.kTimeout);
         Config.configClosed(wrist, akP, akI, akD, akF, akPeak, akRamp);
         wrist.config_IntegralZone(RobotMap.P_IDX, RobotMap.ARM_ERROR, Config.kTimeout);
     }
@@ -124,24 +124,23 @@ public class Arm extends Subsystem {
         }
 
         //if auto cycling disable when trigger pressed
-        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=3){//if manual control, react to button
+        if(!buttonDisable && buttonPressed && Timer.getFPGATimestamp()-lastTime>=1.55){//if manual control, react to button
             if(!armHasItem){
-                lastTime=Timer.getFPGATimestamp();
-                Scheduler.getInstance().add(new OpenClaw());
+                Scheduler.getInstance().add(new TakeHatch());
             }
             else{
-                lastTime=Timer.getFPGATimestamp();
                 Scheduler.getInstance().add(new PlaceHatch());
             }
+            setLastButtonTime();
         }
 
-        if(intakeBackdriving) Scheduler.getInstance().add(new LiftSetCargo());
-        else if(manualForce!=0 && intakeBecameUnbackdriving) new ArmForce();
+        if(intakeBecameBackdriving) new ArmSet(RobotMap.ARM_CLOSE_BACKDRIVE).start();
+        else if(intakeBecameUnbackdriving) new ArmSetSafe().start();
         
         targetA=target;
 
         //intake compensate
-        targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? Convert.getCounts(7):RobotMap.ARM_CLOSE_FORWARD), targetA);
+        targetA=Math.max(((Robot.intake.getBackdriving() && !getHasItem())? RobotMap.ARM_CLOSE_BACKDRIVE:RobotMap.ARM_CLOSE_FORWARD), targetA);
         //avoid pegs
         targetA=Math.min(((Robot.elevator.getPos()<=RobotMap.ELEV_HATCH1+RobotMap.ELEV_ERROR)? RobotMap.ARM_HATCH_IN:RobotMap.ARM_FAR_FORWARD), targetA);
         //avoid pid pressure
@@ -154,12 +153,16 @@ public class Arm extends Subsystem {
         
 
         //if(liftResting) setWrist(akRestingForce);
-        if(liftBecameResting) manualForce=akRestingForce;
-        else if(liftBecameUnresting) manualForce=0;
+        if(liftResting) manualForce=akRestingForce;
+        if(liftBecameUnresting || intakeBackdriving){
+            manualForce=0;
+        }
+        /*
         if(!manual){
             if(manualForce==0) aMotionPID(targetA, ff);
             else setWrist(manualForce);
-        }
+        }*/
+        if(!manual) aMotionPID(targetA, ff);
 
         putNetwork();
     }
@@ -190,13 +193,13 @@ public class Arm extends Subsystem {
         intakeWasBackdriving = intakeBackdriving;
     }
     private void putNetwork(){
-        Network.put("Arm Button", button);
+        //Network.put("Arm Button", button);
         Network.put("Arm Target", target);
         Network.put("Arm TargetA", targetA);
         Network.put("Arm Pos", pos);
         Network.put("Arm Deg", getDeg());
         Network.put("Arm Native", Convert.getNative(wrist));
-        Network.put("Arm Power", wrist.getMotorOutputPercent());
+        Network.put("Arm Power", manualForce);
     }
     
     private void aMotionPID(double pos){
@@ -257,6 +260,9 @@ public class Arm extends Subsystem {
     }
     public void setIsManual(boolean b){
         manual=b;
+    }
+    public void setLastButtonTime(){
+        lastTime=Timer.getFPGATimestamp();
     }
     public void setButtonDisable(boolean disabled){
         buttonDisable=disabled;

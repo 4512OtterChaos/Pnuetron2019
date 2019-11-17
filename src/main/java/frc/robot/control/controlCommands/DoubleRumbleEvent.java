@@ -15,12 +15,13 @@ import frc.robot.control.XboxJoystick;
 public class DoubleRumbleEvent extends CommandGroup {
 
   public DoubleRumbleEvent(double rumble){
+    this.setInterruptible(false);
     addSequential(new ControllerRumble(rumble));
-    addSequential(new WaitCommand(0.2));
+    addSequential(new WaitCommand(0.35));
     addSequential(new ControllerRumble(0));
-    addSequential(new WaitCommand(0.2));
+    addSequential(new WaitCommand(0.25));
     addSequential(new ControllerRumble(rumble));
-    addSequential(new WaitCommand(0.2));
+    addSequential(new WaitCommand(0.35));
     addSequential(new ControllerRumble(0));
   }
   public DoubleRumbleEvent(double rumble, double time){
@@ -34,11 +35,11 @@ public class DoubleRumbleEvent extends CommandGroup {
   }
   public DoubleRumbleEvent(XboxJoystick controller, double rumble){
     addSequential(new ControllerRumble(controller, rumble));
-    addSequential(new WaitCommand(0.2));
+    addSequential(new WaitCommand(0.35));
     addSequential(new ControllerRumble(controller, 0));
-    addSequential(new WaitCommand(0.2));
+    addSequential(new WaitCommand(0.25));
     addSequential(new ControllerRumble(controller, rumble));
-    addSequential(new WaitCommand(0.2));
+    addSequential(new WaitCommand(0.35));
     addSequential(new ControllerRumble(controller, 0));
   }
   public DoubleRumbleEvent(XboxJoystick controller, double rumble, double time){

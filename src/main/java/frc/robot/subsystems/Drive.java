@@ -31,16 +31,16 @@ public class Drive extends Subsystem {
     public WPI_TalonSRX backLeft;
 
     //pid
-    private double dkP = 0.5;
+    private double dkP = 0.45;
     private double dkI = 0;
     private double dkD = 40;
     private double dkF = 1023/2600.0;
     private double dkPeak = 1;
     private double dkRamp = 0.175;
     //state
-    private final double dkMaxRPM = 400;
-    public final double dkSpeedNeutral = 0.55;
-    public final double dkSpeedLow = 0.2;
+    private final double dkMaxRPM = 500;
+    public final double dkSpeedNeutral = 0.6;
+    public final double dkSpeedLow = 0.3;
     private double dkSpeedShift = dkSpeedNeutral;
     private double dkSpeedDefault = dkSpeedLow;
     private double dkSpeed = dkSpeedDefault;
@@ -59,13 +59,13 @@ public class Drive extends Subsystem {
     */
 
     public Drive() {
-        frontRight = new WPI_TalonSRX(1);
+        frontRight = new WPI_TalonSRX(RobotMap.DRIVE_F_RIGHT);
         
-        backRight = new WPI_TalonSRX(2);
+        backRight = new WPI_TalonSRX(RobotMap.DRIVE_B_RIGHT);
         
-        frontLeft = new WPI_TalonSRX(3);
+        frontLeft = new WPI_TalonSRX(RobotMap.DRIVE_F_LEFT);
         
-        backLeft = new WPI_TalonSRX(4);
+        backLeft = new WPI_TalonSRX(RobotMap.DRIVE_B_LEFT);
         
         //config basic things
         Config.configAllStart(frontRight);
@@ -124,8 +124,17 @@ public class Drive extends Subsystem {
      * @param turn Percentage turn
      */
     private void dVelPID(double forward, double turn){
-		double right = arcadeMath(forward, -turn);
-		double left = arcadeMath(forward, turn);
+		//double right = arcadeMath(forward, -turn);
+        //double left = arcadeMath(forward, turn);
+        
+        //if at first you dont succeed, add more math
+        //double turnWeight = 1.2-(Math.abs(forward)*0.3);//turn less when more forward, more when still
+        //turn*=turnWeight;
+        double gap = 0.8*Math.max((Math.abs(forward)+Math.abs(turn)-1),0);//when peaking, turn more
+        gap = (forward>0)? -gap:gap;
+        gap=0;
+        double right = Convert.limit(forward-turn+gap);
+        double left = Convert.limit(forward+turn+gap);
 		right = calc100ms(right, targetRPM);
 		left = calc100ms(left, targetRPM);
 		frontRight.set(ControlMode.Velocity, right);
@@ -208,6 +217,7 @@ public class Drive extends Subsystem {
      */
     public void setForward(double _forward){
         forward=_forward;
+        Network.put("Given Forward", forward);
     }
     /**
      * Sets the target turn speed
@@ -215,6 +225,7 @@ public class Drive extends Subsystem {
      */
     public void setTurn(double _turn){
         turn=_turn;
+        Network.put("Given Turn", turn);
     }
 
     /**

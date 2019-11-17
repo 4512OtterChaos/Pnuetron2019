@@ -15,6 +15,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.RobotMap;
 
 public class Manipulator extends Subsystem {
 
@@ -22,10 +23,10 @@ public class Manipulator extends Subsystem {
     public DoubleSolenoid pusher;
 
     public Manipulator() {
-        claw = new DoubleSolenoid(0, 4, 5);
+        claw = new DoubleSolenoid(0, RobotMap.CLAW_F, RobotMap.CLAW_R);
         addChild("Claw",claw);
         
-        pusher = new DoubleSolenoid(0, 6, 7);
+        pusher = new DoubleSolenoid(0, RobotMap.PUSHER_F, RobotMap.PUSHER_R);
         addChild("Pusher",pusher);
         
         setPusher(false);

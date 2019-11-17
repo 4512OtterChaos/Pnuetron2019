@@ -11,6 +11,7 @@ public class OperatorConfig extends ControllerConfig{
 
     public void assign(XboxJoystick controller){
         conditions = new XboxButton[]{controller.leftBumper};//control lift when pressing these
+        setConditions(new XboxButton[]{controller.leftBumper});
         //Manipulator
         controller.aButton.whenActive(new OpenClaw(), conditions, true);
         controller.bButton.whenActive(new CloseClaw(), conditions, true);

@@ -9,11 +9,11 @@ import frc.robot.subsystems.manipulatorCommands.*;
 public class SoloConfig extends ControllerConfig{
     
     public void assign(XboxJoystick controller){
-        conditions = new XboxButton[]{controller.rightBumper};//control lift when pressing these
+        setConditions(new XboxButton[]{controller.rightBumper});
         //drive
         controller.leftBumper.whileActive(new DriveShiftAlternate());
         controller.leftTrigger.whileActive(new DriveVroom());
-        controller.rightTrigger.whenActive(new DriveCycle());
+        controller.rightTrigger.whileActive(new DriveVision());
         //Manipulator
         controller.aButton.whenActive(new OpenClaw(), conditions, true);
         controller.bButton.whenActive(new CloseClaw(), conditions, true);
@@ -29,5 +29,10 @@ public class SoloConfig extends ControllerConfig{
         controller.rightStickButton.whenActive(new ShootCargo(), conditions, false);
         //flipper
         controller.rightStickButton.whenActive(new FlipIntake(), conditions, true);
+
+        //
+        controller.leftStickButton.whenActive(new IntakeOut(), conditions, true);
+        controller.leftStickButton.whenActive(new IntakeIn(), conditions, false);
+        controller.leftStickButton.whenInactive(new IntakeZero());
     }
 }
